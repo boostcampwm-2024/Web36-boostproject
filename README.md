@@ -1,4 +1,4 @@
-# Web36-boostproject
+# Web36-QLab
 
 ## 팀원소개
 
