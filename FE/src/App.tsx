@@ -1,3 +1,4 @@
 export const App = () => {
-  return <div>hello</div>;
-};
+  var hello = 'hello'
+  return <div>{hello}</div>
+}

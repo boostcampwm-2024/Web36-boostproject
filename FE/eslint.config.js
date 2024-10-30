@@ -8,8 +8,10 @@ export default tseslint.config(
   { ignores: ['dist'] },
   {
     extends: [
+      'airbnb',
+      'airbnb/hooks',
+      'airbnb-typescript',
       js.configs.recommended,
-      ...tseslint.configs.recommended,
       'plugin:prettier/recommended',
     ],
     files: ['**/*.{ts,tsx}'],
@@ -23,6 +25,15 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      'react/jsx-filename-extension': [1, { extensions: ['.tsx'] }],
+      'import/extensions': [
+        'error',
+        'ignorePackages',
+        {
+          ts: 'never',
+          tsx: 'never',
+        },
+      ],
     },
   }
 )
