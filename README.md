@@ -23,12 +23,15 @@
 
 ## 팀원소개
 
-| **이름** | FE/BE | **번호** | **렛미 인트로듀스**                                                                 | **github**                   |
-| -------- | ----- | -------- | ----------------------------------------------------------------------------------- | ---------------------------- |
-| 김다영   | FE    | J027     | [J027\_김다영](https://www.notion.so/J027_-f94bbd9fb8ce41119334d5b7229690b2?pvs=21) | https://github.com/znero1022 |
-| 성유진   | BE    | J136     | [J136\_성유진](https://www.notion.so/J136_-5fa4cdd0695046bbb972d4c0d10d65c6?pvs=21) | https://github.com/jin20fd   |
-| 오민택   | BE    | J157     | [J157\_오민택](https://www.notion.so/J157_-5e9746aa49cd4095967ff44a73cebf48?pvs=21) | https://github.com/mintaek22 |
-| 장승훈   | BE    | J214     | [J214\_장승훈](https://www.notion.so/J214_-955d4d79a2c84f17a51a38907bdf4b99?pvs=21) | https://github.com/Hoons97   |
+<div align="center">
+
+| <img src="https://github.com/user-attachments/assets/2815ad64-0343-4df5-9243-0d22a4c7ba42" width="150"> | <img src="https://github.com/user-attachments/assets/590dcbba-a227-4285-8e30-5480d035e21a" width="150"> | <img src="https://github.com/user-attachments/assets/ca4a946f-0f6f-4a1b-bae9-876bf1827805" width="150"> | <img src="https://github.com/user-attachments/assets/e1c4ba6d-e3f0-4715-aa46-9431f020e800" width="150"> |
+| :---: | :---: | :---: | :---: |
+| [J027\_김다영](https://www.notion.so/J027_-f94bbd9fb8ce41119334d5b7229690b2?pvs=21) | [J157\_오민택](https://www.notion.so/J157_-5e9746aa49cd4095967ff44a73cebf48?pvs=21) | [J214\_장승훈](https://www.notion.so/J214_-955d4d79a2c84f17a51a38907bdf4b99?pvs=21) | [J136\_성유진](https://www.notion.so/J136_-5fa4cdd0695046bbb972d4c0d10d65c6?pvs=21) |
+| FE | BE | BE | BE |
+
+
+</div>
 
 <br>
 
