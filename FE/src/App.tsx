@@ -1,4 +1,5 @@
-export const App = () => {
-  var hello = 'hello'
-  return <div>{hello}</div>
+import React from 'react'
+
+export const App: React.FC = () => {
+  return <div>Hello, React!</div>
 }
