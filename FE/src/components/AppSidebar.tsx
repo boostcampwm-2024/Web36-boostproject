@@ -3,8 +3,6 @@
 import * as React from 'react'
 import data from '@/mocData'
 
-import { Command } from 'lucide-react'
-
 import {
   Sidebar,
   SidebarContent,
@@ -12,20 +10,19 @@ import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
-  SidebarInput,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
-import Switch from '@/components/ui/switch'
-import Label from '@/components/ui/label'
+import logo from '@/assets/logo.svg'
 import NavUser from './NavUser'
 
-function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export default function AppSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
   const [activeItem, setActiveItem] = React.useState(data.navMain[0])
-  const [mails, setMails] = React.useState(data.mails)
-  const { setOpen } = useSidebar()
+  const { setOpen, toggleSidebar } = useSidebar()
 
   return (
     <Sidebar
@@ -40,22 +37,10 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         collapsible="none"
         className="!w-[calc(var(--sidebar-width-icon)_+_1px)] border-r"
       >
-        <SidebarHeader>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton size="lg" asChild className="md:h-8 md:p-0">
-                <a href="#">
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                    <Command className="size-4" />
-                  </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">Acme Inc</span>
-                    <span className="truncate text-xs">Enterprise</span>
-                  </div>
-                </a>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
+        <SidebarHeader className="pt-3">
+          <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
+            <img src={logo} alt="logo" className="size-6" />
+          </div>
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup>
@@ -70,14 +55,11 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       }}
                       onClick={() => {
                         setActiveItem(item)
-                        const mail = data.mails.sort(() => Math.random() - 0.5)
-                        setMails(
-                          mail.slice(
-                            0,
-                            Math.max(5, Math.floor(Math.random() * 10) + 1)
-                          )
-                        )
-                        setOpen(true)
+                        if (activeItem.title === item.title) {
+                          toggleSidebar()
+                        } else {
+                          setOpen(true)
+                        }
                       }}
                       isActive={activeItem.title === item.title}
                       className="px-2.5 md:px-2"
@@ -104,38 +86,14 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <div className="text-base font-medium text-foreground">
               {activeItem.title}
             </div>
-            <Label className="flex items-center gap-2 text-sm">
-              <span>Unreads</span>
-              <Switch className="shadow-none" />
-            </Label>
           </div>
-          <SidebarInput placeholder="Type to search..." />
         </SidebarHeader>
         <SidebarContent>
           <SidebarGroup className="px-0">
-            <SidebarGroupContent>
-              {mails.map((mail) => (
-                <a
-                  href="#"
-                  key={mail.email}
-                  className="flex flex-col items-start gap-2 whitespace-nowrap border-b p-4 text-sm leading-tight last:border-b-0 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                >
-                  <div className="flex w-full items-center gap-2">
-                    <span>{mail.name}</span>{' '}
-                    <span className="ml-auto text-xs">{mail.date}</span>
-                  </div>
-                  <span className="font-medium">{mail.subject}</span>
-                  <span className="line-clamp-2 w-[260px] whitespace-break-spaces text-xs">
-                    {mail.teaser}
-                  </span>
-                </a>
-              ))}
-            </SidebarGroupContent>
+            <SidebarGroupContent />
           </SidebarGroup>
         </SidebarContent>
       </Sidebar>
     </Sidebar>
   )
 }
-
-export default AppSidebar
