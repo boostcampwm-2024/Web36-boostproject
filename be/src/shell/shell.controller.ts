@@ -1,9 +1,18 @@
-import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpStatus,
+  Post,
+  Res,
+  UseFilters,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { ShellService } from './shell.service';
 import { CreateShellDto } from './dto/create-shell.dto';
+import { ExceptionHandler } from 'src/exception-handler.ts';
 
 @Controller('shells')
+@UseFilters(new ExceptionHandler())
 export class ShellController {
   constructor(private shellService: ShellService) {}
 

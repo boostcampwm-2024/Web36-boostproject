@@ -5,7 +5,7 @@ export class Shell {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
-  @Column({ type: 'bigint' })
+  @Column({ type: 'bigint', unique: true })
   shellId: number;
 
   // 임시로 nullable 처리
