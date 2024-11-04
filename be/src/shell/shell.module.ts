@@ -4,6 +4,6 @@ import { ShellService } from './shell.service';
 
 @Module({
   controllers: [ShellController],
-  providers: [ShellService]
+  providers: [ShellService],
 })
 export class ShellModule {}

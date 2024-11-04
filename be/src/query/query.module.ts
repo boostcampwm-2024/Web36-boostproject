@@ -2,6 +2,6 @@ import { Module } from '@nestjs/common';
 import { QueryService } from './query.service';
 
 @Module({
-  providers: [QueryService]
+  providers: [QueryService],
 })
 export class QueryModule {}
