@@ -161,6 +161,9 @@ export default {
         '.text-white': {
           color: theme('grayscale.50'),
         },
+        '.text-blue': {
+          color: theme('blue.400'),
+        },
         '.surface-default': {
           backgroundColor: theme('grayscale.50'),
         },
@@ -172,6 +175,9 @@ export default {
         },
         'surface-selected': {
           backgroundColor: theme('blue.300'),
+        },
+        'surface-white': {
+          backgroundColor: theme('white'),
         },
       }
       addUtilities(textUtils)
