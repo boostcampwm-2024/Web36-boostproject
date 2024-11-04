@@ -1,16 +1,15 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { User } from 'src/user/user.entity';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Shell {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
-  @ManyToOne(() => User, (user) => user.shells)
-  user: User;
-
   @Column({ type: 'bigint' })
   shellId: number;
+
+  @Column()
+  sessionId: string;
 
   @Column()
   runTime: string;
