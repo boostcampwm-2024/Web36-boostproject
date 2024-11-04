@@ -68,6 +68,7 @@
   },
   "rules": {
     "prettier/prettier": "error",
-    "no-console": "off"
+    "no-console": "off",
+    "react/jsx-props-no-spreading": "off"
   }
 }
