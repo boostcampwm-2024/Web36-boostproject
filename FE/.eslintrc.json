@@ -31,6 +31,15 @@
       }
     },
     {
+      "files": ["vite.config.ts"],
+      "parserOptions": {
+        "project": "./tsconfig.json"
+      },
+      "rules": {
+        "no-unused-vars": "off"
+      }
+    },
+    {
       "files": ["*.js"],
       "parser": "espree",
       "extends": ["eslint:recommended", "prettier"],
