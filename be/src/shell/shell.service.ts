@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Shell } from './shell.entity';
@@ -12,7 +16,13 @@ export class ShellService {
     private shellRepository: Repository<Shell>,
   ) {}
 
-  create(createShellDto: CreateShellDto) {
+  async create(createShellDto: CreateShellDto) {
+    const existedShell = await this.shellRepository.findOne({
+      where: createShellDto,
+    });
+    if (existedShell) {
+      throw new BadRequestException('shell already exist');
+    }
     const shell = this.shellRepository.create(createShellDto);
     return this.shellRepository.save(shell);
   }
@@ -22,7 +32,7 @@ export class ShellService {
       where: { shellId },
     });
     if (!originShell) {
-      throw new Error('shell not found');
+      throw new NotFoundException('shell not found');
     }
     return this.shellRepository.save({
       ...originShell,
@@ -35,7 +45,7 @@ export class ShellService {
       shellId: shellId,
     });
     if (!affected) {
-      throw new Error('shell not found');
+      throw new NotFoundException('shell not found');
     }
   }
 }

@@ -10,11 +10,9 @@ import {
 import { ShellService } from './shell.service';
 import { CreateShellDto } from './dto/create-shell.dto';
 import { ExceptionHandler } from '../common/exception/exception.handler';
-import { HttpExceptionHandler } from 'src/common/exception/http-exception.handler';
 import { UpdateShellDto } from './dto/update-shell.dto';
 
 @Controller('api/shells')
-@UseFilters(new HttpExceptionHandler())
 @UseFilters(new ExceptionHandler())
 export class ShellController {
   constructor(private shellService: ShellService) {}
