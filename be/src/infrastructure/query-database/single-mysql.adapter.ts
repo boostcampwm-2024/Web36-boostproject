@@ -1,8 +1,13 @@
 import dotenv from 'dotenv';
 import { Injectable } from '@nestjs/common';
 import { QueryDBAdapter } from './query-db.adapter';
-import { createPool, Pool, RowDataPacket } from 'mysql2/promise';
-import { FieldPacket } from 'mysql2';
+import {
+  Connection,
+  createConnection,
+  createPool,
+  Pool,
+  RowDataPacket,
+} from 'mysql2/promise';
 
 dotenv.config();
 
@@ -11,30 +16,48 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
   private pool: Pool;
 
   constructor() {
-    this.initializePool();
+    this.createPool();
   }
 
-  private initializePool() {
+  private createPool() {
     this.pool = createPool({
       host: process.env.QUERY_DB_HOST,
-      user: process.env.QUERY_DB_USER,
+      user: process.env.QUERY_DB_USERNAME,
       password: process.env.QUERY_DB_PASSWORD,
       port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
       connectionLimit: 10,
     });
   }
 
-  async run(
-    query: string,
-  ): Promise<{ rows: RowDataPacket[]; fields: FieldPacket[] }> {
-    if (!this.pool) {
-      this.initializePool();
-    }
+  public async createConnection(identify: string) {
     try {
-      const [rows, fields] = await this.pool.execute<RowDataPacket[]>(query);
-      return { rows, fields };
+      return await createConnection({
+        host: process.env.QUERY_DB_HOST,
+        user: process.env.QUERY_DB_USERNAME,
+        password: process.env.QUERY_DB_PASSWORD,
+        port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
+        database: identify,
+      });
     } catch (e) {
-      throw Error(e);
+      //해당 database가 없을때
+      const createDatabase = `create database ${identify};`;
+      await this.pool.execute(createDatabase);
+      return createConnection({
+        host: process.env.QUERY_DB_HOST,
+        user: process.env.QUERY_DB_USERNAME,
+        password: process.env.QUERY_DB_PASSWORD,
+        port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
+        database: identify,
+      });
     }
+  }
+
+  public async closeConnection(connection: Connection) {
+    await connection.end();
+  }
+
+  async run(connection: Connection, query: string): Promise<RowDataPacket[]> {
+    const [rows] = await connection.execute<RowDataPacket[]>(query);
+    return rows;
   }
 }

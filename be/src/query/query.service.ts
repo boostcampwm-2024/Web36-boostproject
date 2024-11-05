@@ -1,12 +1,24 @@
-import { Injectable } from '@nestjs/common';
-import { ResQueryDto } from './dto/res-query.dto';
+import { Inject, Injectable } from '@nestjs/common';
 import { QueryDto } from './dto/query.dto';
-import { QueryRepository } from './query.repository';
+import { QUERY_DB_ADAPTER } from '../infrastructure/query-database/query-db.moudle';
+import { QueryDBAdapter } from '../infrastructure/query-database/query-db.adapter';
+import { ResQueryDto } from './dto/res-query.dto';
 
 @Injectable()
 export class QueryService {
-  constructor(private readonly queryRepository: QueryRepository) {}
-  queryExecute(queryDto: QueryDto) {
-    this.queryRepository.
+  constructor(
+    @Inject(QUERY_DB_ADAPTER) private readonly queryDBAdapter: QueryDBAdapter,
+  ) {}
+
+  async execute(userId: string, queryDto: QueryDto) {
+    const connection = await this.queryDBAdapter.createConnection(userId);
+    try {
+      const rows = await this.queryDBAdapter.run(connection, queryDto.query);
+      return ResQueryDto.ok(rows);
+    } catch (e) {
+      return ResQueryDto.fail(e.sqlMessage);
+    } finally {
+      this.queryDBAdapter.closeConnection(connection);
+    }
   }
 }
