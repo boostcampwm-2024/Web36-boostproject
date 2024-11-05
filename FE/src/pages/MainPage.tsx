@@ -1,13 +1,15 @@
 'use client'
 
-import * as React from 'react'
+import React, { useState } from 'react'
 
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
-import { Badge } from '@/components/ui/badge'
 import AppSidebar from '@/components/AppSidebar'
-import Shell from '@/components/Shell'
+import ShellList from '@/components/ShellList'
+import ShellType from '@/types/interfaces'
 
 export default function Page() {
+  const [shells, setShells] = useState<ShellType[]>([])
+
   return (
     <SidebarProvider
       style={
@@ -21,16 +23,7 @@ export default function Page() {
         <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-3.5">
           <h2 className="h-full text-xl font-bold text-foreground">Q-Lab</h2>
         </header>
-        <div className="sticky top-0 flex shrink-0 items-center gap-3 border-b bg-background p-2">
-          <Badge variant="outline" className="cursor-pointer">
-            + add
-          </Badge>
-        </div>
-        <div className="flex flex-1 flex-col gap-3 p-4">
-          <Shell />
-          <Shell />
-          <Shell />
-        </div>
+        <ShellList shells={shells} setShells={setShells} />
       </SidebarInset>
     </SidebarProvider>
   )
