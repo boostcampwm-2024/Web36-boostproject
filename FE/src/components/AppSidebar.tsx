@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import data from '@/mocData'
+import { NAV_MENU, USER } from '@/constants'
 import { X } from 'lucide-react'
 
 import {
@@ -22,7 +22,7 @@ import NavUser from './NavUser'
 export default function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const [activeItem, setActiveItem] = React.useState(data.navMain[0])
+  const [activeItem, setActiveItem] = React.useState(NAV_MENU[0])
   const { setOpen, toggleSidebar } = useSidebar()
 
   return (
@@ -48,7 +48,7 @@ export default function AppSidebar({
           <SidebarGroup>
             <SidebarGroupContent className="px-1.5 md:px-0">
               <SidebarMenu>
-                {data.navMain.map((item) => (
+                {NAV_MENU.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       tooltip={{
@@ -76,7 +76,7 @@ export default function AppSidebar({
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
-          <NavUser user={data.user} />
+          <NavUser user={USER} />
         </SidebarFooter>
       </Sidebar>
 
