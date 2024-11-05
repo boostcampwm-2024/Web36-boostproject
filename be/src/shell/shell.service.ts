@@ -12,10 +12,6 @@ export class ShellService {
   ) {}
 
   create(createShellDto: CreateShellDto): Promise<Shell> {
-    // class-validator로 변경 필요
-    if (!createShellDto.shellId) {
-      throw new Error('invalid shellId');
-    }
     const shell = this.shellRepository.create(createShellDto);
     return this.shellRepository.save(shell);
   }

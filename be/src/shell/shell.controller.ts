@@ -10,8 +10,10 @@ import { Response } from 'express';
 import { ShellService } from './shell.service';
 import { CreateShellDto } from './dto/create-shell.dto';
 import { ExceptionHandler } from '../common/exception/exception.handler';
+import { HttpExceptionHandler } from 'src/common/exception/http-exception.handler';
 
 @Controller('shells')
+@UseFilters(new HttpExceptionHandler())
 @UseFilters(new ExceptionHandler())
 export class ShellController {
   constructor(private shellService: ShellService) {}
