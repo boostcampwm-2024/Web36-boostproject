@@ -15,4 +15,13 @@ export class ShellService {
     const shell = this.shellRepository.create(createShellDto);
     return this.shellRepository.save(shell);
   }
+
+  async delete(shellId: number) {
+    const { affected } = await this.shellRepository.delete({
+      shellId: shellId,
+    });
+    if (!affected) {
+      throw new Error('shell not found');
+    }
+  }
 }
