@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import data from '@/mocData'
+import { X } from 'lucide-react'
 
 import {
   Sidebar,
@@ -28,6 +29,7 @@ export default function AppSidebar({
     <Sidebar
       collapsible="icon"
       className="overflow-hidden [&>[data-sidebar=sidebar]]:flex-row"
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
     >
       {/* This is the first sidebar */}
@@ -86,8 +88,16 @@ export default function AppSidebar({
             <div className="text-base font-medium text-foreground">
               {activeItem.title}
             </div>
+            <button
+              type="button"
+              className="text-foreground"
+              onClick={() => setOpen(false)}
+            >
+              <X className="fill-current" />
+            </button>
           </div>
         </SidebarHeader>
+        <div className="p-4 font-medium">{activeItem.title}</div>
         <SidebarContent>
           <SidebarGroup className="px-0">
             <SidebarGroupContent />
