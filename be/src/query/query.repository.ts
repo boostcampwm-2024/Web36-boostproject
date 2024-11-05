@@ -6,4 +6,7 @@ export class QueryRepository {
   constructor(
     @Inject(QUERY_DB_ADAPTER) private readonly queryDBAdapter: QueryDBAdapter,
   ) {}
+  run(identify:string,query:string){
+      this.queryDBAdapter.createPool()
+  }
 }

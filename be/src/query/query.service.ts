@@ -6,7 +6,7 @@ import { QueryRepository } from './query.repository';
 @Injectable()
 export class QueryService {
   constructor(private readonly queryRepository: QueryRepository) {}
-  queryExecute(queryDto: QueryDto): ResQueryDto {
-
+  queryExecute(queryDto: QueryDto) {
+    this.queryRepository.
   }
 }

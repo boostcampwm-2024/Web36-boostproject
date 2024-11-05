@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { SingleMySQLAdapter } from './query-db.config';
+import { SingleMySQLAdapter } from './single-mysql.adapter';
 
-export const QUERY_DB_ADAPTER = Symbol('QUERY_DB_ADAPTER');
+export const QUERY_DB_ADAPTER = 'QUERY_DB_ADAPTER';
 
 @Module({
   providers: [
