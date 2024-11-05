@@ -20,6 +20,7 @@ describe('ShellService', () => {
   const mockRepository = {
     create: jest.fn().mockReturnValue(mockShell),
     save: jest.fn().mockResolvedValue(mockShell),
+    delete: jest.fn().mockResolvedValue({ affected: 1 }),
     findOne: jest.fn(),
   };
 
@@ -42,7 +43,7 @@ describe('ShellService', () => {
     jest.clearAllMocks();
   });
 
-  it('shell을 추가할 수 있다.', async () => {
+  test('shell을 추가할 수 있다.', async () => {
     const createShellDto = { shellId: 1 };
     mockRepository.findOne.mockResolvedValueOnce(null);
 
@@ -59,5 +60,22 @@ describe('ShellService', () => {
     expect(repository.create).toHaveBeenCalledWith(createShellDto);
     expect(repository.save).toHaveBeenCalledWith(mockShell);
     expect(createdShell).toEqual(expectedShell);
+  });
+
+  test('shell을 삭제할 수 있다.', async () => {
+    const shellId = 1;
+    mockRepository.delete.mockResolvedValueOnce({ affected: 1 });
+    await service.delete(shellId);
+    expect(repository.delete).toHaveBeenCalledWith({ shellId });
+  });
+
+  test('삭제할 shell이 존재하지 않으면 에러를 발생시킨다.', async () => {
+    const shellId = 1;
+    mockRepository.delete.mockResolvedValueOnce({ affected: 0 });
+    try {
+      await service.delete(shellId);
+    } catch (e) {
+      expect(e.message).toBe('shell not found');
+    }
   });
 });
