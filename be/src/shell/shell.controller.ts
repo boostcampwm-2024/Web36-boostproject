@@ -4,7 +4,7 @@ import { CreateShellDto } from './dto/create-shell.dto';
 import { ExceptionHandler } from '../common/exception/exception.handler';
 import { HttpExceptionHandler } from 'src/common/exception/http-exception.handler';
 
-@Controller('shells')
+@Controller('api/shells')
 @UseFilters(new HttpExceptionHandler())
 @UseFilters(new ExceptionHandler())
 export class ShellController {
