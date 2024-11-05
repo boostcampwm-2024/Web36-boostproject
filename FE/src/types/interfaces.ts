@@ -1,4 +1,4 @@
-export interface Shell {
+export default interface ShellType {
   shellId: number
   queryStatus: boolean | null
   runTime: string | null
@@ -14,5 +14,5 @@ export interface Shell {
     | null
   failMessage: string | null
   affectedRows: number | null
-  table: { string: string }[] | null
+  table: { string: string }[] | [] | null
 }
