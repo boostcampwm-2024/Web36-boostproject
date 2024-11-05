@@ -13,6 +13,9 @@ export class Shell {
   sessionId: string;
 
   @Column({ nullable: true })
+  query: string;
+
+  @Column({ nullable: true })
   runTime: string;
 
   @Column({ nullable: true })
