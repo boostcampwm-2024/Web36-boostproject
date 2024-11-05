@@ -11,11 +11,11 @@ export class ResQueryDto {
   affectedRows: number;
   table: any[];
 
-  static ok(rows: RowDataPacket[]): ResQueryDto {
+  static ok(query: string, rows: RowDataPacket[]): ResQueryDto {
     const response = new ResQueryDto();
     response.queryStatus = true;
     response.runTime = '0.01';
-    response.queryType = QueryType.SELECT;
+    response.queryType = this.detectQueryType(query);
     response.affectedRows = rows.length;
     response.table = rows;
     return response;
@@ -26,5 +26,16 @@ export class ResQueryDto {
     response.queryStatus = false;
     response.failMessage = failMessage;
     return response;
+  }
+
+  private static detectQueryType(query: string): QueryType {
+    const trimmedQuery = query.trim().toUpperCase();
+    if (trimmedQuery.startsWith('SELECT')) return QueryType.SELECT;
+    if (trimmedQuery.startsWith('INSERT')) return QueryType.INSERT;
+    if (trimmedQuery.startsWith('UPDATE')) return QueryType.UPDATE;
+    if (trimmedQuery.startsWith('DELETE')) return QueryType.DELETE;
+    if (trimmedQuery.startsWith('CREATE')) return QueryType.CREATE;
+    if (trimmedQuery.startsWith('DROP')) return QueryType.DROP;
+    if (trimmedQuery.startsWith('ALTER')) return QueryType.ALTER;
   }
 }
