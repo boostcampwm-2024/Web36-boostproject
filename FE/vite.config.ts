@@ -4,7 +4,7 @@ import tsConfigPaths from 'vite-tsconfig-paths'
 import path from 'path'
 
 export default defineConfig({
-  plugins: [react(), tsConfigPaths()],
+  plugins: [react(), tsConfigPaths(), svgr()],
   build: {
     target: 'esnext',
   },
