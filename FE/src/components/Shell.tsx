@@ -1,11 +1,21 @@
-import React, { useState } from 'react'
+import * as React from 'react'
 import PlayCircle from '@/assets/play_circle.svg'
 import ShellType from '@/types/interfaces'
 import { X } from 'lucide-react'
 
-export default function Shell({ shell }: { shell: ShellType }) {
-  const [isFocused, setIsFocused] = useState(false)
+interface ShellProps {
+  shell: ShellType
+  removeShell: (shellId: number) => void
+  focusedShell: number | null
+  setFocusedShell: React.Dispatch<React.SetStateAction<number | null>>
+}
 
+export default function Shell({
+  shell,
+  removeShell,
+  focusedShell,
+  setFocusedShell,
+}: ShellProps) {
   const {
     shellId,
     queryStatus,
@@ -44,11 +54,15 @@ export default function Shell({ shell }: { shell: ShellType }) {
         <input
           type="text"
           defaultValue={query ?? ''}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onFocus={() => setFocusedShell(shellId)}
           className="h-8 w-full border-none bg-secondary p-2 text-base font-medium text-foreground focus:outline-none"
         />
-        {isFocused && <X className="mr-3 fill-current" />}
+        {focusedShell === shellId && (
+          <X
+            className="mr-3 fill-current"
+            onClick={() => removeShell(shellId)}
+          />
+        )}
       </div>
       {runTime != null && resultBox}
     </>
