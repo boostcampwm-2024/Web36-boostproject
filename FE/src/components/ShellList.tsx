@@ -5,7 +5,7 @@ import ShellType from '@/types/interfaces'
 
 interface ShellListType {
   shells: ShellType[]
-  setShells: React.Dispatch<React.SetStateAction<ShellType[]>> // useState의 setState 함수 타입
+  setShells: React.Dispatch<React.SetStateAction<ShellType[]>>
 }
 
 export default function ShellList({ shells, setShells }: ShellListType) {
@@ -20,7 +20,6 @@ export default function ShellList({ shells, setShells }: ShellListType) {
       affectedRows: null,
       table: null,
     }
-
     setShells((prevShells) => [...prevShells, newShell])
   }
 
@@ -33,7 +32,7 @@ export default function ShellList({ shells, setShells }: ShellListType) {
       </div>
       <div className="flex flex-1 flex-col gap-3 p-4">
         {shells.map((shell) => (
-          <Shell key={shell.shellId} />
+          <Shell key={shell.shellId} shell={shell} />
         ))}
       </div>
     </>
