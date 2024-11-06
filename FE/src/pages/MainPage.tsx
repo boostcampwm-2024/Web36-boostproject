@@ -6,9 +6,10 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import AppSidebar from '@/components/AppSidebar'
 import ShellList from '@/components/ShellList'
 import ShellType from '@/types/interfaces'
+import mocData from '@/mocdata.json'
 
 export default function Page() {
-  const [shells, setShells] = useState<ShellType[]>([])
+  const [shells, setShells] = useState<ShellType[]>(mocData.result)
 
   return (
     <SidebarProvider
