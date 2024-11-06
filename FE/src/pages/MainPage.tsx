@@ -26,9 +26,7 @@ export default function Page() {
             + add
           </Badge>
         </div>
-        <div className="flex flex-1 flex-col gap-3 p-4">
-          <Shell />
-          <Shell />
+        <div className="flex flex-1 flex-col gap-4 p-4">
           <Shell />
         </div>
       </SidebarInset>
