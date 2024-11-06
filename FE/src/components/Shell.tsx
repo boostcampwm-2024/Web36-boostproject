@@ -1,8 +1,11 @@
-import * as React from 'react'
+import React, { useState } from 'react'
 import PlayCircle from '@/assets/play_circle.svg'
 import ShellType from '@/types/interfaces'
+import { X } from 'lucide-react'
 
 export default function Shell({ shell }: { shell: ShellType }) {
+  const [isFocused, setIsFocused] = useState(false)
+
   const {
     shellId,
     queryStatus,
@@ -35,14 +38,17 @@ export default function Shell({ shell }: { shell: ShellType }) {
   return (
     <>
       <div className="flex h-12 w-full items-center overflow-hidden rounded-sm bg-secondary">
-        <button type="button" className="bg-primary p-3">
+        <button type="button" className="mr-3 h-full w-12 bg-primary p-3">
           <img src={PlayCircle} alt="play button" />
         </button>
         <input
           type="text"
           defaultValue={query ?? ''}
-          className="ml-3 h-8 w-full border-none bg-secondary p-2 text-base font-medium text-foreground focus:outline-none"
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          className="h-8 w-full border-none bg-secondary p-2 text-base font-medium text-foreground focus:outline-none"
         />
+        {isFocused && <X className="mr-3 fill-current" />}
       </div>
       {runTime != null && resultBox}
     </>
