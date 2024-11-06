@@ -5,27 +5,31 @@ export class Shell {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
-  @Column({ type: 'bigint' })
+  @Column({ type: 'bigint', unique: true })
   shellId: number;
 
-  @Column()
+  // 임시로 nullable 처리
+  @Column({ nullable: true })
   sessionId: string;
 
-  @Column()
+  @Column({ nullable: true })
+  query: string;
+
+  @Column({ nullable: true })
   runTime: string;
 
-  @Column()
+  @Column({ nullable: true })
   queryType: string;
 
-  @Column()
+  @Column({ nullable: true })
   failMessage: string;
 
-  @Column()
+  @Column({ nullable: true })
   affectedRows: number;
 
-  @Column({ type: 'json' })
+  @Column({ type: 'json', nullable: true })
   resultTable: object;
 
-  @Column()
+  @Column({ nullable: true })
   queryStatus: boolean;
 }
