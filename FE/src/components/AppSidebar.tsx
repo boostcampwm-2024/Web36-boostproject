@@ -1,7 +1,8 @@
 'use client'
 
 import * as React from 'react'
-import data from '@/mocData'
+import { NAV_MENU, USER } from '@/constants'
+import { X } from 'lucide-react'
 
 import {
   Sidebar,
@@ -21,13 +22,14 @@ import NavUser from './NavUser'
 export default function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const [activeItem, setActiveItem] = React.useState(data.navMain[0])
+  const [activeItem, setActiveItem] = React.useState(NAV_MENU[0])
   const { setOpen, toggleSidebar } = useSidebar()
 
   return (
     <Sidebar
       collapsible="icon"
       className="overflow-hidden [&>[data-sidebar=sidebar]]:flex-row"
+      // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
     >
       {/* This is the first sidebar */}
@@ -46,7 +48,7 @@ export default function AppSidebar({
           <SidebarGroup>
             <SidebarGroupContent className="px-1.5 md:px-0">
               <SidebarMenu>
-                {data.navMain.map((item) => (
+                {NAV_MENU.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       tooltip={{
@@ -74,7 +76,7 @@ export default function AppSidebar({
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
-          <NavUser user={data.user} />
+          <NavUser user={USER} />
         </SidebarFooter>
       </Sidebar>
 
@@ -86,8 +88,16 @@ export default function AppSidebar({
             <div className="text-base font-medium text-foreground">
               {activeItem.title}
             </div>
+            <button
+              type="button"
+              className="text-foreground"
+              onClick={() => setOpen(false)}
+            >
+              <X className="fill-current" />
+            </button>
           </div>
         </SidebarHeader>
+        <div className="p-4 font-medium">{activeItem.title}</div>
         <SidebarContent>
           <SidebarGroup className="px-0">
             <SidebarGroupContent />
