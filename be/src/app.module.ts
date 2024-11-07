@@ -10,6 +10,7 @@ import { User } from 'src/user/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import dotenv from 'dotenv';
 import { SessionMiddleware } from './session/session.middleware';
+import { RedisModule } from './infrastructure/redis/redis.module';
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ dotenv.config();
     UserModule,
     ShellModule,
     QueryModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],

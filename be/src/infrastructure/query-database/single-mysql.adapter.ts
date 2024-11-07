@@ -60,4 +60,9 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
     const [rows] = await connection.execute<RowDataPacket[]>(query);
     return rows;
   }
+
+  async dropDatabase(identify: string) {
+    const dropDatabase = `drop database ${identify};`;
+    await this.pool.execute(dropDatabase);
+  }
 }

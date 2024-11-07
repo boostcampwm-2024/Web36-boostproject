@@ -4,4 +4,5 @@ export interface QueryDBAdapter {
   createConnection(identify: string): Promise<Connection>;
   closeConnection(connection: Connection): void;
   run(connection: Connection, query: string): Promise<RowDataPacket[]>;
+  dropDatabase(key: string): void;
 }
