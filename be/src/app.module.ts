@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { UserModule } from './user/user.module';
 import { ShellModule } from './shell/shell.module';
 import { QueryModule } from './query/query.module';
@@ -7,6 +7,7 @@ import { Shell } from 'src/shell/shell.entity';
 import { User } from 'src/user/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import dotenv from 'dotenv';
+import { SessionMiddleware } from './session/session.middleware';
 
 dotenv.config();
 
@@ -28,4 +29,8 @@ dotenv.config();
     QueryModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(SessionMiddleware).forRoutes('*');
+  }
+}

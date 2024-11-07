@@ -21,9 +21,7 @@ export class ExceptionHandler implements ExceptionFilter {
       error instanceof HttpException ? error.getResponse() : null;
 
     const message =
-      exceptionResponse &&
-      typeof exceptionResponse === 'object' &&
-      Array.isArray(exceptionResponse['message'])
+      exceptionResponse && Array.isArray(exceptionResponse['message'])
         ? exceptionResponse['message'].join(', ')
         : error.message;
 

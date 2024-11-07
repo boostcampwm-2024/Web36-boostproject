@@ -17,7 +17,6 @@ export class QueryController {
   @Post('execute')
   async executeQuery(@Req() req: Request, @Body() queryDto: QueryDto) {
     return ResponseDto.ok(
-      await this.queryService.execute(req.cookies.sid, queryDto),
-    );
+      await this.queryService.execute(req.sessionID, queryDto));
   }
 }

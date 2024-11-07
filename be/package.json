@@ -25,14 +25,20 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^8.0.2",
     "@nestjs/typeorm": "^10.0.2",
+    "@types/express-session": "^1.18.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "connect-redis": "^7.1.1",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.5",
+    "express-session": "^1.18.1",
+    "ioredis": "^5.4.1",
+    "memorystore": "^1.6.7",
     "mysql2": "^3.11.3",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "uuid": "^11.0.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
