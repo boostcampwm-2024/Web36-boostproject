@@ -21,7 +21,7 @@ export class ShellService {
       where: createShellDto,
     });
     if (existedShell) {
-      throw new BadRequestException('shell already exist');
+      throw new BadRequestException('이미 존재하는 shellId 입니다.');
     }
     const shell = this.shellRepository.create(createShellDto);
     return this.shellRepository.save(shell);
@@ -32,7 +32,7 @@ export class ShellService {
       where: { shellId },
     });
     if (!originShell) {
-      throw new NotFoundException('shell not found');
+      throw new NotFoundException('존재하지 않는 shellId 입니다.');
     }
     return this.shellRepository.save({
       ...originShell,
@@ -45,7 +45,7 @@ export class ShellService {
       shellId: shellId,
     });
     if (!affected) {
-      throw new NotFoundException('shell not found');
+      throw new NotFoundException('존재하지 않는 shellId 입니다.');
     }
   }
 }
