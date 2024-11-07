@@ -1,12 +1,13 @@
 import axiosClient from '@/api/axiosClient'
+import ShellType from '@/types/interfaces'
 
 export async function fetchShells() {
   const response = await axiosClient.get('/shells')
   return response.data
 }
 
-export async function addShell(shellId: number) {
-  const response = await axiosClient.post('/shells', { shellId })
+export async function addShell(shell: ShellType) {
+  const response = await axiosClient.post('/shells', { shellId: shell.shellId })
   return response.data
 }
 
