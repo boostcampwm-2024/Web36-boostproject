@@ -16,6 +16,7 @@ export default function Shell({
   focusedShell,
   setFocusedShell,
 }: ShellProps) {
+
   const {
     shellId,
     queryStatus,
