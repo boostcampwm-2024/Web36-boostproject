@@ -10,7 +10,6 @@ interface ShellListType {
 
 export default function ShellList({ shells, setShells }: ShellListType) {
   const [focusedShell, setFocusedShell] = useState<number | null>(null)
-
   const addShell = () => {
     const newShell: ShellType = {
       shellId: new Date().getTime(),
@@ -30,7 +29,6 @@ export default function ShellList({ shells, setShells }: ShellListType) {
       prevShells.filter((shell) => shell.shellId !== shellId)
     )
   }
-
   return (
     <>
       <div className="sticky top-0 flex shrink-0 items-center gap-3 border-b bg-background p-2">
