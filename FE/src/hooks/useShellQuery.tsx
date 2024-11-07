@@ -48,7 +48,7 @@ function useShellMutation<TData, TVariables>(
 }
 
 export function useShells() {
-  return useQuery(QUERY_KEYS.shells, fetchShells, {
+  return useQuery<ShellType[]>(QUERY_KEYS.shells, fetchShells, {
     staleTime: 5 * 60 * 1000, // 5분
     cacheTime: 30 * 60 * 1000, // 30분
     refetchOnWindowFocus: false,
