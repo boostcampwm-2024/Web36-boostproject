@@ -27,24 +27,19 @@ export class RedisClient {
     });
   }
 
-  private subscribeToExpiredEvents() {
-    this.pubsub.subscribe('__keyevent@0__:expired');
-
-    this.pubsub.on('message', (key) => {
-      this.queryDBAdapter.dropDatabase(key);
-    });
-  }
-
-  async getSession(key: string) {
+  getSession(key: string) {
     return this.redis.get(key);
   }
 
-  async setSession(key: string, value: string = '', expiration: number = 100) {
-    console.log('set key', key, 'value', value, expiration);
-    return this.redis.set(key, value, 'EX', expiration);
+  private subscribeToExpiredEvents() {
+    this.pubsub.subscribe('__keyevent@0__:expired');
+
+    this.pubsub.on('message', (event, session) => {
+      this.queryDBAdapter.dropDatabase(session);
+    });
   }
 
-  async del(key: string) {
-    return this.redis.del(key);
+  getRedis() {
+    return this.redis;
   }
 }
