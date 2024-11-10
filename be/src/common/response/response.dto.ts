@@ -1,6 +1,11 @@
 export class ResponseDto {
   status: boolean;
   data: object;
+
+  /**
+   * 응답 메세지
+   * @example '성공적으로 응답되었습니다.'
+   */
   message: string;
 
   private constructor(status: boolean, data: object, message: string) {
