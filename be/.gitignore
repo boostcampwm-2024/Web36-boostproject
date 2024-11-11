@@ -12,6 +12,9 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+# http requests
+**/*.http
+
 # OS
 .DS_Store
 
