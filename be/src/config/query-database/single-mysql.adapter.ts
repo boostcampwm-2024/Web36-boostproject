@@ -31,21 +31,29 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
 
   public async createConnection(identify: string) {
     try {
+      const username = identify.substring(0, 10);
       return await createConnection({
         host: process.env.QUERY_DB_HOST,
-        user: process.env.QUERY_DB_USERNAME,
-        password: process.env.QUERY_DB_PASSWORD,
+        user: username,
+        password: identify,
         port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
         database: identify,
       });
     } catch (e) {
       //해당 database가 없을때
+      const username = identify.substring(0, 10);
+
       const createDatabase = `create database ${identify};`;
+      const createUser = `create user '${username}'@'%' identified by '${identify}';`;
+      const grantPrivilege = `grant all privileges on ${identify}.* to '${username}'@'%';`; // 사용자 db에 대해서만 권한 부여
       await this.pool.execute(createDatabase);
+      await this.pool.execute(createUser);
+      await this.pool.execute(grantPrivilege);
+
       return createConnection({
         host: process.env.QUERY_DB_HOST,
-        user: process.env.QUERY_DB_USERNAME,
-        password: process.env.QUERY_DB_PASSWORD,
+        user: username,
+        password: identify,
         port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
         database: identify,
       });
