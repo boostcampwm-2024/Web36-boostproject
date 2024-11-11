@@ -1,6 +1,6 @@
 import * as React from 'react'
 import PlayCircle from '@/assets/play_circle.svg'
-import ShellType from '@/types/interfaces'
+import { ShellType } from '@/types/interfaces'
 import { X } from 'lucide-react'
 
 interface ShellProps {

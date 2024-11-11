@@ -5,7 +5,7 @@ import {
   useQueryClient,
 } from 'react-query'
 import { fetchShells, addShell, deleteShell } from '@/api/shellApi'
-import ShellType from '@/types/interfaces'
+import { ShellType } from '@/types/interfaces'
 
 const QUERY_KEYS = {
   shells: 'shells',

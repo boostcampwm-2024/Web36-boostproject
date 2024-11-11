@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import Shell from '@/components/Shell'
-import ShellType from '@/types/interfaces'
+import { ShellType } from '@/types/interfaces'
 import { useAddShell, useDeleteShell } from '@/hooks/useShellQuery'
 
 export default function ShellList({ shells }: { shells: ShellType[] }) {
