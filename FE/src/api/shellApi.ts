@@ -1,27 +1,27 @@
-import axiosClient from '@/api/axiosClient'
-import ShellType from '@/types/interfaces'
+// import axiosClient from '@/api/axiosClient'
+import { ShellType } from '@/types/interfaces'
+import axiosInstance from '@/api/__mocks__/axiosMock'
 
 export async function fetchShells() {
-  const response = await axiosClient.get('/shells')
+  const response = await axiosInstance.get('/shells')
+  console.log('success fetching shells')
   return response.data
 }
 
 export async function addShell(shell: ShellType) {
-  const response = await axiosClient.post('/shells', { shellId: shell.shellId })
+  const response = await axiosInstance.post('/shells', {
+    shellId: shell.shellId,
+  })
+  console.log(`success adding shells ${shell.shellId}`)
   return response.data
 }
 
 export async function deleteShell(shellId: number) {
-  const response = await axiosClient.delete(`/shells/${shellId}`)
+  const response = await axiosInstance.delete(`/shells/${shellId}`)
   return response.data
 }
 
 export async function updateShell(shellId: number, query: string) {
-  const response = await axiosClient.put(`/shells/${shellId}`, { query })
-  return response.data
-}
-
-export async function saveShellTable(shellId: number, table: unknown[]) {
-  const response = await axiosClient.post(`/shells/${shellId}/table`, { table })
+  const response = await axiosInstance.put(`/shells/${shellId}`, { query })
   return response.data
 }
