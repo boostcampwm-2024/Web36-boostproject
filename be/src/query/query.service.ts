@@ -31,27 +31,32 @@ export class QueryService {
       const rows = await this.queryDBAdapter.run(connection, queryDto.query);
       const slicedRows = rows.length > 100 ? rows.slice(0, 100) : rows;
 
-      const updateData = {
+      await this.updateShell(shellId, shell, {
         ...baseUpdateData,
         affectedRows: rows.length,
         queryStatus: true,
         resultTable: slicedRows,
-      };
-
-      await this.shellRepository.update({ shellId }, updateData);
+      });
     } catch (e) {
-      const updateData = {
+      await this.updateShell(shellId, shell, {
         ...baseUpdateData,
         queryStatus: false,
         failMessage: e.sqlMessage,
-      };
-
-      await this.shellRepository.update({ shellId }, updateData);
+      });
     } finally {
       this.queryDBAdapter.closeConnection(connection);
     }
 
-    return await this.shellRepository.findOne({ where: { shellId } });
+    return shell;
+  }
+
+  private async updateShell(
+    shellId: number,
+    shell: Shell,
+    updateData: Partial<Shell>,
+  ) {
+    await this.shellRepository.update({ shellId }, updateData);
+    Object.assign(shell, updateData);
   }
 
   /*
