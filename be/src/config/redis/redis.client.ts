@@ -27,15 +27,18 @@ export class RedisClient {
     });
   }
 
-  getSession(key: string) {
-    return this.redis.get(key);
+  async getSession(key: string) {
+    if (!key) {
+      return null;
+    }
+    return await this.redis.get(key);
   }
 
   private subscribeToExpiredEvents() {
     this.pubsub.subscribe('__keyevent@0__:expired');
 
     this.pubsub.on('message', (event, session) => {
-      this.queryDBAdapter.dropDatabase(session);
+      this.queryDBAdapter.closeConnection(session);
     });
   }
 
