@@ -1,6 +1,4 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { ShellModule } from './shell/shell.module';
 import { QueryModule } from './query/query.module';
@@ -10,6 +8,7 @@ import { User } from 'src/user/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import dotenv from 'dotenv';
 import { SessionMiddleware } from './session/session.middleware';
+import { RedisModule } from './config/redis/redis.module';
 
 dotenv.config();
 
@@ -29,9 +28,8 @@ dotenv.config();
     UserModule,
     ShellModule,
     QueryModule,
+    RedisModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

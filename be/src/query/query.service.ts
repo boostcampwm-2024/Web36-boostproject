@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { QueryDto } from './dto/query.dto';
-import { QUERY_DB_ADAPTER } from '../infrastructure/query-database/query-db.moudle';
-import { QueryDBAdapter } from '../infrastructure/query-database/query-db.adapter';
+import { QUERY_DB_ADAPTER } from '../config/query-database/query-db.moudle';
+import { QueryDBAdapter } from '../config/query-database/query-db.adapter';
 import { ResQueryDto } from './dto/res-query.dto';
 
 @Injectable()
