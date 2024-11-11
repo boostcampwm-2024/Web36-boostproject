@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Shell } from '../shell/shell.entity';
 
 @Entity()
 export class User {
@@ -19,4 +20,7 @@ export class User {
 
   @Column()
   deletedAt: Date;
+
+  @OneToMany(() => Shell, (shell) => shell.user)
+  shells: Shell[];
 }

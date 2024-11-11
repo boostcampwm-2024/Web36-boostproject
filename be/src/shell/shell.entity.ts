@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  Index,
+} from 'typeorm';
+import { User } from '../user/user.entity';
 
 @Entity()
 export class Shell {
@@ -8,9 +15,12 @@ export class Shell {
   @Column({ type: 'bigint', unique: true })
   shellId: number;
 
-  // 임시로 nullable 처리
-  @Column({ nullable: true })
-  sessionId: string;
+  @Index()
+  @Column({ type: 'bigint', nullable: true })
+  sessionId: number;
+
+  @ManyToOne(() => User, (user) => user.id)
+  user: User;
 
   @Column({ nullable: true })
   query: string;

@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { plainToClass } from 'class-transformer';
+import { plainToClass, plainToInstance } from "class-transformer";
 
 interface ClassConstructor {
   new (...args: any[]): {};
@@ -24,14 +24,14 @@ class SerializeInterceptor implements NestInterceptor {
   ): Observable<any> {
     return next.handle().pipe(
       map((inputData: any) => {
-        const data = plainToClass(this.dto, inputData, {
-          excludeExtraneousValues: true,
+        const data = plainToInstance(this.dto, inputData, {
+          excludeExtraneousValues: false,
         });
 
         return {
           status: true,
           data,
-          message: 'Request processed successfully',
+          message: '성공적으로 응답되었습니다.',
         };
       }),
     );
