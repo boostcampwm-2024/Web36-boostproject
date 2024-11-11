@@ -8,7 +8,7 @@ import { User } from 'src/user/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import dotenv from 'dotenv';
 import { SessionMiddleware } from './session/session.middleware';
-import { RedisModule } from './infrastructure/redis/redis.module';
+import { RedisModule } from './config/redis/redis.module';
 
 dotenv.config();
 
