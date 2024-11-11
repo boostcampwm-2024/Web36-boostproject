@@ -33,8 +33,8 @@ export class SessionMiddleware implements NestMiddleware {
       },
       name: 'sid',
     })(req, res, async () => {
-      const existSession = await this.redisClient.getSession(req.sessionID);
-      if (!existSession) {
+      const session = await this.redisClient.getSession(req.sessionID);
+      if (!session) {
         await this.queryDBAdapter.createConnection(req.sessionID);
       }
       next();

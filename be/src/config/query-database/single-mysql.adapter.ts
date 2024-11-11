@@ -1,13 +1,19 @@
 import dotenv from 'dotenv';
 import { Injectable } from '@nestjs/common';
 import { QueryDBAdapter } from './query-db.adapter';
-import { Connection, createConnection, RowDataPacket } from 'mysql2/promise';
+import {
+  Connection,
+  createConnection,
+  Pool,
+  createPool,
+  RowDataPacket,
+} from 'mysql2/promise';
 
 dotenv.config();
 
 @Injectable()
 export class SingleMySQLAdapter implements QueryDBAdapter {
-  private adminConnection: Connection;
+  private adminConnection: Pool;
   private userConnectionList: Record<string, Connection> = {};
 
   constructor() {
@@ -15,30 +21,39 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
   }
 
   private async createAdminConnection() {
-    this.adminConnection = await createConnection({
+    this.adminConnection = await createPool({
       host: process.env.QUERY_DB_HOST,
       user: process.env.QUERY_DB_USER,
       password: process.env.QUERY_DB_PASSWORD,
       port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
+      connectionLimit: 10,
     });
   }
 
   public async createConnection(identify: string) {
-    const username = identify.substring(0, 10);
+    const connectInfo = {
+      name: identify.substring(0, 10),
+      password: identify,
+      host: '%', //process.env.QUERY_DB_HOST
+      database: identify,
+    };
 
-    const createDatabase = `create database ${identify};`;
-    const createUser = `create user '${username}'@'%' identified by '${identify}';`;
-    const grantPrivilege = `grant all privileges on ${identify}.* to '${username}'@'%';`; // 사용자 db에 대해서만 권한 부여
-    await this.adminConnection.execute(createDatabase);
-    await this.adminConnection.execute(createUser);
-    await this.adminConnection.execute(grantPrivilege);
+    await this.adminConnection.query(
+      `create database ${connectInfo.database};`,
+    );
+    await this.adminConnection.query(
+      `create user '${connectInfo.name}'@'${connectInfo.host}' identified by '${connectInfo.password}';`,
+    );
+    await this.adminConnection.query(
+      `grant all privileges on ${connectInfo.database}.* to '${connectInfo.name}'@'${connectInfo.host}';`,
+    );
 
     const connection = await createConnection({
       host: process.env.QUERY_DB_HOST,
-      user: username,
-      password: identify,
+      user: connectInfo.name,
+      password: connectInfo.password,
       port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
-      database: identify,
+      database: connectInfo.database,
     });
     this.userConnectionList[identify] = connection;
   }
