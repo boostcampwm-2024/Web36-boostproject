@@ -3,22 +3,19 @@ import { QueryDto } from './dto/query.dto';
 import { QUERY_DB_ADAPTER } from '../config/query-database/query-db.moudle';
 import { QueryDBAdapter } from '../config/query-database/query-db.adapter';
 import { QueryType } from '../common/enums/query-type.enum';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Shell } from '../shell/shell.entity';
 import { ShellService } from '../shell/shell.service';
 
 @Injectable()
 export class QueryService {
   constructor(
     @Inject(QUERY_DB_ADAPTER) private readonly queryDBAdapter: QueryDBAdapter,
-    @InjectRepository(Shell)
     private shellService: ShellService,
   ) {}
 
   async execute(sessionId: string, shellId: number, queryDto: QueryDto) {
     await this.shellService.findShellOrThrow(shellId);
 
-    const connection = await this.queryDBAdapter.getConnection(sessionId);
+    const connection = this.queryDBAdapter.getConnection(sessionId);
     const baseUpdateData = {
       query: queryDto.query,
       queryType: this.detectQueryType(queryDto.query),
