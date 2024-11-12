@@ -11,7 +11,7 @@ export async function addShell(shell: ShellType) {
   const response = await axiosInstance.post('/shells', {
     shellId: shell.shellId,
   })
-  return response.data
+  return { ...response.data, shell }
 }
 
 export async function deleteShell(shellId: number) {
@@ -19,7 +19,10 @@ export async function deleteShell(shellId: number) {
   return response.data
 }
 
-export async function updateShell(shellId: number, query: string) {
-  const response = await axiosInstance.put(`/shells/${shellId}`, { query })
+export async function updateShell(shell: ShellType) {
+  const response = await axiosInstance.put(
+    `/shells/${shell.shellId}`,
+    shell.query
+  )
   return response.data
 }
