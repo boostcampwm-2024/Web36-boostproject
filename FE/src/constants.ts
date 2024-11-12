@@ -24,4 +24,8 @@ const NAV_MENU = [
   },
 ]
 
-export { USER, NAV_MENU }
+const QUERY_KEYS = {
+  shells: 'shells',
+} as const
+
+export { USER, NAV_MENU, QUERY_KEYS }
