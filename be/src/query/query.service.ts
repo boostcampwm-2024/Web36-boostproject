@@ -11,14 +11,13 @@ export class QueryService {
   ) {}
 
   async execute(userId: string, queryDto: QueryDto) {
-    const connection = await this.queryDBAdapter.createConnection(userId);
+    const connection = this.queryDBAdapter.getConnection(userId);
     try {
       const rows = await this.queryDBAdapter.run(connection, queryDto.query);
       return ResQueryDto.ok(queryDto.query, rows);
     } catch (e) {
+      // console.error(e);
       return ResQueryDto.fail(e.sqlMessage);
-    } finally {
-      this.queryDBAdapter.closeConnection(connection);
     }
   }
 }
