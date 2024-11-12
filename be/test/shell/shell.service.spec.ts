@@ -44,10 +44,9 @@ describe('ShellService', () => {
   });
 
   test('shell을 추가할 수 있다.', async () => {
-    const createShellDto = { shellId: 1 };
     mockRepository.findOne.mockResolvedValueOnce(null);
 
-    const createdShell = await service.create(createShellDto);
+    const createdShell = await service.create();
     const expectedShell = {
       id: 1,
       shellId: 1,
@@ -57,7 +56,6 @@ describe('ShellService', () => {
       failMessage: null,
     };
 
-    expect(repository.create).toHaveBeenCalledWith(createShellDto);
     expect(repository.save).toHaveBeenCalledWith(mockShell);
     expect(createdShell).toEqual(expectedShell);
   });

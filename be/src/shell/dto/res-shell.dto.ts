@@ -1,3 +1,4 @@
-export class ResponseShellDto {
-  readonly shellId: number;
+export class ResShellDto {
+  readonly id: number;
+  readonly query: string;
 }

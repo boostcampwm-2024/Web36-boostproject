@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   Index,
+  CreateDateColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
 
@@ -11,9 +12,6 @@ import { User } from '../user/user.entity';
 export class Shell {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
-
-  @Column({ type: 'bigint', unique: true })
-  shellId: number;
 
   @Index()
   @Column({ type: 'bigint', nullable: true })
@@ -42,4 +40,7 @@ export class Shell {
 
   @Column({ nullable: true })
   queryStatus: boolean;
+
+  @CreateDateColumn()
+  createdAt: Date;
 }
