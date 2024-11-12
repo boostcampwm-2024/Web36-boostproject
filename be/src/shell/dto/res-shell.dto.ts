@@ -1,4 +1,4 @@
 export class ResShellDto {
-  readonly id: number;
-  readonly query: string;
+  id: number;
+  query: string;
 }

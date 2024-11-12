@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
 import { plainToInstance } from 'class-transformer';
 
 interface ClassConstructor {
-  new (...args: any[]): {};
+  new (...args: any[]): object;
 }
 
 export function Serialize(dto: ClassConstructor) {
@@ -24,7 +24,8 @@ class SerializeInterceptor implements NestInterceptor {
   ): Observable<any> {
     return next.handle().pipe(
       map((inputData: any) => {
-        const data = plainToInstance(this.dto, inputData, {});
+        let data = plainToInstance(this.dto, inputData);
+        data = this.removeNullProperties(data);
 
         return {
           status: true,
@@ -32,6 +33,13 @@ class SerializeInterceptor implements NestInterceptor {
           message: '성공적으로 응답되었습니다.',
         };
       }),
+    );
+  }
+
+  removeNullProperties(obj: any): any {
+    return Object.fromEntries(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      Object.entries(obj).filter(([_, value]) => value !== null),
     );
   }
 }
