@@ -1,7 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
-  ApiCookieAuth,
   ApiCreatedResponse,
   ApiOperation,
   getSchemaPath,
@@ -15,7 +14,6 @@ export function ExecuteQuerySwagger() {
       summary: '사용자의 쿼리를 실행 시킨다.',
       description: '현재는 단일 쿼리만 지원합니다.',
     }),
-    ApiCookieAuth('sid'),
     ApiCreatedResponse({
       description: '사용자 쿼리 요청 성공 시',
       schema: {

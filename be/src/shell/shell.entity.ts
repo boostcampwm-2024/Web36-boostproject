@@ -1,16 +1,24 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  Index,
+  CreateDateColumn,
+} from 'typeorm';
+import { User } from '../user/user.entity';
 
 @Entity()
 export class Shell {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
-  @Column({ type: 'bigint', unique: true })
-  shellId: number;
+  @Index()
+  @Column({ type: 'bigint', nullable: true })
+  sessionId: number;
 
-  // 임시로 nullable 처리
-  @Column({ nullable: true })
-  sessionId: string;
+  @ManyToOne(() => User, (user) => user.id)
+  user: User;
 
   @Column({ nullable: true })
   query: string;
@@ -32,4 +40,7 @@ export class Shell {
 
   @Column({ nullable: true })
   queryStatus: boolean;
+
+  @CreateDateColumn()
+  createdAt: Date;
 }
