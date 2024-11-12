@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:container": "docker-compose -f docker-compose.backend.local.yml up --build"
+    "start:container": "docker-compose -f ./BE/docker-compose.backend.local.yml up --build"
   },
   "author": "",
   "license": "ISC"

@@ -2,7 +2,7 @@ version: '3'
 services:
   backend:
     build:
-      context: ./BE
+      context: .
     container_name: QLab-Service-Server
     ports:
       - "3000:3000"
