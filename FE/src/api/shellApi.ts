@@ -4,7 +4,6 @@ import axiosInstance from '@/api/__mocks__/axiosMock'
 
 export async function fetchShells() {
   const response = await axiosInstance.get('/shells')
-  console.log('success fetching shells')
   return response.data
 }
 
@@ -12,7 +11,6 @@ export async function addShell(shell: ShellType) {
   const response = await axiosInstance.post('/shells', {
     shellId: shell.shellId,
   })
-  console.log(`success adding shells ${shell.shellId}`)
   return response.data
 }
 
