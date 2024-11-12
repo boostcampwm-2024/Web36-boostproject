@@ -62,14 +62,21 @@ export class QueryService {
   /*
   TODO 다중 쿼리 가능하면 맨 마지막 쿼리 기준으로
    */
-  private detectQueryType(query: string): QueryType {
+  private detectQueryType(query: string): QueryType | undefined {
     const trimmedQuery = query.trim().toUpperCase();
-    if (trimmedQuery.startsWith('SELECT')) return QueryType.SELECT;
-    if (trimmedQuery.startsWith('INSERT')) return QueryType.INSERT;
-    if (trimmedQuery.startsWith('UPDATE')) return QueryType.UPDATE;
-    if (trimmedQuery.startsWith('DELETE')) return QueryType.DELETE;
-    if (trimmedQuery.startsWith('CREATE')) return QueryType.CREATE;
-    if (trimmedQuery.startsWith('DROP')) return QueryType.DROP;
-    if (trimmedQuery.startsWith('ALTER')) return QueryType.ALTER;
+    const queryType = Object.keys(this.queryTypeMap).find((type) =>
+      trimmedQuery.startsWith(type),
+    );
+    return queryType ? this.queryTypeMap[queryType] : undefined;
   }
+
+  private queryTypeMap: Record<string, QueryType> = {
+    SELECT: QueryType.SELECT,
+    INSERT: QueryType.INSERT,
+    UPDATE: QueryType.UPDATE,
+    DELETE: QueryType.DELETE,
+    CREATE: QueryType.CREATE,
+    DROP: QueryType.DROP,
+    ALTER: QueryType.ALTER,
+  };
 }
