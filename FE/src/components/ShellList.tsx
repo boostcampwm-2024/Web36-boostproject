@@ -1,15 +1,14 @@
 import React, { useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import Shell from '@/components/Shell'
-import ShellType from '@/types/interfaces'
+import { ShellType } from '@/types/interfaces'
+import { useAddShell, useDeleteShell } from '@/hooks/useShellQuery'
 
-interface ShellListType {
-  shells: ShellType[]
-  setShells: React.Dispatch<React.SetStateAction<ShellType[]>>
-}
-
-export default function ShellList({ shells, setShells }: ShellListType) {
+export default function ShellList({ shells }: { shells: ShellType[] }) {
   const [focusedShell, setFocusedShell] = useState<number | null>(null)
+  const addShellMutation = useAddShell()
+  const deleteShellMutation = useDeleteShell()
+
   const addShell = () => {
     const newShell: ShellType = {
       shellId: new Date().getTime(),
@@ -21,13 +20,11 @@ export default function ShellList({ shells, setShells }: ShellListType) {
       affectedRows: null,
       table: null,
     }
-    setShells((prevShells) => [...prevShells, newShell])
+    addShellMutation.mutate(newShell)
   }
 
   const removeShell = (shellId: number) => {
-    setShells((prevShells) =>
-      prevShells.filter((shell) => shell.shellId !== shellId)
-    )
+    deleteShellMutation.mutate(shellId)
   }
   return (
     <>

@@ -1,4 +1,4 @@
-import { Inject, Injectable} from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { QueryDto } from './dto/query.dto';
 import { QUERY_DB_ADAPTER } from '../config/query-database/query-db.moudle';
 import { QueryDBAdapter } from '../config/query-database/query-db.adapter';
@@ -18,12 +18,11 @@ export class QueryService {
   async execute(sessionId: string, shellId: number, queryDto: QueryDto) {
     await this.shellService.findShellOrThrow(shellId);
 
-    const connection = await this.queryDBAdapter.createConnection(sessionId);
+    const connection = await this.queryDBAdapter.getConnection(sessionId);
     const baseUpdateData = {
       query: queryDto.query,
       queryType: this.detectQueryType(queryDto.query),
     };
-
     try {
       const rows = await this.queryDBAdapter.run(connection, queryDto.query);
       const slicedRows = rows.length > 100 ? rows.slice(0, 100) : rows;
@@ -40,8 +39,6 @@ export class QueryService {
         queryStatus: false,
         failMessage: e.sqlMessage,
       });
-    } finally {
-      this.queryDBAdapter.closeConnection(connection);
     }
   }
 
