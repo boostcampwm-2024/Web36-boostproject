@@ -1,0 +1,27 @@
+version: '3'
+services:
+  frontend:
+    build:
+      context: ./FE
+    container_name: QLab-Front-Server
+    expose:
+      - 80
+
+  backend:
+    build:
+      context: ./BE
+    container_name: QLab-Service-Server
+    expose:
+      - 3000
+    environment:
+      - NODE_ENV=production
+
+  nginx:
+    build:
+      context: ./nginx
+    container_name: QLab-nginx-webServer
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
