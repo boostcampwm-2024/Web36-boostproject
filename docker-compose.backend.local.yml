@@ -19,7 +19,6 @@ services:
       DB_USERNAME: root
       DB_PASSWORD: db1004
       DB_DATABASE: qlab
-
       QUERY_DB_TYPE: mysql
       QUERY_DB_HOST: query_db
       QUERY_DB_PORT: 3306
@@ -43,7 +42,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - server_db_data:/var/lib/mysql
+      - ./db/server:/var/lib/mysql
     networks:
       - backend
 
@@ -56,7 +55,7 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - query_db_data:/var/lib/mysql
+      - ./db/query:/var/lib/mysql
     networks:
       - backend
 
@@ -66,14 +65,9 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - redis_data:/data
+      - ./db/redis:/data
     networks:
       - backend
-
-volumes:
-  server_db_data:
-  query_db_data:
-  redis_data:
 
 networks:
   backend:
