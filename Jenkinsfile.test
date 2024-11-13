@@ -51,11 +51,19 @@ pipeline {
         }
         success {
             echo 'Tests passed successfully!'
-            githubNotify context: 'ci/test', status: 'SUCCESS', description: 'Tests passed'
+            setGitHubPullRequestStatus(
+                context: 'ci/test',
+                description: 'Tests passed',
+                state: 'SUCCESS'
+            )        
         }
         failure {
             echo 'Tests failed.'
-            githubNotify context: 'ci/test', status: 'FAILURE', description: 'Tests failed'
+            setGitHubPullRequestStatus(
+                context: 'ci/test',
+                description: 'Tests failed',
+                state: 'FAILURE'
+            )        
         }
     }
 }
