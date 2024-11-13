@@ -17,21 +17,21 @@
   },
   "resultTableShort": {
     "queryStatus": true,
-    "runTime": "0.05",
+    "runTime": "0.04",
     "queryType": "SELECT",
     "failMessage": null,
     "affectedRows": 10,
     "table": [
       {
         "id": "1",
-        "title": "첫 번째 공지사항",
+        "title": "바뀐 공지사항",
         "description": "첫 번째 공지사항의 내용이 여기에 포함됩니다.",
         "authorId": "3",
         "timestamp": "2024-11-03T09:00:00.000Z"
       },
       {
         "id": "2",
-        "title": "두 번째 업데이트",
+        "title": "바뀐 공지사항",
         "description": "시스템 업데이트에 관한 두 번째 공지가 여기에 들어갑니다.",
         "authorId": "4",
         "timestamp": "2024-11-04T14:30:00.000Z"
