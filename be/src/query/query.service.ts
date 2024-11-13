@@ -15,13 +15,12 @@ export class QueryService {
   async execute(sessionId: string, shellId: number, queryDto: QueryDto) {
     await this.shellService.findShellOrThrow(shellId);
 
-    const connection = this.queryDBAdapter.getConnection(sessionId);
     const baseUpdateData = {
       query: queryDto.query,
       queryType: this.detectQueryType(queryDto.query),
     };
     try {
-      const rows = await this.queryDBAdapter.run(connection, queryDto.query);
+      const rows = await this.queryDBAdapter.run(sessionId, queryDto.query);
       const slicedRows = rows.length > 100 ? rows.slice(0, 100) : rows;
 
       return await this.shellService.update(shellId, {
