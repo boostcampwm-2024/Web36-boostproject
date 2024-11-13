@@ -26,3 +26,11 @@ export async function updateShell(shell: ShellType) {
   )
   return response.data
 }
+
+export async function excuteShell(shellId: number, shellQuery: string) {
+  const response = await axiosInstance.post(`/api/shells/${shellId}/execute`, {
+    query: shellQuery,
+  })
+
+  return response.data
+}
