@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react'
 import PlayCircle from '@/assets/play_circle.svg'
 import { ShellType } from '@/types/interfaces'
+import { useExecuteShell } from '@/hooks/useShellQuery'
 import { X } from 'lucide-react'
 
 interface ShellProps {
@@ -31,6 +32,7 @@ export default function Shell({
 
   const [inputValue, setInputValue] = useState(query ?? '')
   const prevQueryRef = useRef<string>('')
+  const executeShellMutation = useExecuteShell()
 
   const successMessage = `Query OK ${affectedRows} affected (${runTime} sec)`
 
@@ -40,17 +42,26 @@ export default function Shell({
     prevQueryRef.current = inputValue
   }
 
+  const handleClick = () => {
+    if (!shellId) return
+    executeShellMutation.mutate(shell)
+  }
+
   return (
     <>
       <div className="flex h-12 w-full items-center overflow-hidden rounded-sm bg-secondary">
-        <button type="button" className="mr-3 h-full w-12 bg-primary p-3">
+        <button
+          type="button"
+          className="mr-3 h-full w-12 bg-primary p-3"
+          onClick={handleClick}
+        >
           <img src={PlayCircle} alt="play button" />
         </button>
         <input
           type="text"
           defaultValue={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          onFocus={() => setFocusedShell(shellId)}
+          onFocus={() => setFocusedShell(shellId || null)}
           onBlur={handleBlur}
           className="h-8 w-full border-none bg-secondary p-2 text-base font-medium text-foreground focus:outline-none"
         />
