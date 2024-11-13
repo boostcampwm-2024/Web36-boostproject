@@ -14,6 +14,7 @@ mock.onGet('/shells').reply(200, shellData)
 // add
 mock.onPost('/shells').reply((config) => {
   const newShell: ShellType = JSON.parse(config.data)
+  newShell.shellId = new Date().getTime()
   shellData.push(newShell)
   return [200, newShell.shellId]
 })
@@ -31,12 +32,12 @@ mock.onDelete(/\/shells\/\d+/).reply((config) => {
 
 mock.onPut(/\/shells\/\d+/).reply((config) => {
   const id = parseInt(config.url!.split('/').pop()!, 10)
-  const newQuery = JSON.parse(config.data)
+  const newQuery = config.data
   const changedShell = shellData.find((shell) => shell.shellId === id)
 
   if (!changedShell) return [404, { error: 'Shell not found' }]
 
-  changedShell.query = newQuery
+  changedShell.query = config.data
   return [200, { id, newQuery }]
 })
 
