@@ -3,7 +3,7 @@ type TableRow = {
 }
 
 export interface ShellType {
-  shellId: number
+  shellId: number | null
   queryStatus: boolean | null
   runTime: string | null
   query: string | null
