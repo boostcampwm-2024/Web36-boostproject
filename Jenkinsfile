@@ -18,13 +18,8 @@ pipeline {
                         string(credentialsId: 'QUERY_DB_PASSWORD', variable: 'QUERY_DB_PASSWORD'),
                         string(credentialsId: 'SESSION_SECRET', variable: 'SESSION_SECRET')
                     ]) {
-                        // 민감 정보를 Secret 파일로 작성
-                        writeFile file: 'db_password.txt', text: DB_PASSWORD
-                        writeFile file: 'query_db_password.txt', text: QUERY_DB_PASSWORD
-                        writeFile file: 'session_secret.txt', text: SESSION_SECRET
-                        
-                        sh 'pwd'
-                        sh 'ls'
+                        // 기존 컨테이너 제거
+                        sh 'docker-compose down'
                         
                         // Docker Compose 빌드
                         sh 'docker-compose build'
