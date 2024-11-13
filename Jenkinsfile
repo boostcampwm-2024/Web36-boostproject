@@ -23,6 +23,9 @@ pipeline {
                         writeFile file: 'query_db_password.txt', text: QUERY_DB_PASSWORD
                         writeFile file: 'session_secret.txt', text: SESSION_SECRET
                         
+                        sh 'pwd'
+                        sh 'ls'
+                        
                         // Docker Compose 빌드
                         sh 'docker-compose build'
 
