@@ -1,0 +1,61 @@
+pipeline {
+    agent any
+    environment {
+        NODE_ENV = 'test'  // 테스트 환경 설정
+    }
+    stages {
+        stage('Condition : when Merge branch is DEV'){
+            when{
+                expression {
+                    return env.CHANGE_TARGET == 'dev';
+                }
+            }
+            stages{
+                stage('Checkout and Merge') {
+                    when{
+                        branch 'dev'
+                    }
+                    steps {
+                        checkout scm  // 소스 코드 가져오기
+                        sh 'git fetch origin dev'
+                        sh 'git merge origin/dev'
+                    }
+                }
+                stage('docker image Build') {
+                    steps {
+                        sh 'docker build -f .BE/dockerfile.test -t be-test-image ./BE/' 
+                        sh 'docker build -f .FE/dockerfile.test -t fe-test-image ./FE/' 
+                    }
+                }
+                stage('Run test & build') {
+                    steps {
+                        sh 'docker run --rm be-test-image'
+                        sh 'docker run --rm fe-test-image'
+                    }
+                }
+
+                stage('clean Up') {
+                    steps {
+                        sh 'docker rmi be-test-image'
+                        sh 'docker rmi fe-test-image'
+                    }
+                }
+            }
+        }
+    }
+        
+    post {
+        always {
+            // 빌드 결과 알림 또는 후처리
+            echo 'CI Test completed.'
+        }
+        success {
+            echo 'Tests passed successfully!'
+            githubNotify context: 'ci/test', status: 'SUCCESS', description: 'Tests passed'
+        }
+        failure {
+            echo 'Tests failed.'
+            githubNotify context: 'ci/test', status: 'FAILURE', description: 'Tests failed'
+        }
+    }
+}
