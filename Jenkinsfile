@@ -14,9 +14,9 @@ pipeline {
             steps {
                 script {
                     withCredentials([
-                        string(credentialsId: 'DB_PASSWORD_ID', variable: 'DB_PASSWORD'),
-                        string(credentialsId: 'QUERY_DB_PASSWORD_ID', variable: 'QUERY_DB_PASSWORD'),
-                        string(credentialsId: 'SESSION_SECRET_ID', variable: 'SESSION_SECRET')
+                        string(credentialsId: 'DB_PASSWORD', variable: 'DB_PASSWORD'),
+                        string(credentialsId: 'QUERY_DB_PASSWORD', variable: 'QUERY_DB_PASSWORD'),
+                        string(credentialsId: 'SESSION_SECRET', variable: 'SESSION_SECRET')
                     ]) {
                         // 민감 정보를 Secret 파일로 작성
                         writeFile file: 'db_password.txt', text: DB_PASSWORD
