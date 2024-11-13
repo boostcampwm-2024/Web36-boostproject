@@ -3,13 +3,13 @@ FROM node:22 AS build
 
 WORKDIR /app
 
-COPY package*.json /app
+COPY package.json /app
 
 RUN npm config set registry https://registry.npmjs.org/
 
-RUN npm install
-
 RUN npm install vite
+
+RUN npm install
 
 COPY . /app
 
