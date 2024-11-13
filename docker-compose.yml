@@ -28,10 +28,10 @@ services:
 
       REDIS_HOST: 10.0.1.7
       REDIS_PORT: 6379
-    secrets:
-      - db_password
-      - query_db_password
-      - session_secret
+
+      DB_PASSWORD: ${DB_PASSWORD}
+      QUERY_DB_PASSWORD: ${QUERY_DB_PASSWORD}
+      SESSION_SECRET: ${SESSION_SECRET}
 
   nginx:
     build:
@@ -42,11 +42,3 @@ services:
     depends_on:
       - frontend
       - backend
-
-secrets:
-  db_password:
-    file: ./secrets/db_password.txt
-  query_db_password:
-    file: ./secrets/query_db_password.txt
-  session_secret:
-    file: ./secrets/session_secret.txt
