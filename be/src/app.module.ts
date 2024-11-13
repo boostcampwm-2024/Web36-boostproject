@@ -9,7 +9,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import dotenv from 'dotenv';
 import { SessionMiddleware } from './session/session.middleware';
 import { RedisModule } from './config/redis/redis.module';
-import { QueryDBModule } from './config/query-database/query-db.moudle';
 
 dotenv.config();
 
@@ -30,7 +29,6 @@ dotenv.config();
     ShellModule,
     QueryModule,
     RedisModule,
-    QueryDBModule,
   ],
 })
 export class AppModule {
