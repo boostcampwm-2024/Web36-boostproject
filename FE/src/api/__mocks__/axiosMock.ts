@@ -22,13 +22,14 @@ mock.onPost('/shells').reply((config) => {
 
 // execute
 mock.onPost(/^\/shells(\/\d+\/execute)?$/).reply((config) => {
-  const id = parseInt(config.url!.split('/')[1], 10)
-  let executeddShell = shellData.find((shell) => shell.shellId === id)
+  const id = parseInt(config.url!.split('/')[2], 10)
+  const executeddShell = shellData.find((shell) => shell.shellId === id)
+  const index = shellData.findIndex((shell) => shell.shellId === id)
 
   if (!executeddShell) return [404, { error: 'Shell not found' }]
   const result = getMocResult(executeddShell)
-  executeddShell = { ...executeddShell, ...result }
 
+  shellData.splice(index, 1, { ...executeddShell, ...result })
   return [200, result]
 })
 
