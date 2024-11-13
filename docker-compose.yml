@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 services:
   frontend:
     build:
@@ -14,7 +14,24 @@ services:
     expose:
       - 3000
     environment:
-      - NODE_ENV=production
+      DB_TYPE: mysql
+      DB_HOST: 10.0.1.7
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_DATABASE: qlab
+
+      QUERY_DB_TYPE: mysql
+      QUERY_DB_HOST: 10.0.1.7
+      QUERY_DB_PORT: 3307
+      QUERY_DB_USER: root
+      QUERY_DB_DATABASE: qlab
+
+      REDIS_HOST: 10.0.1.7
+      REDIS_PORT: 6379
+    secrets:
+      - db_password
+      - query_db_password
+      - session_secret
 
   nginx:
     build:
@@ -25,3 +42,11 @@ services:
     depends_on:
       - frontend
       - backend
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+  query_db_password:
+    file: ./secrets/query_db_password.txt
+  session_secret:
+    file: ./secrets/session_secret.txt
