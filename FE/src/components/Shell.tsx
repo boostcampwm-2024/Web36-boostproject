@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react'
+import { v4 as uuidv4 } from 'uuid'
 import PlayCircle from '@/assets/play_circle.svg'
 import { ShellType } from '@/types/interfaces'
 import { X } from 'lucide-react'
@@ -64,7 +65,11 @@ export default function Shell({
       {queryType != null && ( // 쉘 실행 결과가 있는가?
         <div className="flex w-full flex-col overflow-hidden rounded-sm bg-secondary">
           <div className="m-3">
-            <p>{queryStatus ? successMessage : failMessage}</p>
+            {queryStatus ? (
+              <p className="text-green-500">{successMessage}</p>
+            ) : (
+              <p className="text-red-500">{failMessage}</p>
+            )}
             {queryType === 'SELECT' && <p>{JSON.stringify(table)}</p>}
           </div>
           {queryType === 'SELECT' && (
