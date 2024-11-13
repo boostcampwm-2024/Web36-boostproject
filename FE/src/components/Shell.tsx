@@ -71,16 +71,16 @@ export default function Shell({
         )}
       </div>
       {queryType != null && ( // 쉘 실행 결과가 있는가?
-        <div className="flex w-full flex-col overflow-hidden overflow-x-auto rounded-sm bg-secondary p-3">
+        <div className="flex w-full flex-col overflow-hidden overflow-x-auto rounded-sm bg-secondary">
           {queryStatus ? (
-            <p className="text-green-500">{successMessage}</p>
+            <p className="m-3 text-green-500">{successMessage}</p>
           ) : (
-            <p className="text-red-500">{failMessage}</p>
+            <p className="m-3 text-red-500">{failMessage}</p>
           )}
           {queryType === 'SELECT' &&
             table !== null && ( // 결과 테이블이 있는지
               <>
-                <Table>
+                <Table className="m-3">
                   <TableHeader>
                     {Object.keys(table[0]).map((header) => (
                       <TableHead key={uuidv4()}>{header}</TableHead>
