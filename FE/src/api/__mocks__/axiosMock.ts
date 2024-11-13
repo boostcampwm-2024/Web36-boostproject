@@ -5,8 +5,8 @@ import shellDataRaw from '@/api/__mocks__/mocdata.json'
 
 const shellData: ShellType[] = shellDataRaw.result
 
-const axiosInstance = axios.create()
-const mock = new MockAdapter(axiosInstance)
+const axiosMock = axios.create()
+const mock = new MockAdapter(axiosMock)
 
 // fetch
 mock.onGet('/shells').reply(200, shellData)
@@ -41,4 +41,4 @@ mock.onPut(/\/shells\/\d+/).reply((config) => {
   return [200, { id, newQuery }]
 })
 
-export default axiosInstance
+export default axiosMock

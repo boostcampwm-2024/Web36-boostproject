@@ -1,6 +1,8 @@
-// import axiosClient from '@/api/axiosClient'
+import axiosClient from '@/api/axiosClient'
+import axiosMock from '@/api/__mocks__/axiosMock'
 import { ShellType } from '@/types/interfaces'
-import axiosInstance from '@/api/__mocks__/axiosMock'
+
+const axiosInstance = process.env.NODE_ENV === 'test' ? axiosMock : axiosClient
 
 export async function fetchShells() {
   const response = await axiosInstance.get('/shells')
