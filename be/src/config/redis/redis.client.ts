@@ -45,4 +45,8 @@ export class RedisClient {
   getRedis() {
     return this.redis;
   }
+
+  getPubSub() {
+    return this.pubsub;
+  }
 }
