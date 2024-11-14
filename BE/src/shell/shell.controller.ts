@@ -23,6 +23,7 @@ import {
 } from '../config/swagger/shell-swagger.decorator';
 import { Request } from 'express';
 import { ShellGuard } from '../guard/shell.guard';
+import { ResShellResultDto } from './dto/res-shell-result.dto';
 
 @ApiExtraModels(ResponseDto, ResShellDto)
 @Controller('api/shells')
@@ -31,14 +32,14 @@ export class ShellController {
   constructor(private shellService: ShellService) {}
 
   @Get()
-  @Serialize(ResShellDto)
+  @Serialize(ResShellResultDto)
   async findAll(@Req() req: Request) {
     const sessionId = req.sessionID;
     return await this.shellService.findAll(sessionId);
   }
 
   @Get(':shellId')
-  @Serialize(ResShellDto)
+  @Serialize(ResShellResultDto)
   async findOne(@Param('shellId') shellId: number) {
     return await this.shellService.findShellOrThrow(shellId);
   }
