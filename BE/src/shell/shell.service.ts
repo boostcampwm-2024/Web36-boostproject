@@ -10,8 +10,9 @@ export class ShellService {
     private shellRepository: Repository<Shell>,
   ) {}
 
-  async create() {
+  async create(sessionId: string) {
     const shell = this.shellRepository.create();
+    shell.sessionId = sessionId;
     return this.shellRepository.save(shell);
   }
 
