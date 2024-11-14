@@ -1,18 +1,13 @@
 import session from 'express-session';
 import { NextFunction, Request, Response } from 'express';
-import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import RedisStore from 'connect-redis';
-import { RedisClient } from 'src/config/redis/redis.client';
-import { QUERY_DB_ADAPTER } from 'src/config/query-database/query-db.moudle';
-import { QueryDBAdapter } from 'src/config/query-database/query-db.adapter';
+import { RedisService } from 'src/config/redis/redis.service';
 
 @Injectable()
 export class SessionMiddleware implements NestMiddleware {
-  constructor(
-    private readonly redisClient: RedisClient,
-    @Inject(QUERY_DB_ADAPTER) private readonly queryDBAdapter: QueryDBAdapter,
-  ) {}
+  constructor(private readonly redisService: RedisService) {}
 
   use(req: Request, res: Response, next: NextFunction) {
     session({
@@ -21,7 +16,7 @@ export class SessionMiddleware implements NestMiddleware {
       saveUninitialized: true,
       rolling: true,
       store: new RedisStore({
-        client: this.redisClient.getRedis(),
+        client: this.redisService.getDefaultConnection(),
         prefix: '',
       }),
       genid: () => {
@@ -33,10 +28,7 @@ export class SessionMiddleware implements NestMiddleware {
       },
       name: 'sid',
     })(req, res, async () => {
-      const session = await this.redisClient.getSession(req.sessionID);
-      if (!session) {
-        await this.queryDBAdapter.createConnection(req.sessionID);
-      }
+      await this.redisService.setNewSession(req.sessionID);
       next();
     });
   }
