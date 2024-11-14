@@ -63,8 +63,8 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
 
   public async closeConnection(identify: string) {
     await this.userConnectionList[identify].end();
-    delete this.userConnectionList[identify];
     await this.removeDatabaseInfo(identify);
+    delete this.userConnectionList[identify];
   }
 
   public async run(identify: string, query: string): Promise<RowDataPacket[]> {

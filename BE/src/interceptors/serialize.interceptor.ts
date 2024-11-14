@@ -24,8 +24,22 @@ class SerializeInterceptor implements NestInterceptor {
   ): Observable<any> {
     return next.handle().pipe(
       map((inputData: any) => {
-        let data = plainToInstance(this.dto, inputData);
-        data = this.removeNullProperties(data);
+        let data;
+        if (inputData instanceof Array) {
+          data = inputData.map((item) =>
+            this.removeNullProperties(
+              plainToInstance(this.dto, item, {
+                excludeExtraneousValues: true,
+              }),
+            ),
+          );
+        } else {
+          data = this.removeNullProperties(
+            plainToInstance(this.dto, inputData, {
+              excludeExtraneousValues: true,
+            }),
+          );
+        }
 
         return {
           status: true,

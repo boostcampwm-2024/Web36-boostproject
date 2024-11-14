@@ -9,28 +9,18 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import dotenv from 'dotenv';
 import { SessionMiddleware } from './session/session.middleware';
 import { RedisModule } from './config/redis/redis.module';
-import { QueryDBModule } from './config/query-database/query-db.moudle';
+import { ServiceDBModule } from './config/service-database/service-db.module';
 
 dotenv.config();
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: process.env.DB_TYPE as any,
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT, 10),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
-      entities: [User, Shell],
-      synchronize: true,
-    }),
+    ServiceDBModule,
     TypeOrmModule.forFeature([User, Shell]),
     UserModule,
     ShellModule,
     QueryModule,
     RedisModule,
-    QueryDBModule,
   ],
 })
 export class AppModule {

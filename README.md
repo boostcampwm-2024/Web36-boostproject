@@ -49,6 +49,11 @@ _예시 시나리오: 호눅스님이 300만건의 유저데이터를 넣어 검
 - 쿼리만 빠르데 실행하고 싶은데 복잡한 DB 환경세팅에 너무 많은 시간이 소요
 - 이전에 실행한 쿼리들의 시간을 비교하는게 어려움
 
+<br>
+
+
+## 아키텍처 구조
+<img width="2304" alt="QLab architecture" src="https://github.com/user-attachments/assets/dc1e1a29-b9fa-47ad-8c58-df591ed922b7">
 
 <br>
 
