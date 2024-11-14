@@ -108,7 +108,7 @@ pipeline {
                 stage('Checkout and Merge') {
                     steps {
                         sh 'git fetch origin dev'
-                        sh 'git checkout -b dev || git checout dev'
+                        sh 'git checkout -b dev || git checkout dev'
                         checkout scm  // 소스 코드 가져오기
                         sh 'git merge origin/dev'
                     }
