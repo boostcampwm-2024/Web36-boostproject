@@ -29,7 +29,7 @@ describe('싱글 MYSQL(Query DB) 어댑터 테스트', () => {
     const identify = 'identify';
     await singleMysqlAdapter.createConnection(identify);
 
-    expect(singleMysqlAdapter['userConnectionList'][identify]).toBeDefined();
+    expect(singleMysqlAdapter.getConnection(identify)).toBeDefined();
   });
 
   it('식별자를 통해 해당 connection에 쿼리를 실행할 수 있다.', async () => {
@@ -52,6 +52,6 @@ describe('싱글 MYSQL(Query DB) 어댑터 테스트', () => {
     const identify = 'identify';
     await singleMysqlAdapter.closeConnection(identify);
 
-    expect(singleMysqlAdapter['userConnectionList'][identify]).toBeUndefined();
+    expect(singleMysqlAdapter.getConnection(identify)).toBeUndefined();
   });
 });
