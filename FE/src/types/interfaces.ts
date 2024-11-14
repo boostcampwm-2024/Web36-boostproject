@@ -3,7 +3,7 @@ type TableRow = {
 }
 
 export interface ShellType {
-  id: string | null // 추후 number로 변경 필요
+  id: number | null // 추후 number로 변경 필요
   queryStatus: boolean | null
   runTime: string | null
   query: string | null
