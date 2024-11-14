@@ -15,16 +15,16 @@ mock.onGet('/shells').reply(200, shellData)
 // add
 mock.onPost('/shells').reply((config) => {
   const newShell: ShellType = JSON.parse(config.data)
-  newShell.shellId = new Date().getTime()
+  newShell.id = new Date().getTime()
   shellData.push(newShell)
-  return [200, newShell.shellId]
+  return [200, newShell.id]
 })
 
 // execute
 mock.onPost(/^\/shells(\/\d+\/execute)?$/).reply((config) => {
   const id = parseInt(config.url!.split('/')[2], 10)
-  const executeddShell = shellData.find((shell) => shell.shellId === id)
-  const index = shellData.findIndex((shell) => shell.shellId === id)
+  const executeddShell = shellData.find((shell) => shell.id === id)
+  const index = shellData.findIndex((shell) => shell.id === id)
 
   if (!executeddShell) return [404, { error: 'Shell not found' }]
   const result = getMocResult(executeddShell)
@@ -36,7 +36,7 @@ mock.onPost(/^\/shells(\/\d+\/execute)?$/).reply((config) => {
 // delete
 mock.onDelete(/\/shells\/\d+/).reply((config) => {
   const id = parseInt(config.url!.split('/').pop()!, 10)
-  const index = shellData.findIndex((shell) => shell.shellId === id)
+  const index = shellData.findIndex((shell) => shell.id === id)
 
   if (index === -1) return [404, { error: 'Shell not found' }]
 
@@ -48,7 +48,7 @@ mock.onDelete(/\/shells\/\d+/).reply((config) => {
 mock.onPut(/\/shells\/\d+/).reply((config) => {
   const id = parseInt(config.url!.split('/').pop()!, 10)
   const newQuery = config.data
-  const changedShell = shellData.find((shell) => shell.shellId === id)
+  const changedShell = shellData.find((shell) => shell.id === id)
 
   if (!changedShell) return [404, { error: 'Shell not found' }]
   changedShell.query = config.data

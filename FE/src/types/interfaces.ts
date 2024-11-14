@@ -1,16 +1,16 @@
 type TableRow = {
-  [key: string]: string
+  [key: string]: any // key는 string, value는 어떤 타입도 가능
 }
 
 export interface ShellType {
-  shellId?: number | null
+  id?: string | null
   queryStatus?: boolean | null
   runTime?: string | null
   query?: string | null
   queryType?: string | null
   failMessage?: string | null
   affectedRows?: number | null
-  table?: TableRow[] | null
+  resultTable?: TableRow[] | null
 }
 
 export type QueryType =

@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [react(), tsConfigPaths()],
   build: {
     target: 'esnext',
+    sourcemap: true,
   },
   resolve: {
     alias: {

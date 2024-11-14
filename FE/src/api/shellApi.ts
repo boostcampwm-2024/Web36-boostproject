@@ -7,35 +7,30 @@ const axiosInstance =
 
 export async function fetchShells() {
   const response = await axiosInstance.get('/shells')
-  return response.data
+  return response.data.data
 }
 
 export async function addShell(shell: ShellType) {
-  const response = await axiosInstance.post('/shells', {
-    shellId: shell.shellId,
-  })
-  return { ...response.data, shell }
+  const response = await axiosInstance.post('/shells')
+  return { ...response.data.data, shell }
 }
 
-export async function deleteShell(shellId: number) {
-  const response = await axiosInstance.delete(`/shells/${shellId}`)
-  return response.data
+export async function deleteShell(id: number) {
+  const response = await axiosInstance.delete(`/shells/${id}`)
+  return response.data.data
 }
 
 export async function updateShell(shell: ShellType) {
-  const response = await axiosInstance.put(
-    `/shells/${shell.shellId}`,
-    shell.query
-  )
-  return response.data
+  const response = await axiosInstance.put(`/shells/${shell.id}`, {
+    query: shell.query,
+  })
+  return response.data.data
 }
 
 export async function executeShell(shell: ShellType) {
-  const response = await axiosInstance.post(
-    `/shells/${shell.shellId}/execute`,
-    {
-      query: shell.query,
-    }
-  )
-  return { ...shell, ...response.data }
+  const response = await axiosInstance.post(`/shells/${shell.id}/execute`, {
+    query: shell.query,
+  })
+  console.log(`response ${response.data.data}`)
+  return { ...shell, ...response.data.data }
 }

@@ -1,7 +1,7 @@
 {
   "result": [
     {
-      "shellId": 1,
+      "id": 1,
       "queryStatus": true,
       "runTime": "0.04",
       "query": "SELECT * FROM users;",
@@ -26,7 +26,7 @@
       ]
     },
     {
-      "shellId": 2,
+      "id": 2,
       "queryStatus": false,
       "runTime": "0.1",
       "query": "INSERT INTO products (name, price) VALUES ('Sample Product', 19.99);",
@@ -36,7 +36,7 @@
       "table": []
     },
     {
-      "shellId": 3,
+      "id": 3,
       "queryStatus": true,
       "runTime": "0.03",
       "query": "UPDATE users SET active = 1 WHERE id = 2;",
@@ -46,7 +46,7 @@
       "table": []
     },
     {
-      "shellId": 4,
+      "id": 4,
       "queryStatus": true,
       "runTime": "0.07",
       "query": "DELETE FROM orders WHERE id = 5;",
@@ -56,7 +56,7 @@
       "table": []
     },
     {
-      "shellId": 5,
+      "id": 5,
       "queryStatus": true,
       "runTime": "0.02",
       "query": "ALTER TABLE users ADD COLUMN age INT;",
@@ -66,7 +66,7 @@
       "table": []
     },
     {
-      "shellId": 6,
+      "id": 6,
       "queryStatus": true,
       "runTime": "0.07",
       "query": "SELECT * FROM users;",

@@ -17,10 +17,10 @@ export default function useCustomMutation<TData, TVariables extends TData>(
       onMutate: async (newData: TVariables) => {
         const previousData = queryClient.getQueryData<TData[]>(queryKey)
 
-        queryClient.setQueryData<TData[]>(queryKey, (old = []) => [
-          ...old,
-          newData,
-        ])
+        queryClient.setQueryData<TData[]>(queryKey, (old = []) => {
+          const previousArray = Array.isArray(old) ? old : []
+          return [...previousArray, newData]
+        })
 
         return { previousData }
       },
