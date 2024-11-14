@@ -20,6 +20,10 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
     this.createAdminConnection();
   }
 
+  getConnection(identify: string): Connection {
+    return this.userConnectionList[identify];
+  }
+
   private createAdminConnection() {
     this.adminConnection = createPool({
       host: process.env.QUERY_DB_HOST,
