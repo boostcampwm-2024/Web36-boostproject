@@ -13,8 +13,7 @@ pipeline {
                     }
                     expression {
                         // 메인 브랜치에 대한 업데이트인지 확인
-                        def payload = readJSON text: env.CHANGE_PAYLOAD
-                        return payload.ref == 'main'
+                        return env.BRANCH_NME == 'main'
                     }
                 }
             }
