@@ -55,5 +55,5 @@ export class ResShellResultDto {
    * 쿼리 결과 데이터 (테이블 형식)
    */
   @Expose()
-  table: object;
+  resultTable: object;
 }
