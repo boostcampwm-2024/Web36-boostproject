@@ -5,7 +5,7 @@
     "queryType": "UPDATE",
     "failMessage": null,
     "affectedRows": 1,
-    "table": []
+    "resultTable": []
   },
   "resultError": {
     "queryStatus": false,
@@ -13,7 +13,7 @@
     "queryType": "INSERT",
     "failMessage": "Duplicate entry",
     "affectedRows": null,
-    "table": []
+    "resultTable": []
   },
   "resultTableShort": {
     "queryStatus": true,
@@ -21,7 +21,7 @@
     "queryType": "SELECT",
     "failMessage": null,
     "affectedRows": 10,
-    "table": [
+    "resultTable": [
       {
         "id": "1",
         "title": "바뀐 공지사항",
@@ -44,7 +44,7 @@
     "queryType": "SELECT",
     "failMessage": null,
     "affectedRows": 15,
-    "table": [
+    "resultTable": [
       {
         "id": "1",
         "title": "첫 번째 공지사항",
