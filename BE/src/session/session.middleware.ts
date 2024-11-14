@@ -24,7 +24,7 @@ export class SessionMiddleware implements NestMiddleware {
         return uuid;
       },
       cookie: {
-        maxAge: 1000 * 60,
+        maxAge: 1000 * 60 * 60,
       },
       name: 'sid',
     })(req, res, async () => {
