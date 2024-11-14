@@ -1,7 +1,15 @@
 import React, { useState, useRef } from 'react'
+import { v4 as uuidv4 } from 'uuid'
 import PlayCircle from '@/assets/play_circle.svg'
 import { ShellType } from '@/types/interfaces'
-import { useExecuteShell } from '@/hooks/useShellQuery'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { X } from 'lucide-react'
 
 interface ShellProps {
@@ -73,19 +81,39 @@ export default function Shell({
         )}
       </div>
       {queryType != null && ( // 쉘 실행 결과가 있는가?
-        <div className="flex w-full flex-col overflow-hidden rounded-sm bg-secondary">
-          <div className="m-3">
-            <p>{queryStatus ? successMessage : failMessage}</p>
-            {queryType === 'SELECT' && <p>{JSON.stringify(table)}</p>}
-          </div>
-          {queryType === 'SELECT' && (
-            <button
-              type="button"
-              className="flex w-full justify-center bg-primary"
-            >
-              <div className="text-bold w-3 text-background">+</div>
-            </button>
+        <div className="flex w-full flex-col overflow-hidden overflow-x-auto rounded-sm bg-secondary">
+          {queryStatus ? (
+            <p className="m-3 text-green-500">{successMessage}</p>
+          ) : (
+            <p className="m-3 text-red-500">{failMessage}</p>
           )}
+          {queryType === 'SELECT' &&
+            table !== null && ( // 결과 테이블이 있는지
+              <>
+                <Table className="m-3">
+                  <TableHeader>
+                    {Object.keys(table[0]).map((header) => (
+                      <TableHead key={uuidv4()}>{header}</TableHead>
+                    ))}
+                  </TableHeader>
+                  <TableBody>
+                    {table.map((row) => (
+                      <TableRow key={uuidv4()}>
+                        {Object.values(row).map((cell) => (
+                          <TableCell key={uuidv4()}>{cell}</TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                <button
+                  type="button"
+                  className="flex w-full justify-center bg-primary"
+                >
+                  <div className="text-bold w-3 text-background">+</div>
+                </button>
+              </>
+            )}
         </div>
       )}
     </>
