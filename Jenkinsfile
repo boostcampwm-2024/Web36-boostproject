@@ -110,7 +110,7 @@ pipeline {
                         checkout scm  // 소스 코드 가져오기
                         sh 'git fetch origin dev'
                         sh 'git checkout -b temp-branch || git checkout temp-branch'
-                        sh 'git merge origin/dev'
+                        sh 'git merge FETCH_HEAD'
                     }
                 }
                 stage('docker image Build') {
