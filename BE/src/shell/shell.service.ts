@@ -23,9 +23,9 @@ export class ShellService {
   }
 
   async update(id: number, updateData: Partial<Shell>) {
-    const shell = await this.findShellOrThrow(id);
-    Object.assign(shell, updateData);
-    return this.shellRepository.save(shell);
+    await this.findShellOrThrow(id);
+    const updatedShell = this.shellRepository.create({ id, ...updateData });
+    return this.shellRepository.save(updatedShell);
   }
 
   async delete(id: number) {

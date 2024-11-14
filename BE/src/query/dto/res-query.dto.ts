@@ -1,9 +1,17 @@
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 import { QueryType } from '../../common/enums/query-type.enum';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ResQueryDto {
   constructor() {}
+
+  /**
+   * 쉘 Id
+   * @example 1
+   */
+  @Expose()
+  @Transform(({ value }) => Number(value))
+  id: number;
 
   /**
    * 쿼리 실행 성공 여부
