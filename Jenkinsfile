@@ -108,9 +108,9 @@ pipeline {
                 stage('Checkout and Merge') {
                     steps {
                         checkout scm  // 소스 코드 가져오기
-                        sh 'git branch -a'
                         sh 'git fetch origin dev'
-                        sh 'git merge dev'
+                        sh 'git checkout -b temp-branch || git checkout temp-branch'
+                        sh 'git merge origin/dev'
                     }
                 }
                 stage('docker image Build') {
