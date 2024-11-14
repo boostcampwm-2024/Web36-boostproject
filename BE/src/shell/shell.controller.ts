@@ -6,7 +6,9 @@ import {
   Param,
   Post,
   Put,
+  Req,
   UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 import { ShellService } from './shell.service';
 import { ExceptionHandler } from '../common/exception/exception.handler';
@@ -19,6 +21,8 @@ import {
   CreateShellSwagger,
   UpdateShellSwagger,
 } from '../config/swagger/shell-swagger.decorator';
+import { Request } from 'express';
+import { ShellGuard } from '../guard/shell.guard';
 
 @ApiExtraModels(ResponseDto, ResShellDto)
 @Controller('api/shells')
@@ -28,8 +32,9 @@ export class ShellController {
 
   @Get()
   @Serialize(ResShellDto)
-  async findAll() {
-    return await this.shellService.findAll();
+  async findAll(@Req() req: Request) {
+    const sessionId = req.sessionID;
+    return await this.shellService.findAll(sessionId);
   }
 
   @Get(':shellId')
@@ -41,13 +46,15 @@ export class ShellController {
   @Post()
   @Serialize(ResShellDto)
   @CreateShellSwagger()
-  async create() {
-    return await this.shellService.create();
+  async create(@Req() req: Request) {
+    const sessionId = req.sessionID;
+    return await this.shellService.create(sessionId);
   }
 
   @Put(':shellId')
   @Serialize(ResShellDto)
   @UpdateShellSwagger()
+  @UseGuards(ShellGuard)
   async update(
     @Param('shellId') shellId: number,
     @Body() updateShellDto: UpdateShellDto,
@@ -56,6 +63,7 @@ export class ShellController {
   }
 
   @Delete(':shellId')
+  @UseGuards(ShellGuard)
   async delete(@Param('shellId') shellId: number) {
     await this.shellService.delete(shellId);
   }

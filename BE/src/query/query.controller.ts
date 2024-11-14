@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Req, UseFilters } from '@nestjs/common';
+import { Body, Controller, Param, Post, Req, UseFilters, UseGuards } from "@nestjs/common";
 import { QueryService } from './query.service';
 import { QueryDto } from './dto/query.dto';
 import { ResponseDto } from '../common/response/response.dto';
@@ -8,6 +8,7 @@ import { ExecuteQuerySwagger } from '../config/swagger/query-swagger.decorator';
 import { Request } from 'express';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { ExceptionHandler } from '../common/exception/exception.handler';
+import { ShellGuard } from "../guard/shell.guard";
 
 @ApiExtraModels(ResponseDto, ResQueryDto)
 @ApiTags('쿼리 API')
@@ -19,6 +20,7 @@ export class QueryController {
   @ExecuteQuerySwagger()
   @Serialize(ResQueryDto)
   @Post('/:shellId/execute')
+  @UseGuards(ShellGuard)
   async executeQuery(
     @Req() req: Request,
     @Param('shellId') shellId: number,

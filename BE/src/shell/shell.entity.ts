@@ -14,8 +14,8 @@ export class Shell {
   id: number;
 
   @Index()
-  @Column({ type: 'bigint', nullable: true })
-  sessionId: number;
+  @Column({ nullable: true })
+  sessionId: string;
 
   @ManyToOne(() => User, (user) => user.id)
   user: User;
