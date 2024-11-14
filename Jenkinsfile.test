@@ -7,10 +7,18 @@ pipeline {
         stage('Condition : when Merge branch is DEV'){
             when{
                 allOf {
-                expression {
-                        // PR인지 확인하기 위해 CHANGE_ID 환경 변수 확인
-                        return env.CHANGE_ID != null
-                }
+                    expression {
+                            // PR인지 확인하기 위해 CHANGE_ID 환경 변수 확인
+                            return env.CHANGE_ID != null
+                    }
+                    expression {
+                        // action이 opened, reopened 인지 확인
+                        return env.GITHUB_EVENT_ACTION in ['opened', 'reopened']
+                    }
+                    expression {
+                        // 대상 브랜치가 dev인지 확인
+                        return env.CHANGE_TARGET == 'dev'
+                    }
                 }
             }
             stages{
