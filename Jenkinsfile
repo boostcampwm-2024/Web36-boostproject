@@ -107,9 +107,9 @@ pipeline {
                 }
                 stage('Checkout and Merge') {
                     steps {
+                        sh 'git checkout -b dev origin/dev'
+                        sh 'git pull'
                         checkout scm  // 소스 코드 가져오기
-                        sh 'git fetch origin dev'
-                        sh 'git branch -a'
                         sh 'git merge origin/dev'
                     }
                 }
