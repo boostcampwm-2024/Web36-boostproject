@@ -1,0 +1,73 @@
+version: '3'
+services:
+  backend:
+    build:
+      context: .
+    container_name: QLab-Service-Server
+    ports:
+      - "3000:3000"
+    depends_on:
+      - server_db
+      - query_db
+      - redis
+    networks:
+      - backend
+    environment:
+      DB_TYPE: mysql
+      DB_HOST: server_db
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: db1004
+      DB_DATABASE: qlab
+      QUERY_DB_TYPE: mysql
+      QUERY_DB_HOST: query_db
+      QUERY_DB_PORT: 3306
+      QUERY_DB_USER: root
+      QUERY_DB_PASSWORD: db1004
+      QUERY_DB_DATABASE: qlab
+
+      SESSION_SECRET: session-secret
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    expose:
+      - 3000
+
+  server_db:
+    image: mysql:8.0
+    container_name: server_db
+    environment:
+      MYSQL_ROOT_PASSWORD: db1004
+      MYSQL_DATABASE: qlab
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/server:/var/lib/mysql
+    networks:
+      - backend
+
+  query_db:
+    image: mysql:8.0
+    container_name: query_db
+    environment:
+      MYSQL_ROOT_PASSWORD: db1004
+      MYSQL_DATABASE: qlab
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./db/query:/var/lib/mysql
+    networks:
+      - backend
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./db/redis:/data
+    networks:
+      - backend
+
+networks:
+  backend:

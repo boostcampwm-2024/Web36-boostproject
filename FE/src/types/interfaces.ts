@@ -3,14 +3,14 @@ type TableRow = {
 }
 
 export interface ShellType {
-  shellId: number
-  queryStatus: boolean | null
-  runTime: string | null
-  query: string | null
-  queryType: string | null
-  failMessage: string | null
-  affectedRows: number | null
-  table: TableRow[] | null
+  shellId?: number | null
+  queryStatus?: boolean | null
+  runTime?: string | null
+  query?: string | null
+  queryType?: string | null
+  failMessage?: string | null
+  affectedRows?: number | null
+  table?: TableRow[] | null
 }
 
 export type QueryType =

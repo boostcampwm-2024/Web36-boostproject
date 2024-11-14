@@ -9,7 +9,7 @@ export function setupSwagger(app: INestApplication): void {
     .build();
   const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('api-docs', app, document, {
+  SwaggerModule.setup('api/api-docs', app, document, {
     swaggerOptions: {
       defaultModelsExpandDepth: 5,
       defaultModelExpandDepth: 5,
