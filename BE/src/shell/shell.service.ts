@@ -10,6 +10,10 @@ export class ShellService {
     private shellRepository: Repository<Shell>,
   ) {}
 
+  async findAll() {
+    return this.shellRepository.find();
+  }
+
   async create() {
     const shell = this.shellRepository.create();
     return this.shellRepository.save(shell);
