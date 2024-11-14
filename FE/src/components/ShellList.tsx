@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { Badge } from '@/components/ui/badge'
 import Shell from '@/components/Shell'
@@ -9,19 +9,28 @@ import {
   useUpdateShell,
 } from '@/hooks/useShellQuery'
 
-export default function ShellList({ shells }: { shells: ShellType[] }) {
+export default function ShellList({ shells = [] }: { shells: ShellType[] }) {
   const [focusedShell, setFocusedShell] = useState<number | null>(null)
   const addShellMutation = useAddShell()
   const deleteShellMutation = useDeleteShell()
   const updateShellMutation = useUpdateShell()
 
   const addShell = () => {
-    const newShell: Partial<ShellType> = {}
+    const newShell: ShellType = {
+      id: null,
+      queryStatus: null,
+      runTime: null,
+      query: null,
+      queryType: null,
+      failMessage: null,
+      affectedRows: null,
+      resultTable: null,
+    }
     addShellMutation.mutate(newShell)
   }
 
-  const removeShell = (shellId: number) => {
-    deleteShellMutation.mutate(shellId)
+  const removeShell = (id: number) => {
+    deleteShellMutation.mutate(id)
   }
 
   const updateShell = (shell: ShellType) => {
@@ -35,18 +44,20 @@ export default function ShellList({ shells }: { shells: ShellType[] }) {
           + add
         </Badge>
       </div>
-      <div className="flex flex-1 flex-col gap-3 p-4">
-        {shells.map((shell) => (
-          <Shell
-            key={uuidv4()}
-            shell={shell}
-            removeShell={removeShell}
-            updateShell={updateShell}
-            focusedShell={focusedShell}
-            setFocusedShell={setFocusedShell}
-          />
-        ))}
-      </div>
+      {shells.length > 0 && (
+        <div className="flex flex-1 flex-col gap-3 p-4">
+          {shells?.map((shell) => (
+            <Shell
+              key={uuidv4()}
+              shell={shell}
+              removeShell={removeShell}
+              updateShell={updateShell}
+              focusedShell={focusedShell}
+              setFocusedShell={setFocusedShell}
+            />
+          ))}
+        </div>
+      )}
     </>
   )
 }

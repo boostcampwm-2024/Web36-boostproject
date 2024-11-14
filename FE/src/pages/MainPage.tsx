@@ -4,10 +4,12 @@ import * as React from 'react'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import AppSidebar from '@/components/AppSidebar'
 import ShellList from '@/components/ShellList'
+// import { ShellType } from '@/types/interfaces'
 import { useShells } from '@/hooks/useShellQuery'
 
 export default function Page() {
   const { data: shells = [], isLoading, error } = useShells()
+  // const shells: ShellType[] = []
 
   return (
     <SidebarProvider

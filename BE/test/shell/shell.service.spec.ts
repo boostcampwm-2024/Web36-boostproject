@@ -10,7 +10,7 @@ describe('ShellService', () => {
 
   const mockShell = {
     id: 1,
-    shellId: 1,
+    id: 1,
     sessionId: null,
     runTime: null,
     queryType: null,
@@ -49,7 +49,7 @@ describe('ShellService', () => {
     const createdShell = await service.create();
     const expectedShell = {
       id: 1,
-      shellId: 1,
+      id: 1,
       sessionId: null,
       runTime: null,
       queryType: null,
@@ -61,17 +61,17 @@ describe('ShellService', () => {
   });
 
   test('shell을 삭제할 수 있다.', async () => {
-    const shellId = 1;
+    const id = 1;
     mockRepository.delete.mockResolvedValueOnce({ affected: 1 });
-    await service.delete(shellId);
-    expect(repository.delete).toHaveBeenCalledWith({ shellId });
+    await service.delete(id);
+    expect(repository.delete).toHaveBeenCalledWith({ id });
   });
 
   test('삭제할 shell이 존재하지 않으면 에러를 발생시킨다.', async () => {
-    const shellId = 1;
+    const id = 1;
     mockRepository.delete.mockResolvedValueOnce({ affected: 0 });
     try {
-      await service.delete(shellId);
+      await service.delete(id);
     } catch (e) {
       expect(e.message).toBe('shell not found');
     }
