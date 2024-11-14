@@ -1,5 +1,4 @@
-import React, { useState, useRef } from 'react'
-import { v4 as uuidv4 } from 'uuid'
+import { useState, useRef } from 'react'
 import PlayCircle from '@/assets/play_circle.svg'
 import { ShellType } from '@/types/interfaces'
 import { useExecuteShell } from '@/hooks/useShellQuery'
@@ -70,7 +69,7 @@ export default function Shell({
           type="text"
           defaultValue={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          onFocus={() => setFocusedShell(id || null)}
+          onFocus={() => setFocusedShell(id ? parseInt(id, 10) : null)} // 추후 로직 제거?
           onBlur={handleBlur}
           className="h-8 w-full border-none bg-secondary p-2 text-base font-medium text-foreground focus:outline-none"
         />
@@ -91,14 +90,18 @@ export default function Shell({
                 <Table className="m-3">
                   <TableHeader>
                     {Object.keys(resultTable[0])?.map((header) => (
-                      <TableHead key={uuidv4()}>{header}</TableHead>
+                      <TableHead key={JSON.stringify(header)}>
+                        {header}
+                      </TableHead>
                     ))}
                   </TableHeader>
                   <TableBody>
                     {resultTable.map((row) => (
-                      <TableRow key={uuidv4()}>
+                      <TableRow key={JSON.stringify(row)}>
                         {Object.values(row).map((cell) => (
-                          <TableCell key={uuidv4()}>{cell}</TableCell>
+                          <TableCell key={JSON.stringify(cell)}>
+                            {String(cell)}
+                          </TableCell>
                         ))}
                       </TableRow>
                     ))}

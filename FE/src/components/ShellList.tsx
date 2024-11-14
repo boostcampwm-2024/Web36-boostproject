@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import { Badge } from '@/components/ui/badge'
 import Shell from '@/components/Shell'
@@ -16,7 +16,16 @@ export default function ShellList({ shells = [] }: { shells: ShellType[] }) {
   const updateShellMutation = useUpdateShell()
 
   const addShell = () => {
-    const newShell: Partial<ShellType> = {}
+    const newShell: ShellType = {
+      id: null,
+      queryStatus: null,
+      runTime: null,
+      query: null,
+      queryType: null,
+      failMessage: null,
+      affectedRows: null,
+      resultTable: null,
+    }
     addShellMutation.mutate(newShell)
   }
 

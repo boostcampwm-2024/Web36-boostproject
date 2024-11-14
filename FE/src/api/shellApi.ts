@@ -31,6 +31,6 @@ export async function executeShell(shell: ShellType) {
   const response = await axiosInstance.post(`/shells/${shell.id}/execute`, {
     query: shell.query,
   })
-  console.log(`response ${response.data.data}`)
+  console.log(`response ${JSON.stringify(response.data.data)}`)
   return { ...shell, ...response.data.data }
 }
