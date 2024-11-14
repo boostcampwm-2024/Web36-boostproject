@@ -3,7 +3,7 @@ import { QueryDto } from '../../src/query/dto/query.dto';
 import { QueryDBAdapter } from '../../src/config/query-database/query-db.adapter';
 import { Test, TestingModule } from '@nestjs/testing';
 import { QUERY_DB_ADAPTER } from '../../src/config/query-database/query-db.moudle';
-import { Connection, RowDataPacket } from 'mysql2/promise';
+import { Connection } from 'mysql2/promise';
 import { ShellService } from '../../src/shell/shell.service';
 
 describe('QueryService', () => {
@@ -44,9 +44,6 @@ describe('QueryService', () => {
 
     beforeEach(() => {
       jest.spyOn(mockShellService, 'findShellOrThrow').mockResolvedValue(null);
-      jest
-        .spyOn(mockQueryDBAdapter, 'getConnection')
-        .mockReturnValue({} as Connection);
     });
 
     it('테이블 결과값이 100개가 넘어가면 100개만 반환한다..', async () => {
