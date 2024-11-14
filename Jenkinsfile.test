@@ -4,12 +4,12 @@ pipeline {
         NODE_ENV = 'test'  // 테스트 환경 설정
     }
     stages {
-        stage('Condition : when Merge branch is DEV'){
-            when{
+        stage('Condition : when Merge branch is DEV') {
+            when {
                 allOf {
                     expression {
-                            // PR인지 확인하기 위해 CHANGE_ID 환경 변수 확인
-                            return env.CHANGE_ID != null
+                        // PR인지 확인하기 위해 CHANGE_ID 환경 변수 확인
+                        return env.CHANGE_ID != null
                     }
                     expression {
                         // action이 opened, reopened 인지 확인
@@ -21,11 +21,8 @@ pipeline {
                     }
                 }
             }
-            stages{
+            stages {
                 stage('Checkout and Merge') {
-                    when{
-                        branch 'dev'
-                    }
                     steps {
                         checkout scm  // 소스 코드 가져오기
                         sh 'git fetch origin dev'
@@ -44,7 +41,6 @@ pipeline {
                         sh 'docker run --rm fe-test-image'
                     }
                 }
-
                 stage('clean Up') {
                     steps {
                         sh 'docker rmi be-test-image'
@@ -54,7 +50,7 @@ pipeline {
             }
         }
     }
-        
+    
     post {
         always {
             // 빌드 결과 알림 또는 후처리
@@ -63,20 +59,20 @@ pipeline {
         success {
             echo 'Tests passed successfully!'
             script {
-                withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
-                    def commitStatus = "curl -X POST -H 'Authorization: token ${GITHUB_TOKEN}' -d '{\"state\": \"success\", \"context\": \"ci/test\", \"description\": \"Tests passed\"}' https://api.github.com/repos/boostcampwm-2024/web36-QLab/statuses/${env.GIT_COMMIT}"
+                withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                    def commitStatus = "curl -X POST -u \"${GITHUB_USER}:${GITHUB_TOKEN}\" -d '{\"state\": \"success\", \"context\": \"ci/test\", \"description\": \"Tests passed\"}' https://api.github.com/repos/boostcampwm-2024/web36-QLab/statuses/${env.GIT_COMMIT}"
                     sh commitStatus
-                }       
+                }
             }
         }
         failure {
             echo 'Tests failed.'
             script {
-                withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
-                    def commitStatus = "curl -X POST -H 'Authorization: token ${GITHUB_TOKEN}' -d '{\"state\": \"failure\", \"context\": \"ci/test\", \"description\": \"Tests failed\"}' https://api.github.com/repos/boostcampwm-2024/web36-QLab/statuses/${env.GIT_COMMIT}"
+                withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                    def commitStatus = "curl -X POST -u \"${GITHUB_USER}:${GITHUB_TOKEN}\" -d '{\"state\": \"failure\", \"context\": \"ci/test\", \"description\": \"Tests failed\"}' https://api.github.com/repos/boostcampwm-2024/web36-QLab/statuses/${env.GIT_COMMIT}"
                     sh commitStatus
                 }
-            }      
+            }
         }
     }
 }
