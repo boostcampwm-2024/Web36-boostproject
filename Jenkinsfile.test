@@ -23,11 +23,13 @@ pipeline {
             }
             stages {
                 stage('write Ci Test start review') {
-                    script {
-                        // GitHub API를 사용해 PR에 코멘트를 남깁니다
-                        withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
-                            def comment = "curl -X POST -u \"${GITHUB_USER}:${GITHUB_TOKEN}\" -d '{\"body\": \"Jenkins : Dev 브랜치로 PR 확인. CI test 를 수행합니다.\"}' https://api.github.com/repos/boostcampwm-2024/web36-QLab/issues/${env.CHANGE_ID}/comments"
-                            sh comment
+                    steps{
+                        script {
+                            // GitHub API를 사용해 PR에 코멘트를 남깁니다
+                            withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                                def comment = "curl -X POST -u \"${GITHUB_USER}:${GITHUB_TOKEN}\" -d '{\"body\": \"Jenkins : Dev 브랜치로 PR 확인. CI test 를 수행합니다.\"}' https://api.github.com/repos/boostcampwm-2024/web36-QLab/issues/${env.CHANGE_ID}/comments"
+                                sh comment
+                            }
                         }
                     }
                 }
@@ -57,10 +59,12 @@ pipeline {
                     }
                 }
                 stage('write Ci Test success review') {
-                    script {
-                        withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
-                            def comment = "curl -X POST -u \"${GITHUB_USER}:${GITHUB_TOKEN}\" -d '{\"body\": \"Jenkins : CI test 성공. 머지하세용~\"}' https://api.github.com/repos/boostcampwm-2024/web36-QLab/issues/${env.CHANGE_ID}/comments"
-                            sh comment
+                    steps{
+                        script {
+                            withCredentials([usernamePassword(credentialsId: 'github-token', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                                def comment = "curl -X POST -u \"${GITHUB_USER}:${GITHUB_TOKEN}\" -d '{\"body\": \"Jenkins : CI test 성공. 머지하세용~\"}' https://api.github.com/repos/boostcampwm-2024/web36-QLab/issues/${env.CHANGE_ID}/comments"
+                                sh comment
+                            }
                         }
                     }
                 }
