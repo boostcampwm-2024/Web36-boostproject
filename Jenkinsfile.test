@@ -62,19 +62,21 @@ pipeline {
         }
         success {
             echo 'Tests passed successfully!'
-            setGitHubPullRequestStatus(
-                context: 'ci/test',
-                description: 'Tests passed',
-                state: 'SUCCESS'
-            )        
+            script {
+                withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
+                    def commitStatus = "curl -X POST -H 'Authorization: token ${GITHUB_TOKEN}' -d '{\"state\": \"success\", \"context\": \"ci/test\", \"description\": \"Tests passed\"}' https://api.github.com/repos/boostcampwm-2024/web36-QLab/statuses/${env.GIT_COMMIT}"
+                    sh commitStatus
+                }       
+            }
         }
         failure {
             echo 'Tests failed.'
-            setGitHubPullRequestStatus(
-                context: 'ci/test',
-                description: 'Tests failed',
-                state: 'FAILURE'
-            )        
+            script {
+                withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
+                    def commitStatus = "curl -X POST -H 'Authorization: token ${GITHUB_TOKEN}' -d '{\"state\": \"failure\", \"context\": \"ci/test\", \"description\": \"Tests failed\"}' https://api.github.com/repos/boostcampwm-2024/web36-QLab/statuses/${env.GIT_COMMIT}"
+                    sh commitStatus
+                }
+            }      
         }
     }
 }
