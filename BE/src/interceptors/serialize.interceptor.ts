@@ -27,11 +27,17 @@ class SerializeInterceptor implements NestInterceptor {
         let data;
         if (inputData instanceof Array) {
           data = inputData.map((item) =>
-            this.removeNullProperties(plainToInstance(this.dto, item)),
+            this.removeNullProperties(
+              plainToInstance(this.dto, item, {
+                excludeExtraneousValues: true,
+              }),
+            ),
           );
         } else {
           data = this.removeNullProperties(
-            plainToInstance(this.dto, inputData),
+            plainToInstance(this.dto, inputData, {
+              excludeExtraneousValues: true,
+            }),
           );
         }
 
