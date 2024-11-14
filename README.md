@@ -53,7 +53,7 @@ _예시 시나리오: 호눅스님이 300만건의 유저데이터를 넣어 검
 
 
 ## 아키텍처 구조
-<img width="2544" alt="Qlab achitecture" src="https://github.com/user-attachments/assets/13dd1218-b8b8-47da-8cf4-325844d0f2dd">
+<img width="2304" alt="QLab architecture" src="https://github.com/user-attachments/assets/dc1e1a29-b9fa-47ad-8c58-df591ed922b7">
 
 <br>
 
