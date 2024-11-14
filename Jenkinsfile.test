@@ -4,6 +4,17 @@ pipeline {
         NODE_ENV = 'test'  // 테스트 환경 설정
     }
     stages {
+        stage('Check and Print Environment Variables') {
+            steps {
+                script {
+                    // 환경 변수 출력
+                    echo "Checking environment variables:"
+                    echo "CHANGE_ID: ${env.CHANGE_ID}"
+                    echo "GITHUB_EVENT_ACTION: ${env.GITHUB_EVENT_ACTION}"
+                    echo "CHANGE_TARGET: ${env.CHANGE_TARGET}"
+                }
+            }
+        }
         stage('Condition : when Merge branch is DEV') {
             when {
                 allOf {
