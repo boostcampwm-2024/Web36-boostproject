@@ -85,6 +85,3 @@ _예시 시나리오: 호눅스님이 300만건의 유저데이터를 넣어 검
 <div align="center">
   <img width="600" alt="data tool page" src="https://github.com/user-attachments/assets/67453191-62c2-4283-9ca6-315de3a8ff01">
 </div>
-
-<br>
-
