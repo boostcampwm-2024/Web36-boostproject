@@ -3,7 +3,7 @@
     {
       "shellId": 1,
       "queryStatus": true,
-      "runTime": "00:00:05",
+      "runTime": "0.04",
       "query": "SELECT * FROM users;",
       "queryType": "SELECT",
       "failMessage": null,
@@ -28,7 +28,7 @@
     {
       "shellId": 2,
       "queryStatus": false,
-      "runTime": "00:00:10",
+      "runTime": "0.1",
       "query": "INSERT INTO products (name, price) VALUES ('Sample Product', 19.99);",
       "queryType": "INSERT",
       "failMessage": "Duplicate entry",
@@ -38,7 +38,7 @@
     {
       "shellId": 3,
       "queryStatus": true,
-      "runTime": "00:00:03",
+      "runTime": "0.03",
       "query": "UPDATE users SET active = 1 WHERE id = 2;",
       "queryType": "UPDATE",
       "failMessage": null,
@@ -48,7 +48,7 @@
     {
       "shellId": 4,
       "queryStatus": true,
-      "runTime": "00:00:07",
+      "runTime": "0.07",
       "query": "DELETE FROM orders WHERE id = 5;",
       "queryType": "DELETE",
       "failMessage": null,
@@ -58,12 +58,37 @@
     {
       "shellId": 5,
       "queryStatus": true,
-      "runTime": "00:00:02",
+      "runTime": "0.02",
       "query": "ALTER TABLE users ADD COLUMN age INT;",
       "queryType": "ALTER",
       "failMessage": null,
       "affectedRows": 0,
       "table": []
+    },
+    {
+      "shellId": 6,
+      "queryStatus": true,
+      "runTime": "0.07",
+      "query": "SELECT * FROM users;",
+      "queryType": "SELECT",
+      "failMessage": null,
+      "affectedRows": 10,
+      "table": [
+        {
+          "id": "1",
+          "title": "첫 번째 공지사항",
+          "description": "첫 번째 공지사항의 내용이 여기에 포함됩니다.",
+          "authorId": "3",
+          "timestamp": "2024-11-03T09:00:00.000Z"
+        },
+        {
+          "id": "2",
+          "title": "두 번째 업데이트",
+          "description": "시스템 업데이트에 관한 두 번째 공지가 여기에 들어갑니다.",
+          "authorId": "4",
+          "timestamp": "2024-11-04T14:30:00.000Z"
+        }
+      ]
     }
   ]
 }

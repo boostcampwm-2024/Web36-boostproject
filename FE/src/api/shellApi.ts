@@ -1,6 +1,9 @@
-// import axiosClient from '@/api/axiosClient'
+import axiosClient from '@/api/axiosClient'
+import axiosMock from '@/api/__mocks__/axiosMock'
 import { ShellType } from '@/types/interfaces'
-import axiosInstance from '@/api/__mocks__/axiosMock'
+
+const axiosInstance =
+  import.meta.env.VITE_NODE_ENV === 'development' ? axiosMock : axiosClient
 
 export async function fetchShells() {
   const response = await axiosInstance.get('/shells')
@@ -25,4 +28,14 @@ export async function updateShell(shell: ShellType) {
     shell.query
   )
   return response.data
+}
+
+export async function executeShell(shell: ShellType) {
+  const response = await axiosInstance.post(
+    `/shells/${shell.shellId}/execute`,
+    {
+      query: shell.query,
+    }
+  )
+  return { ...shell, ...response.data }
 }

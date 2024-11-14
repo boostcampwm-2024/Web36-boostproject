@@ -16,16 +16,7 @@ export default function ShellList({ shells }: { shells: ShellType[] }) {
   const updateShellMutation = useUpdateShell()
 
   const addShell = () => {
-    const newShell: ShellType = {
-      shellId: null,
-      queryStatus: null,
-      runTime: null,
-      query: null,
-      queryType: null,
-      failMessage: null,
-      affectedRows: null,
-      table: null,
-    }
+    const newShell: Partial<ShellType> = {}
     addShellMutation.mutate(newShell)
   }
 

@@ -1,6 +1,12 @@
 import { useQuery } from 'react-query'
 import useCustomMutation from '@/hooks/useCustomMutation'
-import { fetchShells, addShell, deleteShell, updateShell } from '@/api/shellApi'
+import {
+  fetchShells,
+  addShell,
+  deleteShell,
+  updateShell,
+  executeShell,
+} from '@/api/shellApi'
 import { ShellType } from '@/types/interfaces'
 import { QUERY_KEYS } from '@/constants'
 
@@ -22,4 +28,8 @@ export function useDeleteShell() {
 
 export function useUpdateShell() {
   return useCustomMutation(updateShell, QUERY_KEYS.shells)
+}
+
+export function useExecuteShell() {
+  return useCustomMutation(executeShell, QUERY_KEYS.shells)
 }
