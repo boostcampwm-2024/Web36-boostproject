@@ -6,8 +6,11 @@ pipeline {
     stages {
         stage('Condition : when Merge branch is DEV'){
             when{
+                allOf {
                 expression {
-                    return env.CHANGE_TARGET == 'dev';
+                        // PR인지 확인하기 위해 CHANGE_ID 환경 변수 확인
+                        return env.CHANGE_ID != null
+                }
                 }
             }
             stages{
