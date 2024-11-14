@@ -109,14 +109,13 @@ pipeline {
                     steps {
                         checkout scm  // 소스 코드 가져오기
                         sh 'git fetch origin dev'
-                        sh 'git checkout -b temp-branch || git checkout temp-branch'
                         sh 'git merge FETCH_HEAD'
                     }
                 }
                 stage('docker image Build') {
                     steps {
-                        sh 'docker build -f .BE/dockerfile.test -t be-test-image ./BE/' 
-                        sh 'docker build -f .FE/dockerfile.test -t fe-test-image ./FE/' 
+                        sh 'docker build -f ./BE/dockerfile.test -t be-test-image ./BE/' 
+                        sh 'docker build -f ./FE/dockerfile.test -t fe-test-image ./FE/' 
                     }
                 }
                 stage('Run test & build') {
