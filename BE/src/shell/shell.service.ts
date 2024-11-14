@@ -36,4 +36,11 @@ export class ShellService {
     }
     return shell;
   }
+
+  async isMappingSession(sessionId: string, shellId: number) {
+    const shell = await this.shellRepository.findOne({
+      where: { id: shellId, sessionId },
+    });
+    return Boolean(shell);
+  }
 }
