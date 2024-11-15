@@ -21,6 +21,9 @@
 <br>
 <br>
 
+## 배포링크
+[QLAB](http://223.130.155.9)
+
 ## 팀원소개 (Query Squard)
 
 <div align="center">
