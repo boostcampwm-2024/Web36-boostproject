@@ -34,7 +34,7 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
     });
   }
 
-  public async createConnection(identify: string) {
+  public async createConnection(identify: string, existSession: boolean) {
     const connectInfo = {
       name: identify.substring(0, 10),
       password: identify,
@@ -42,23 +42,28 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
       database: identify,
     };
 
-    await this.adminConnection.query(
-      `create database ${connectInfo.database};`,
-    );
-    await this.adminConnection.query(
-      `create user '${connectInfo.name}'@'${connectInfo.host}' identified by '${connectInfo.password}';`,
-    );
-    await this.adminConnection.query(
-      `grant all privileges on ${connectInfo.database}.* to '${connectInfo.name}'@'${connectInfo.host}';`,
-    );
+    if (!existSession) {
+      await this.adminConnection.query(
+        `create database ${connectInfo.database};`,
+      );
+      await this.adminConnection.query(
+        `create user '${connectInfo.name}'@'${connectInfo.host}' identified by '${connectInfo.password}';`,
+      );
+      await this.adminConnection.query(
+        `grant all privileges on ${connectInfo.database}.* to '${connectInfo.name}'@'${connectInfo.host}';`,
+      );
+    }
 
-    this.userConnectionList[identify] = await createConnection({
-      host: process.env.QUERY_DB_HOST,
-      user: connectInfo.name,
-      password: connectInfo.password,
-      port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
-      database: connectInfo.database,
-    });
+    if (!this.userConnectionList[identify]) {
+      this.userConnectionList[identify] = await createConnection({
+        host: process.env.QUERY_DB_HOST,
+        user: connectInfo.name,
+        password: connectInfo.password,
+        port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
+        database: connectInfo.database,
+      });
+      await this.run(identify, 'set profiling = 1;');
+    }
   }
 
   public async closeConnection(identify: string) {

@@ -22,6 +22,7 @@ export class QueryService {
     try {
       const rows = await this.queryDBAdapter.run(sessionId, queryDto.query);
       const slicedRows = rows.length > 100 ? rows.slice(0, 100) : rows;
+      const runTime = await this.measureQueryRunTime(sessionId);
 
       const updateData = {
         ...baseUpdateData,
@@ -30,15 +31,31 @@ export class QueryService {
         ...(baseUpdateData.queryType === QueryType.SELECT && {
           resultTable: slicedRows,
         }),
+        runTime: runTime,
       };
-
       return await this.shellService.update(shellId, updateData);
     } catch (e) {
-      return await this.shellService.update(shellId, {
+      const runTime = await this.measureQueryRunTime(sessionId);
+
+      const updateData = {
         ...baseUpdateData,
         queryStatus: false,
         failMessage: e.sqlMessage,
-      });
+        runTime: runTime,
+      };
+      return await this.shellService.update(shellId, updateData);
+    }
+  }
+
+  private async measureQueryRunTime(sessionId: string): Promise<string> {
+    try {
+      const rows = await this.queryDBAdapter.run(sessionId, 'show profiles;');
+      let lastQueryRunTime = rows[rows.length - 1]?.Duration;
+      lastQueryRunTime = Math.round(lastQueryRunTime * 100) / 100;
+      return lastQueryRunTime.toFixed(2) || '0.00';
+    } catch (e) {
+      console.error(e);
+      return '0.00';
     }
   }
 
