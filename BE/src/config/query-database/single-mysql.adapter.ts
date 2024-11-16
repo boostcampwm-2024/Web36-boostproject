@@ -34,25 +34,13 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
     });
   }
 
-  public async createConnection(identify: string, existSession: boolean) {
+  public async createConnection(identify: string) {
     const connectInfo = {
       name: identify.substring(0, 10),
       password: identify,
       host: '%',
       database: identify,
     };
-
-    if (!existSession) {
-      await this.adminConnection.query(
-        `create database ${connectInfo.database};`,
-      );
-      await this.adminConnection.query(
-        `create user '${connectInfo.name}'@'${connectInfo.host}' identified by '${connectInfo.password}';`,
-      );
-      await this.adminConnection.query(
-        `grant all privileges on ${connectInfo.database}.* to '${connectInfo.name}'@'${connectInfo.host}';`,
-      );
-    }
 
     if (!this.userConnectionList[identify]) {
       this.userConnectionList[identify] = await createConnection({
@@ -64,6 +52,25 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
       });
       await this.run(identify, 'set profiling = 1;');
     }
+  }
+
+  public async initUserDatabase(identify: string) {
+    const connectInfo = {
+      name: identify.substring(0, 10),
+      password: identify,
+      host: '%',
+      database: identify,
+    };
+
+    await this.adminConnection.query(
+      `create database ${connectInfo.database};`,
+    );
+    await this.adminConnection.query(
+      `create user '${connectInfo.name}'@'${connectInfo.host}' identified by '${connectInfo.password}';`,
+    );
+    await this.adminConnection.query(
+      `grant all privileges on ${connectInfo.database}.* to '${connectInfo.name}'@'${connectInfo.host}';`,
+    );
   }
 
   public async closeConnection(identify: string) {

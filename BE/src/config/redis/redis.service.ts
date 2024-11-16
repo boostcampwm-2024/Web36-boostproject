@@ -44,14 +44,13 @@ export class RedisService {
     return await this.defaultConnection.get(key);
   }
 
-  // connectionList에는 없는데, sessionStorage에 없는 경우 때문에 자꾸 오류난다
   public async setNewSession(key: string) {
     const session = await this.getSession(key);
-    let existSession = false;
-    if (session) {
-      existSession = true;
+
+    this.queryDBAdapter.createConnection(key);
+    if (!session) {
+      this.queryDBAdapter.initUserDatabase(key);
     }
-    await this.queryDBAdapter.createConnection(key, existSession);
   }
 
   private subscribeToExpiredEvents() {

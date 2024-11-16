@@ -3,11 +3,11 @@ import { NextFunction, Request, Response } from 'express';
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import RedisStore from 'connect-redis';
-import { SessionService } from 'src/config/redis/redis.service';
+import { RedisService } from 'src/config/redis/redis.service';
 
 @Injectable()
 export class SessionMiddleware implements NestMiddleware {
-  constructor(private readonly sessionService: SessionService) {}
+  constructor(private readonly redisService: RedisService) {}
 
   use(req: Request, res: Response, next: NextFunction) {
     session({
@@ -16,7 +16,7 @@ export class SessionMiddleware implements NestMiddleware {
       saveUninitialized: true,
       rolling: true,
       store: new RedisStore({
-        client: this.sessionService.getDefaultConnection(),
+        client: this.redisService.getDefaultConnection(),
         prefix: '',
       }),
       genid: () => {
@@ -28,7 +28,7 @@ export class SessionMiddleware implements NestMiddleware {
       },
       name: 'sid',
     })(req, res, async () => {
-      await this.sessionService.setNewSession(req.sessionID);
+      await this.redisService.setNewSession(req.sessionID);
       next();
     });
   }
