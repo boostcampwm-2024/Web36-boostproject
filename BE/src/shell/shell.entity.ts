@@ -20,7 +20,7 @@ export class Shell {
   @ManyToOne(() => User, (user) => user.id)
   user: User;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   query: string;
 
   @Column({ nullable: true })
