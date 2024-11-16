@@ -105,17 +105,15 @@ pipeline {
                         }
                     }
                 }
-                stage('Checkout and Merge') {
+                stage('Checkout') {
                     steps {
                         checkout scm  // 소스 코드 가져오기
-                        sh 'git fetch origin dev'
-                        sh 'git merge origin/dev'
                     }
                 }
                 stage('docker image Build') {
                     steps {
-                        sh 'docker build -f .BE/dockerfile.test -t be-test-image ./BE/' 
-                        sh 'docker build -f .FE/dockerfile.test -t fe-test-image ./FE/' 
+                        sh 'docker build -f ./BE/Dockerfile.test -t be-test-image ./BE/' 
+                        sh 'docker build -f ./FE/Dockerfile.test -t fe-test-image ./FE/' 
                     }
                 }
                 stage('Run test & build') {
