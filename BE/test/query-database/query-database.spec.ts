@@ -27,7 +27,7 @@ describe('싱글 MYSQL(Query DB) 어댑터 테스트', () => {
 
   it('커넥션 생성 시 유저 커넥션 리스트에 커넥션이 추가된다.', async () => {
     const identify = 'identify';
-    await singleMysqlAdapter.createConnection(identify);
+    await singleMysqlAdapter.createDatabaseAndConnection(identify);
 
     expect(singleMysqlAdapter.getConnection(identify)).toBeDefined();
   });
