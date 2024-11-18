@@ -46,6 +46,11 @@ export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
     if (id) removeShell(id)
   }
 
+  const handleOutput = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    e.target.style.height = 'auto' // 기존 높이 초기화
+    e.target.style.height = `${e.target.scrollHeight}px` // 내용에 맞게 높이 설정
+  }
+
   return (
     <>
       <div className="flex min-h-[2rem] w-full items-center overflow-hidden rounded-sm bg-secondary">
@@ -61,7 +66,9 @@ export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
           onChange={(e) => setInputValue(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={handleBlur}
-          className="h-8 w-full border-none bg-secondary p-2 text-base font-medium text-foreground focus:outline-none"
+          rows={1}
+          onInput={handleOutput}
+          className="min-h-[2rem] w-full resize-none overflow-auto border-none bg-secondary p-2 text-base font-medium text-foreground focus:outline-none"
         />
         {focused && (
           <button
