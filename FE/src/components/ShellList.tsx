@@ -19,11 +19,9 @@ export default function ShellList({ shells = [] }: { shells: ShellType[] }) {
     const newShell: ShellType = {
       id: null,
       queryStatus: null,
-      runTime: null,
       query: null,
       queryType: null,
-      failMessage: null,
-      affectedRows: null,
+      text: null,
       resultTable: null,
     }
     addShellMutation.mutate(newShell)
@@ -48,7 +46,7 @@ export default function ShellList({ shells = [] }: { shells: ShellType[] }) {
         <div className="flex flex-1 flex-col gap-3 p-4">
           {shells?.map((shell) => (
             <Shell
-              key={uuidv4()}
+              key={shell.id || uuidv4()}
               shell={shell}
               removeShell={removeShell}
               updateShell={updateShell}
