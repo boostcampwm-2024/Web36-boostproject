@@ -79,9 +79,11 @@ export default function Shell({
               <>
                 <Table className="m-3">
                   <TableHeader>
-                    {Object.keys(resultTable[0])?.map((header) => (
-                      <TableHead key={header}>{header}</TableHead>
-                    ))}
+                    <TableRow>
+                      {Object.keys(resultTable[0])?.map((header) => (
+                        <TableHead key={header}>{header}</TableHead>
+                      ))}
+                    </TableRow>
                   </TableHeader>
                   <TableBody>
                     {resultTable.map((row) => (
