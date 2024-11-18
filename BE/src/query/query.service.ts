@@ -16,6 +16,7 @@ export class QueryService {
     await this.shellService.findShellOrThrow(shellId);
 
     const baseUpdateData = {
+      sessionId: sessionId,
       query: queryDto.query,
       queryType: this.detectQueryType(queryDto.query),
     };
@@ -35,7 +36,7 @@ export class QueryService {
         runTime: runTime,
         text: text,
       };
-      return await this.shellService.update(shellId, updateData);
+      return await this.shellService.replace(shellId, updateData);
     } catch (e) {
       const text = `ERROR ${e.errno || ''} (${e.sqlState || ''}): ${e.sqlMessage || ''}`;
 
@@ -45,7 +46,7 @@ export class QueryService {
         failMessage: e.sqlMessage,
         text: text,
       };
-      return await this.shellService.update(shellId, updateData);
+      return await this.shellService.replace(shellId, updateData);
     }
   }
 
