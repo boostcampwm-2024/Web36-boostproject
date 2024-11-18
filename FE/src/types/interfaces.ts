@@ -3,13 +3,11 @@ type TableRow = {
 }
 
 export interface ShellType {
-  id: number | null // 추후 number로 변경 필요
+  id: number | null
   queryStatus: boolean | null
-  runTime: string | null
-  query: string | null
   queryType: string | null
-  failMessage: string | null
-  affectedRows: number | null
+  query: string | null
+  text: string | null
   resultTable: TableRow[] | null
 }
 
