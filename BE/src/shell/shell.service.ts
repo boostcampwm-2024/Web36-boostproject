@@ -30,7 +30,6 @@ export class ShellService {
       user: shell.user,
       createdAt: shell.createdAt,
     });
-
     return this.shellRepository.save(updatedShell);
   }
 

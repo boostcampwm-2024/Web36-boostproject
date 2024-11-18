@@ -1,14 +1,14 @@
 {
   "result": [
     {
-      "shellId": 1,
+      "id": "1",
       "queryStatus": true,
       "runTime": "0.04",
       "query": "SELECT * FROM users;",
       "queryType": "SELECT",
       "failMessage": null,
       "affectedRows": 10,
-      "table": [
+      "resultTable": [
         {
           "id": "1",
           "title": "첫 번째 공지사항",
@@ -26,54 +26,54 @@
       ]
     },
     {
-      "shellId": 2,
+      "id": "2",
       "queryStatus": false,
       "runTime": "0.1",
       "query": "INSERT INTO products (name, price) VALUES ('Sample Product', 19.99);",
       "queryType": "INSERT",
       "failMessage": "Duplicate entry",
       "affectedRows": null,
-      "table": []
+      "resultTable": []
     },
     {
-      "shellId": 3,
+      "id": "3",
       "queryStatus": true,
       "runTime": "0.03",
       "query": "UPDATE users SET active = 1 WHERE id = 2;",
       "queryType": "UPDATE",
       "failMessage": null,
       "affectedRows": 1,
-      "table": []
+      "resultTable": []
     },
     {
-      "shellId": 4,
+      "id": 4,
       "queryStatus": true,
       "runTime": "0.07",
       "query": "DELETE FROM orders WHERE id = 5;",
       "queryType": "DELETE",
       "failMessage": null,
       "affectedRows": 1,
-      "table": []
+      "resultTable": []
     },
     {
-      "shellId": 5,
+      "id": "5",
       "queryStatus": true,
       "runTime": "0.02",
       "query": "ALTER TABLE users ADD COLUMN age INT;",
       "queryType": "ALTER",
       "failMessage": null,
       "affectedRows": 0,
-      "table": []
+      "resultTable": []
     },
     {
-      "shellId": 6,
+      "id": "6",
       "queryStatus": true,
       "runTime": "0.07",
       "query": "SELECT * FROM users;",
       "queryType": "SELECT",
       "failMessage": null,
       "affectedRows": 10,
-      "table": [
+      "resultTable": [
         {
           "id": "1",
           "title": "첫 번째 공지사항",

@@ -25,7 +25,7 @@ import { Request } from 'express';
 import { ShellGuard } from '../guard/shell.guard';
 import { ResShellResultDto } from './dto/res-shell-result.dto';
 
-@ApiExtraModels(ResponseDto, ResShellDto)
+@ApiExtraModels(ResponseDto, ResShellDto, ResShellResultDto)
 @Controller('api/shells')
 @UseFilters(new ExceptionHandler())
 export class ShellController {
