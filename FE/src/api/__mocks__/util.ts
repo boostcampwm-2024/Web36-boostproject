@@ -1,16 +1,12 @@
 import shellResultDataRaw from '@/api/__mocks__/mocdataResult.json'
 import { ShellType } from '@/types/interfaces'
 
-const { resultPlain, resultError, resultTableShort, resultTableLong } =
-  shellResultDataRaw
+const { resultPlain, resultError, resultTableShort } = shellResultDataRaw
 
 export default function getMocResult(shell: ShellType) {
-  const { queryStatus, runTime, queryType, resultTable } = shell
+  const { queryStatus, resultTable } = shell
 
   if (queryStatus === false) return resultError
   if (resultTable?.length === 0) return resultPlain
-  if (queryType === 'SELECT' && parseFloat(runTime || '0') <= 0.05)
-    return resultTableShort
-
-  return resultTableLong
+  return resultTableShort
 }

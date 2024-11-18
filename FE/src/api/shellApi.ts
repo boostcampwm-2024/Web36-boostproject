@@ -11,7 +11,7 @@ export async function fetchShells() {
 }
 
 export async function addShell(shell: ShellType) {
-  const response = await axiosInstance.post('/shells')
+  const response = await axiosInstance.post('/shells', shell)
   return { ...response.data.data, shell }
 }
 
@@ -31,6 +31,5 @@ export async function executeShell(shell: ShellType) {
   const response = await axiosInstance.post(`/shells/${shell.id}/execute`, {
     query: shell.query,
   })
-  console.log(`response ${JSON.stringify(response.data.data)}`)
   return { ...shell, ...response.data.data }
 }
