@@ -13,7 +13,7 @@ RUN npm install
 
 COPY . /app
 
-RUN npx vite build
+RUN vite build
 
 # http 서버 생성
 FROM nginx:alpine
