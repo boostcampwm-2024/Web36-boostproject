@@ -38,7 +38,8 @@ export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
 
   const handleClick = () => {
     if (!id) return
-    executeShellMutation.mutate(shell)
+    const processedQuery = shell.query?.replace(/\n/g, '') || null
+    executeShellMutation.mutate({ ...shell, query: processedQuery })
   }
 
   const handleMouseDown = (e: React.MouseEvent) => {
