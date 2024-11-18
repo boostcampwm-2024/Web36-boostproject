@@ -1,7 +1,7 @@
 import { MySqlContainer, StartedMySqlContainer } from '@testcontainers/mysql';
 import { SingleMySQLAdapter } from '../../src/config/query-database/single-mysql.adapter';
 
-jest.setTimeout(10000);
+jest.setTimeout(20000);
 
 describe('싱글 MYSQL(Query DB) 어댑터 테스트', () => {
   let singleMysqlAdapter: SingleMySQLAdapter;
@@ -27,6 +27,7 @@ describe('싱글 MYSQL(Query DB) 어댑터 테스트', () => {
 
   it('커넥션 생성 시 유저 커넥션 리스트에 커넥션이 추가된다.', async () => {
     const identify = 'identify';
+    await singleMysqlAdapter.initUserDatabase(identify);
     await singleMysqlAdapter.createConnection(identify);
 
     expect(singleMysqlAdapter.getConnection(identify)).toBeDefined();
