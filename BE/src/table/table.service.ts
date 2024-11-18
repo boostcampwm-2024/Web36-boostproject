@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { QUERY_DB_ADAPTER } from '../config/query-database/query-db.moudle';
 import { QueryDBAdapter } from '../config/query-database/query-db.adapter';
+import { Pool } from 'mysql2/promise';
+import { ColumnDto, ResTableDto } from './dto/res-table.dto';
+import {ResTablesDto} from "./dto/res-tables.dto";
 
 @Injectable()
 export class TableService {
@@ -8,112 +11,100 @@ export class TableService {
     @Inject(QUERY_DB_ADAPTER) private readonly queryDBAdapter: QueryDBAdapter,
   ) {}
 
-  async getSchema(sessionId: string) {
-    const tables = await this.queryDBAdapter.run(sessionId, 'SHOW TABLES;');
-    //Table 없으면 예외처리
-    const tableKey = Object.keys(tables[0])[0];
+  async findAll(sessionId: string) {
+    const pool = this.queryDBAdapter.getAdminPool(sessionId);
 
-    const schema = {
-      tables: [],
-    };
+    const tables = await this.getTables(pool, sessionId);
+    const columns = await this.getColumns(pool, sessionId);
+    const foreignKeys = await this.getForeignKeys(pool, sessionId);
 
-    for (const table of tables) {
-      const tableName: string = table[tableKey];
-
-      const [result] = await this.queryDBAdapter.run(
-        sessionId,
-        `SHOW CREATE TABLE \`${tableName}\`;`,
-      );
-
-      const createTableSql = result['Create Table'];
-
-      const columnData = this.getColumns(createTableSql);
-
-      schema.tables.push({
-        name: tableName,
-        columns: columnData,
-      });
-    }
-
-    return schema;
+    return new ResTablesDto(this.mapTablesWithColumnsAndKeys(tables, columns, foreignKeys));
   }
 
-  private getColumns(createTableSql: string) {
-    const columnDefinitionRegex = /\(([\s\S]+)\)\s+ENGINE=/;
-    const columnDefinitionMatch = createTableSql.match(columnDefinitionRegex);
-    const columnDefinitions = columnDefinitionMatch
-      ? columnDefinitionMatch[1]
-      : null;
+  async find(sessionId: string, tableName: string) {
+    const pool = this.queryDBAdapter.getAdminPool(sessionId);
 
-    const columnRegex =
-      /`(\w+)`\s+([\w()]+)(?:\s+NOT\s+NULL)?(?:\s+AUTO_INCREMENT)?(?:\s+DEFAULT\s+[^,]*)?/g;
-    const pkRegex = /PRIMARY KEY\s+\((.*?)\)/;
-    const uniqueKeyRegex = /UNIQUE KEY `(\w+)` \((.*?)\)/g;
-    const foreignKeyRegex =
-      /CONSTRAINT `(\w+)` FOREIGN KEY \((.*?)\) REFERENCES `(\w+)` \((.*?)\)/g;
-    const indexKeyRegex = /KEY `(\w+)` \((.*?)\)/g;
+    const tables = await this.getTables(pool, sessionId, tableName);
+    const columns = await this.getColumns(pool, sessionId, tableName);
+    const foreignKeys = await this.getForeignKeys(pool, sessionId, tableName);
 
-    const primaryKeyMatch = createTableSql.match(pkRegex);
-    const primaryKeys = primaryKeyMatch
-      ? primaryKeyMatch[1].replace(/`/g, '').split(',')
-      : [];
+    return this.mapTablesWithColumnsAndKeys(tables, columns, foreignKeys)[0] || [];
+  }
 
-    const columns = [];
-    const columnNames = new Set();
+  private async getTables(pool: Pool, schema: string, tableName?: string) {
+    const query = `
+    SELECT TABLE_NAME
+    FROM INFORMATION_SCHEMA.TABLES
+    WHERE TABLE_SCHEMA = ? ${tableName ? 'AND TABLE_NAME = ?' : ''}
+  `;
+    const params = tableName ? [schema, tableName] : [schema];
+    const [tables] = await pool.query(query, params);
+    return tables as any[];
+  }
 
-    let match;
+  private async getColumns(pool: Pool, schema: string, tableName?: string) {
+    const query = `
+    SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE, COLUMN_KEY, EXTRA, IS_NULLABLE
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = ? ${tableName ? 'AND TABLE_NAME = ?' : ''}
+  `;
+    const params = tableName ? [schema, tableName] : [schema];
+    const [columns] = await pool.query(query, params);
+    return columns as any[];
+  }
 
-    while ((match = columnRegex.exec(columnDefinitions)) !== null) {
-      const [, name, type] = match;
+  private async getForeignKeys(pool: Pool, schema: string, tableName?: string) {
+    const query = `
+    SELECT 
+      TABLE_NAME, 
+      COLUMN_NAME, 
+      REFERENCED_TABLE_NAME, 
+      REFERENCED_COLUMN_NAME
+    FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+    WHERE TABLE_SCHEMA = ? 
+    ${tableName ? 'AND TABLE_NAME = ?' : ''} 
+    AND REFERENCED_TABLE_NAME IS NOT NULL
+  `;
+    const params = tableName ? [schema, tableName] : [schema];
+    const [foreignKeys] = await pool.query(query, params);
+    return foreignKeys as any[];
+  }
 
-      if (columnNames.has(name)) continue;
-      columnNames.add(name);
+  private mapTablesWithColumnsAndKeys(
+    tables: any[],
+    columns: any[],
+    foreignKeys: any[],
+  ): ResTableDto[] {
+    return tables.map((table) => {
+      const tableColumns = columns.filter(
+        (col) => col.TABLE_NAME === table.TABLE_NAME,
+      );
 
-      const constraints = [];
-      if (primaryKeys.includes(name)) constraints.push('PK');
+      const columnDtos = tableColumns.map((col) => {
+        const fk = foreignKeys.find(
+          (key) =>
+            key.TABLE_NAME === col.TABLE_NAME &&
+            key.COLUMN_NAME === col.COLUMN_NAME,
+        );
 
-      columns.push({
-        name,
-        type,
-        constraint: constraints,
-        join: null,
+        return new ColumnDto({
+          name: col.COLUMN_NAME,
+          type: col.DATA_TYPE,
+          PK: col.COLUMN_KEY === 'PRI',
+          FK: fk
+            ? `${fk.REFERENCED_TABLE_NAME}.${fk.REFERENCED_COLUMN_NAME}`
+            : null,
+          UQ: col.COLUMN_KEY === 'UNI',
+          AI: col.EXTRA.includes('auto_increment'),
+          NN: col.IS_NULLABLE === 'NO',
+          IDX: col.COLUMN_KEY === 'MUL',
+        });
       });
-    }
 
-    while ((match = uniqueKeyRegex.exec(createTableSql)) !== null) {
-      const [, , uniqueColumns] = match;
-      const uniqueCols = uniqueColumns.replace(/`/g, '').split(',');
-
-      uniqueCols.forEach((colName) => {
-        const column = columns.find((col) => col.name === colName);
-        if (column && !column.constraint.includes('Unique')) {
-          column.constraint.push('Unique');
-        }
+      return new ResTableDto({
+        tableName: table.TABLE_NAME || null,
+        columns: columnDtos || null,
       });
-    }
-
-    while ((match = foreignKeyRegex.exec(createTableSql)) !== null) {
-      const [, constraintName, columnName, referencedTable, referencedColumn] = match;
-
-      const column = columns.find((col) => col.name === columnName.replace(/`/g, ''));
-      if (column) {
-        column.constraint.push('FK');
-        column.join = `${referencedTable}.${referencedColumn}`;
-      }
-    }
-
-    while ((match = indexKeyRegex.exec(createTableSql)) !== null) {
-      const [, indexName, indexedColumns] = match;
-      const indexedCols = indexedColumns.replace(/`/g, '').split(',');
-
-      indexedCols.forEach((colName) => {
-        const column = columns.find((col) => col.name === colName);
-        if (column && !column.constraint.includes('Index')) {
-          column.constraint.push('Index');
-        }
-      });
-    }
-
-    return columns;
+    });
   }
 }

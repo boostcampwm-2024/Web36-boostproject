@@ -29,6 +29,7 @@ export class ShellService {
       sessionId: shell.sessionId,
       user: shell.user,
       createdAt: shell.createdAt,
+      id: shell.id,
     });
     return this.shellRepository.save(updatedShell);
   }
