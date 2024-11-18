@@ -27,7 +27,8 @@ export class QueryService {
         ...baseUpdateData,
         affectedRows: rows.length,
         queryStatus: true,
-        resultTable: slicedRows,
+        resultTable:
+          baseUpdateData.queryType == QueryType.SELECT ? slicedRows : null,
       });
     } catch (e) {
       return await this.shellService.update(shellId, {
@@ -46,7 +47,7 @@ export class QueryService {
     const queryType = Object.keys(this.queryTypeMap).find((type) =>
       trimmedQuery.startsWith(type),
     );
-    return queryType ? this.queryTypeMap[queryType] : undefined;
+    return queryType ? this.queryTypeMap[queryType] : QueryType.UNKNOWN;
   }
 
   private queryTypeMap: Record<string, QueryType> = {
@@ -57,5 +58,6 @@ export class QueryService {
     CREATE: QueryType.CREATE,
     DROP: QueryType.DROP,
     ALTER: QueryType.ALTER,
+    UNKNOWN: QueryType.UNKNOWN,
   };
 }

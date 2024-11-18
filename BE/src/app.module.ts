@@ -7,9 +7,10 @@ import { Shell } from 'src/shell/shell.entity';
 import { User } from 'src/user/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import dotenv from 'dotenv';
-import { SessionMiddleware } from './session/session.middleware';
+import { SessionMiddleware } from './middleware/session.middleware';
 import { RedisModule } from './config/redis/redis.module';
 import { ServiceDBModule } from './config/service-database/service-db.module';
+import { TableModule } from './table/tableModule';
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ dotenv.config();
     ShellModule,
     QueryModule,
     RedisModule,
+    TableModule,
   ],
 })
 export class AppModule {

@@ -25,7 +25,6 @@ export class ShellService {
   async update(id: number, updateData: Partial<Shell>) {
     const shell = await this.findShellOrThrow(id);
     const updatedShell = this.shellRepository.create({
-      ...shell,
       ...updateData,
       sessionId: shell.sessionId,
       user: shell.user,

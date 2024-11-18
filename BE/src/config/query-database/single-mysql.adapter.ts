@@ -34,7 +34,7 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
     });
   }
 
-  public async createConnection(identify: string) {
+  public async createDatabaseAndConnection(identify: string) {
     const connectInfo = {
       name: identify.substring(0, 10),
       password: identify,
@@ -52,6 +52,22 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
       `grant all privileges on ${connectInfo.database}.* to '${connectInfo.name}'@'${connectInfo.host}';`,
     );
 
+    this.userConnectionList[identify] = await createConnection({
+      host: process.env.QUERY_DB_HOST,
+      user: connectInfo.name,
+      password: connectInfo.password,
+      port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
+      database: connectInfo.database,
+    });
+  }
+
+  public async createConnection(identify: string) {
+    const connectInfo = {
+      name: identify.substring(0, 10),
+      password: identify,
+      host: '%',
+      database: identify,
+    };
     this.userConnectionList[identify] = await createConnection({
       host: process.env.QUERY_DB_HOST,
       user: connectInfo.name,
