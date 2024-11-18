@@ -9,23 +9,15 @@ const shellData: ShellType[] = shellDataRaw.result
 const axiosMock = axios.create()
 const mock = new MockAdapter(axiosMock)
 
-axiosMock.interceptors.response.use(
-  (response) => {
-    response.data.data = response.data
-    return response
-  },
-  (error) => Promise.reject(error)
-)
-
 // fetch
-mock.onGet('/shells').reply(200, shellData)
+mock.onGet('/shells').reply(200, { data: shellData })
 
 // add
 mock.onPost('/shells').reply((config) => {
   const newShell: ShellType = JSON.parse(config.data)
   newShell.id = new Date().getTime()
   shellData.push(newShell)
-  return [200, newShell.id]
+  return [200, { data: newShell.id }]
 })
 
 // execute
@@ -38,7 +30,7 @@ mock.onPost(/^\/shells(\/\d+\/execute)?$/).reply((config) => {
   const result = getMocResult(executeddShell)
 
   shellData.splice(index, 1, { ...executeddShell, ...result })
-  return [200, result]
+  return [200, { data: result }]
 })
 
 // delete
@@ -49,7 +41,7 @@ mock.onDelete(/\/shells\/\d+/).reply((config) => {
   if (index === -1) return [404, { error: 'Shell not found' }]
 
   shellData.splice(index, 1)
-  return [200, id]
+  return [200, { data: id }]
 })
 
 // put
@@ -60,8 +52,7 @@ mock.onPut(/\/shells\/\d+/).reply((config) => {
 
   if (!changedShell) return [404, { error: 'Shell not found' }]
   changedShell.query = config.data
-
-  return [200, { id, newQuery }]
+  return [200, { data: { id, newQuery } }]
 })
 
 export default axiosMock
