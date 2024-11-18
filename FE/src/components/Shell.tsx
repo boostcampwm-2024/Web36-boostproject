@@ -17,24 +17,20 @@ interface ShellProps {
   shell: ShellType
   removeShell: (id: number) => void
   updateShell: (shell: ShellType) => void
-  focusedShell: number | null
-  setFocusedShell: React.Dispatch<React.SetStateAction<number | null>>
 }
 
-export default function Shell({
-  shell,
-  removeShell,
-  updateShell,
-  focusedShell,
-  setFocusedShell,
-}: ShellProps) {
+export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
   const { id, queryStatus, query, text, resultTable } = shell
 
+  const [focused, setFocused] = useState(false)
   const [inputValue, setInputValue] = useState(query ?? '')
-  const prevQueryRef = useRef<string>('')
+
+  const prevQueryRef = useRef<string>(query ?? '')
   const executeShellMutation = useExecuteShell()
 
-  const handleBlur = () => {
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (e.relatedTarget?.id === 'remove-shell-btn') return
+    setFocused(false)
     if (inputValue === prevQueryRef.current) return
     updateShell({ ...shell, query: inputValue })
     prevQueryRef.current = inputValue
@@ -43,6 +39,11 @@ export default function Shell({
   const handleClick = () => {
     if (!id) return
     executeShellMutation.mutate(shell)
+  }
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault() // Blur 이벤트 방지
+    if (id) removeShell(id)
   }
 
   return (
@@ -57,14 +58,21 @@ export default function Shell({
         </button>
         <input
           type="text"
-          defaultValue={inputValue}
+          value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          onFocus={() => setFocusedShell(id || null)} // 추후 로직 제거?
+          onFocus={() => setFocused(true)}
           onBlur={handleBlur}
           className="h-8 w-full border-none bg-secondary p-2 text-base font-medium text-foreground focus:outline-none"
         />
-        {focusedShell === id && id != null && (
-          <X className="mr-3 fill-current" onClick={() => removeShell(id)} />
+        {focused && (
+          <button
+            type="button"
+            id="remove-shell-btn"
+            className="mr-3 cursor-pointer fill-current"
+            onMouseDown={handleMouseDown}
+          >
+            <X />
+          </button>
         )}
       </div>
       {text && ( // 쉘 실행 결과가 있는가?
@@ -81,7 +89,9 @@ export default function Shell({
                   <TableHeader>
                     <TableRow>
                       {Object.keys(resultTable[0])?.map((header) => (
-                        <TableHead key={header}>{header}</TableHead>
+                        <TableHead key={generateKey(header)}>
+                          {header}
+                        </TableHead>
                       ))}
                     </TableRow>
                   </TableHeader>
@@ -89,7 +99,7 @@ export default function Shell({
                     {resultTable.map((row) => (
                       <TableRow key={generateKey(row)}>
                         {Object.values(row).map((cell) => (
-                          <TableCell key={String(cell)}>
+                          <TableCell key={generateKey(cell)}>
                             {String(cell)}
                           </TableCell>
                         ))}
