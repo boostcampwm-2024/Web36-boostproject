@@ -43,4 +43,7 @@ export class Shell {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @Column({ type: 'text', nullable: true })
+  text: string;
 }
