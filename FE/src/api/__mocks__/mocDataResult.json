@@ -1,36 +1,30 @@
 {
   "resultPlain": {
     "queryStatus": true,
-    "runTime": "0.03",
     "queryType": "UPDATE",
-    "failMessage": null,
-    "affectedRows": 1,
-    "resultTable": []
+    "text": "Query OK, 1 rows affected (0.03 sec)",
+    "resultTable": null
   },
   "resultError": {
     "queryStatus": false,
-    "runTime": "0.1",
     "queryType": "INSERT",
-    "failMessage": "Duplicate entry",
-    "affectedRows": null,
-    "resultTable": []
+    "text": "Query Error, Duplicate entry (0.1 sec)",
+    "resultTable": null
   },
   "resultTableShort": {
     "queryStatus": true,
-    "runTime": "0.04",
     "queryType": "SELECT",
-    "failMessage": null,
-    "affectedRows": 10,
+    "text": "Query OK, 10 rows affected (0.04 sec)",
     "resultTable": [
       {
-        "id": "1",
+        "id": 1,
         "title": "바뀐 공지사항",
         "description": "첫 번째 공지사항의 내용이 여기에 포함됩니다.",
         "authorId": "3",
         "timestamp": "2024-11-03T09:00:00.000Z"
       },
       {
-        "id": "2",
+        "id": 2,
         "title": "바뀐 공지사항",
         "description": "시스템 업데이트에 관한 두 번째 공지가 여기에 들어갑니다.",
         "authorId": "4",
@@ -40,83 +34,81 @@
   },
   "resultTableLong": {
     "queryStatus": true,
-    "runTime": "0.08",
     "queryType": "SELECT",
-    "failMessage": null,
-    "affectedRows": 15,
+    "text": "Query OK, 15 rows affected (0.08 sec)",
     "resultTable": [
       {
-        "id": "1",
+        "id": 1,
         "title": "첫 번째 공지사항",
         "description": "첫 번째 공지사항의 내용이 여기에 포함됩니다.",
         "authorId": "3",
         "timestamp": "2024-11-03T09:00:00.000Z"
       },
       {
-        "id": "2",
+        "id": 2,
         "title": "두 번째 업데이트",
         "description": "시스템 업데이트에 관한 두 번째 공지가 여기에 들어갑니다.",
         "authorId": "4",
         "timestamp": "2024-11-04T14:30:00.000Z"
       },
       {
-        "id": "3",
+        "id": 3,
         "title": "세 번째 공지사항",
         "description": "시스템 유지보수 작업 일정입니다.",
         "authorId": "1",
         "timestamp": "2024-11-05T10:15:00.000Z"
       },
       {
-        "id": "4",
+        "id": 4,
         "title": "신규 기능 출시",
         "description": "새로운 기능이 추가되었습니다.",
         "authorId": "2",
         "timestamp": "2024-11-06T08:45:00.000Z"
       },
       {
-        "id": "5",
+        "id": 5,
         "title": "보안 업데이트",
         "description": "보안 패치가 적용되었습니다.",
         "authorId": "5",
         "timestamp": "2024-11-07T12:00:00.000Z"
       },
       {
-        "id": "6",
+        "id": 6,
         "title": "시스템 점검 완료",
         "description": "정기 점검이 완료되었습니다.",
         "authorId": "6",
         "timestamp": "2024-11-08T16:00:00.000Z"
       },
       {
-        "id": "7",
+        "id": 7,
         "title": "기능 개선 안내",
         "description": "기존 기능이 개선되었습니다.",
         "authorId": "4",
         "timestamp": "2024-11-09T18:30:00.000Z"
       },
       {
-        "id": "8",
+        "id": 8,
         "title": "긴급 공지사항",
         "description": "긴급한 공지사항이 있으니 확인 바랍니다.",
         "authorId": "3",
         "timestamp": "2024-11-10T11:00:00.000Z"
       },
       {
-        "id": "9",
+        "id": 9,
         "title": "서비스 사용법 안내",
         "description": "서비스 사용법에 관한 안내입니다.",
         "authorId": "7",
         "timestamp": "2024-11-11T09:15:00.000Z"
       },
       {
-        "id": "10",
+        "id": 10,
         "title": "계정 관련 업데이트",
         "description": "계정 보안이 강화되었습니다.",
         "authorId": "8",
         "timestamp": "2024-11-12T10:20:00.000Z"
       },
       {
-        "id": "11",
+        "id": 11,
         "title": "커뮤니티 가이드라인 개정",
         "description": "커뮤니티 가이드라인이 변경되었습니다.",
         "authorId": "9",

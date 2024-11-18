@@ -4,28 +4,25 @@ import { ShellType } from '@/types/interfaces'
 import getMocResult from '@/api/__mocks__/util'
 import shellDataRaw from '@/api/__mocks__/mocData.json'
 
-const shellData: ShellType[] = shellDataRaw.result.map((shell) => ({
-  ...shell,
-  id: String(shell.id), // 초기 데이터에서도 id를 string으로 변환
-}))
+const shellData: ShellType[] = shellDataRaw.result
 
 const axiosMock = axios.create()
 const mock = new MockAdapter(axiosMock)
 
 // fetch
-mock.onGet('/shells').reply(200, shellData)
+mock.onGet('/shells').reply(200, { data: shellData })
 
 // add
 mock.onPost('/shells').reply((config) => {
   const newShell: ShellType = JSON.parse(config.data)
-  newShell.id = String(new Date().getTime()) // id를 string으로 변환
+  newShell.id = new Date().getTime()
   shellData.push(newShell)
-  return [200, newShell.id]
+  return [200, { data: newShell.id }]
 })
 
 // execute
 mock.onPost(/^\/shells(\/\d+\/execute)?$/).reply((config) => {
-  const id = config.url!.split('/')[2]
+  const id = parseInt(config.url!.split('/')[2], 10)
   const executeddShell = shellData.find((shell) => shell.id === id)
   const index = shellData.findIndex((shell) => shell.id === id)
 
@@ -33,30 +30,29 @@ mock.onPost(/^\/shells(\/\d+\/execute)?$/).reply((config) => {
   const result = getMocResult(executeddShell)
 
   shellData.splice(index, 1, { ...executeddShell, ...result })
-  return [200, result]
+  return [200, { data: result }]
 })
 
 // delete
 mock.onDelete(/\/shells\/\d+/).reply((config) => {
-  const id = config.url!.split('/').pop()!
+  const id = parseInt(config.url!.split('/').pop()!, 10)
   const index = shellData.findIndex((shell) => shell.id === id)
 
   if (index === -1) return [404, { error: 'Shell not found' }]
 
   shellData.splice(index, 1)
-  return [200, id]
+  return [200, { data: id }]
 })
 
 // put
 mock.onPut(/\/shells\/\d+/).reply((config) => {
-  const id = config.url!.split('/').pop()!
+  const id = parseInt(config.url!.split('/').pop()!, 10)
   const newQuery = config.data
   const changedShell = shellData.find((shell) => shell.id === id)
 
   if (!changedShell) return [404, { error: 'Shell not found' }]
   changedShell.query = config.data
-
-  return [200, { id, newQuery }]
+  return [200, { data: { id, newQuery } }]
 })
 
 export default axiosMock

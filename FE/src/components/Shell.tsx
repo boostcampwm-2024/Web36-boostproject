@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import PlayCircle from '@/assets/play_circle.svg'
 import { ShellType } from '@/types/interfaces'
 import { useExecuteShell } from '@/hooks/useShellQuery'
+import generateKey from '@/util'
 import { X } from 'lucide-react'
 import {
   Table,
@@ -27,22 +28,11 @@ export default function Shell({
   focusedShell,
   setFocusedShell,
 }: ShellProps) {
-  const {
-    id,
-    queryStatus,
-    runTime,
-    query,
-    queryType,
-    failMessage,
-    affectedRows,
-    resultTable,
-  } = shell
+  const { id, queryStatus, query, text, resultTable } = shell
 
   const [inputValue, setInputValue] = useState(query ?? '')
   const prevQueryRef = useRef<string>('')
   const executeShellMutation = useExecuteShell()
-
-  const successMessage = `Query OK ${affectedRows || '0'} affected (${runTime || '0.00'} sec)`
 
   const handleBlur = () => {
     if (inputValue === prevQueryRef.current) return
@@ -77,30 +67,29 @@ export default function Shell({
           <X className="mr-3 fill-current" onClick={() => removeShell(id)} />
         )}
       </div>
-      {queryType && ( // 쉘 실행 결과가 있는가?
+      {text && ( // 쉘 실행 결과가 있는가?
         <div className="flex w-full flex-col overflow-hidden overflow-x-auto rounded-sm bg-secondary">
-          {queryStatus ? (
-            <p className="m-3 text-green-500">{successMessage}</p>
-          ) : (
-            <p className="m-3 text-red-500">{failMessage}</p>
-          )}
-          {queryType === 'SELECT' &&
-            resultTable &&
+          <p
+            className={`m-3 ${queryStatus ? 'text-green-500' : 'text-red-500'}`}
+          >
+            {text}
+          </p>
+          {resultTable &&
             resultTable?.length > 0 && ( // 결과 테이블이 있는지
               <>
                 <Table className="m-3">
                   <TableHeader>
-                    {Object.keys(resultTable[0])?.map((header) => (
-                      <TableHead key={JSON.stringify(header)}>
-                        {header}
-                      </TableHead>
-                    ))}
+                    <TableRow>
+                      {Object.keys(resultTable[0])?.map((header) => (
+                        <TableHead key={header}>{header}</TableHead>
+                      ))}
+                    </TableRow>
                   </TableHeader>
                   <TableBody>
                     {resultTable.map((row) => (
-                      <TableRow key={JSON.stringify(row)}>
+                      <TableRow key={generateKey(row)}>
                         {Object.values(row).map((cell) => (
-                          <TableCell key={JSON.stringify(cell)}>
+                          <TableCell key={String(cell)}>
                             {String(cell)}
                           </TableCell>
                         ))}
