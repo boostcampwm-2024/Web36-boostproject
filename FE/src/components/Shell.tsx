@@ -28,7 +28,7 @@ export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
   const prevQueryRef = useRef<string>(query ?? '')
   const executeShellMutation = useExecuteShell()
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     if (e.relatedTarget?.id === 'remove-shell-btn') return
     setFocused(false)
     if (inputValue === prevQueryRef.current) return
@@ -48,7 +48,7 @@ export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
 
   return (
     <>
-      <div className="flex h-12 w-full items-center overflow-hidden rounded-sm bg-secondary">
+      <div className="flex min-h-[2rem] w-full items-center overflow-hidden rounded-sm bg-secondary">
         <button
           type="button"
           className="mr-3 h-full w-12 bg-primary p-3"
@@ -56,8 +56,7 @@ export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
         >
           <img src={PlayCircle} alt="play button" />
         </button>
-        <input
-          type="text"
+        <textarea
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onFocus={() => setFocused(true)}
