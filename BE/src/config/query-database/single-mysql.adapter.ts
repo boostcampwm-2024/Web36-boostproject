@@ -42,6 +42,26 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
       database: identify,
     };
 
+    if (!this.userConnectionList[identify]) {
+      this.userConnectionList[identify] = await createConnection({
+        host: process.env.QUERY_DB_HOST,
+        user: connectInfo.name,
+        password: connectInfo.password,
+        port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
+        database: connectInfo.database,
+      });
+      await this.run(identify, 'set profiling = 1;');
+    }
+  }
+
+  public async initUserDatabase(identify: string) {
+    const connectInfo = {
+      name: identify.substring(0, 10),
+      password: identify,
+      host: '%',
+      database: identify,
+    };
+
     await this.adminConnection.query(
       `create database ${connectInfo.database};`,
     );
@@ -51,14 +71,6 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
     await this.adminConnection.query(
       `grant all privileges on ${connectInfo.database}.* to '${connectInfo.name}'@'${connectInfo.host}';`,
     );
-
-    this.userConnectionList[identify] = await createConnection({
-      host: process.env.QUERY_DB_HOST,
-      user: connectInfo.name,
-      password: connectInfo.password,
-      port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
-      database: connectInfo.database,
-    });
   }
 
   public async closeConnection(identify: string) {
