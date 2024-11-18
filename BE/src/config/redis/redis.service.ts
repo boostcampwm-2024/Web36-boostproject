@@ -47,7 +47,7 @@ export class RedisService {
   public async setNewSession(key: string) {
     const session = await this.getSession(key);
     if (!session) {
-      this.queryDBAdapter.initUserDatabase(key);
+      await this.queryDBAdapter.initUserDatabase(key);
     }
     this.queryDBAdapter.createConnection(key);
   }
