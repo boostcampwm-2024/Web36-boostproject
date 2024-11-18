@@ -47,11 +47,11 @@ mock.onDelete(/\/shells\/\d+/).reply((config) => {
 // put
 mock.onPut(/\/shells\/\d+/).reply((config) => {
   const id = parseInt(config.url!.split('/').pop()!, 10)
-  const newQuery = config.data
+  const newQuery = JSON.parse(config.data).query
   const changedShell = shellData.find((shell) => shell.id === id)
 
   if (!changedShell) return [404, { error: 'Shell not found' }]
-  changedShell.query = config.data
+  changedShell.query = newQuery
   return [200, { data: { id, newQuery } }]
 })
 
