@@ -57,10 +57,15 @@ export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
       <div className="flex min-h-[2rem] w-full items-center overflow-hidden rounded-sm bg-secondary">
         <button
           type="button"
-          className="mr-3 h-full w-12 bg-primary p-3"
+          className="mr-3 h-full w-12 bg-primary p-3 disabled:cursor-not-allowed"
           onClick={handleClick}
+          disabled={inputValue.length === 0}
         >
-          <img src={PlayCircle} alt="play button" />
+          <img
+            src={PlayCircle}
+            alt="play button"
+            className={`${inputValue.length === 0 ? 'opacity-50' : ''}`}
+          />
         </button>
         <textarea
           value={inputValue}
