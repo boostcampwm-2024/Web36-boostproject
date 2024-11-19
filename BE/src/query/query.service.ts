@@ -21,6 +21,13 @@ export class QueryService {
       queryType: this.detectQueryType(queryDto.query),
     };
     try {
+      if (baseUpdateData.queryType === QueryType.UNKNOWN) {
+        return await this.shellService.replace(shellId, {
+          ...baseUpdateData,
+          queryStatus: false,
+          text: '지원하지 않는 쿼리입니다.',
+        });
+      }
       const rows = await this.queryDBAdapter.run(sessionId, queryDto.query);
       const slicedRows = rows.length > 100 ? rows.slice(0, 100) : rows;
       const runTime = await this.measureQueryRunTime(sessionId);
