@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { v4 as uuidv4 } from 'uuid'
+// import { v4 as uuidv4 } from 'uuid'
 import { Badge } from '@/components/ui/badge'
 import Shell from '@/components/Shell'
 import { ShellType } from '@/types/interfaces'
@@ -10,14 +9,13 @@ import {
 } from '@/hooks/useShellQuery'
 
 export default function ShellList({ shells = [] }: { shells: ShellType[] }) {
-  const [focusedShell, setFocusedShell] = useState<number | null>(null)
   const addShellMutation = useAddShell()
   const deleteShellMutation = useDeleteShell()
   const updateShellMutation = useUpdateShell()
 
   const addShell = () => {
     const newShell: ShellType = {
-      id: null,
+      id: Date.now(), // 임시키
       queryStatus: null,
       query: null,
       queryType: null,
@@ -46,12 +44,10 @@ export default function ShellList({ shells = [] }: { shells: ShellType[] }) {
         <div className="flex flex-1 flex-col gap-3 p-4">
           {shells?.map((shell) => (
             <Shell
-              key={shell.id || uuidv4()}
+              key={shell.id}
               shell={shell}
               removeShell={removeShell}
               updateShell={updateShell}
-              focusedShell={focusedShell}
-              setFocusedShell={setFocusedShell}
             />
           ))}
         </div>

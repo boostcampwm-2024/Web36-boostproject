@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Shell } from './shell.entity';
+import { plainToInstance } from 'class-transformer';
 
 @Injectable()
 export class ShellService {
@@ -31,6 +32,19 @@ export class ShellService {
       createdAt: shell.createdAt,
       id: shell.id,
     });
+    return this.shellRepository.save(updatedShell);
+  }
+
+  async replace(id: number, updateData: Partial<Shell>) {
+    const updatedShell = plainToInstance(Shell, { id, ...updateData });
+
+    const shellInstance = new Shell();
+    Object.keys(shellInstance).forEach((key) => {
+      if (!updatedShell[key]) {
+        updatedShell[key] = null;
+      }
+    });
+    console.log(updatedShell);
     return this.shellRepository.save(updatedShell);
   }
 
