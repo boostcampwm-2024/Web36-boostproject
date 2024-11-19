@@ -44,7 +44,6 @@ export class ShellService {
         updatedShell[key] = null;
       }
     });
-    console.log(updatedShell);
     return this.shellRepository.save(updatedShell);
   }
 

@@ -51,7 +51,12 @@ export class QueryService {
   }
 
   private existResultTable(type: QueryType) {
-    const validTypes: QueryType[] = [QueryType.SELECT, QueryType.EXPLAIN];
+    const validTypes: QueryType[] = [
+      QueryType.SELECT,
+      QueryType.EXPLAIN,
+      QueryType.SHOW,
+      QueryType.DESCRIBE,
+    ];
     return validTypes.includes(type);
   }
 
@@ -87,6 +92,15 @@ export class QueryService {
     DROP: QueryType.DROP,
     ALTER: QueryType.ALTER,
     EXPLAIN: QueryType.EXPLAIN,
+    SHOW: QueryType.SHOW,
+    TRUNCATE: QueryType.TRUNCATE,
+    RENAME: QueryType.RENAME,
+    START: QueryType.START,
+    COMMIT: QueryType.COMMIT,
+    ROLLBACK: QueryType.ROLLBACK,
+    SAVEPOINT: QueryType.SAVEPOINT,
+    DESCRIBE: QueryType.DESCRIBE,
+    SET: QueryType.SET,
     UNKNOWN: QueryType.UNKNOWN,
   };
 }
