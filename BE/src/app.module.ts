@@ -10,6 +10,7 @@ import dotenv from 'dotenv';
 import { SessionMiddleware } from './middleware/session.middleware';
 import { RedisModule } from './config/redis/redis.module';
 import { ServiceDBModule } from './config/service-database/service-db.module';
+import { TableModule } from './table/table.module';
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ dotenv.config();
     ShellModule,
     QueryModule,
     RedisModule,
+    TableModule,
   ],
 })
 export class AppModule {
