@@ -42,7 +42,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./db/server:/var/lib/mysql
+      - ../db/server:/var/lib/mysql
     networks:
       - backend
 
@@ -55,7 +55,7 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - ./db/query:/var/lib/mysql
+      - ../db/query:/var/lib/mysql
     networks:
       - backend
 
@@ -65,7 +65,7 @@ services:
     ports:
       - "6379:6379"
     volumes:
-      - ./db/redis:/data
+      - ../db/redis:/data
     networks:
       - backend
 

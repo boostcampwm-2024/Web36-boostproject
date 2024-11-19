@@ -22,9 +22,11 @@ enum Domains {
   PHONE = 'phone',
   SEX = 'sex',
   BOOLEAN = 'boolean',
+  NUMBER = 'number',
+  ENUM = 'enum'
 }
 
-export class randomRecordInsertDto {
+export class RandomRecordInsertDto {
   @IsString()
   @IsNotEmpty()
   tableName: string;

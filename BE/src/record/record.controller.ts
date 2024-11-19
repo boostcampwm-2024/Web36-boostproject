@@ -1,4 +1,19 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post, UseFilters } from '@nestjs/common';
+import { RecordService } from './record.service';
+import { RandomRecordInsertDto } from './dto/record.dto';
+import { ApiExtraModels } from '@nestjs/swagger';
+import { ExceptionHandler } from 'src/common/exception/exception.handler';
 
-@Controller('record')
-export class RecordController {}
+@ApiExtraModels(RandomRecordInsertDto)
+@UseFilters(new ExceptionHandler())
+@Controller('api/record')
+export class RecordController {
+    constructor(private recordService: RecordService) { }
+
+    @Post()
+    insertRandomRecord(@Body() body: RandomRecordInsertDto) {
+        console.log(body);
+        const status = this.recordService.insertRandomRecord();
+        return { status };
+    }
+}
