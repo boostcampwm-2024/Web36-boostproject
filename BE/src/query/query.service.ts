@@ -16,6 +16,7 @@ export class QueryService {
     await this.shellService.findShellOrThrow(shellId);
 
     const baseUpdateData = {
+      sessionId: sessionId,
       query: queryDto.query,
       queryType: this.detectQueryType(queryDto.query),
     };
@@ -23,6 +24,7 @@ export class QueryService {
       const rows = await this.queryDBAdapter.run(sessionId, queryDto.query);
       const slicedRows = rows.length > 100 ? rows.slice(0, 100) : rows;
       const runTime = await this.measureQueryRunTime(sessionId);
+      const text = `Query OK, ${rows.length || 0} rows affected (${runTime || '0.00'} sec)`;
 
       const updateData = {
         ...baseUpdateData,
@@ -32,18 +34,19 @@ export class QueryService {
           resultTable: slicedRows,
         }),
         runTime: runTime,
+        text: text,
       };
-      return await this.shellService.update(shellId, updateData);
+      return await this.shellService.replace(shellId, updateData);
     } catch (e) {
-      const runTime = await this.measureQueryRunTime(sessionId);
+      const text = `ERROR ${e.errno || ''} (${e.sqlState || ''}): ${e.sqlMessage || ''}`;
 
       const updateData = {
         ...baseUpdateData,
         queryStatus: false,
         failMessage: e.sqlMessage,
-        runTime: runTime,
+        text: text,
       };
-      return await this.shellService.update(shellId, updateData);
+      return await this.shellService.replace(shellId, updateData);
     }
   }
 

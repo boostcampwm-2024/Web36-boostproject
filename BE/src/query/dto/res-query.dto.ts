@@ -1,10 +1,8 @@
-import { Expose, Transform } from 'class-transformer';
-import { QueryType } from '../../common/enums/query-type.enum';
 import { ApiProperty } from '@nestjs/swagger';
+import { Expose, Transform } from 'class-transformer';
+import { QueryType } from 'src/common/enums/query-type.enum';
 
 export class ResQueryDto {
-  constructor() {}
-
   /**
    * 쉘 Id
    * @example 1
@@ -14,18 +12,18 @@ export class ResQueryDto {
   id: number;
 
   /**
+   * 사용자 쿼리 요청
+   * @example "select * from users"
+   */
+  @Expose()
+  query: string;
+
+  /**
    * 쿼리 실행 성공 여부
    * @example true
    */
   @Expose()
   queryStatus: boolean;
-
-  /**
-   * 쿼리 실행 시간 (초)
-   * @example "0.01"
-   */
-  @Expose()
-  runTime: string;
 
   /**
    * 쿼리의 타입
@@ -34,19 +32,11 @@ export class ResQueryDto {
   @Expose()
   queryType: QueryType;
 
-  /**=
-   * 실패 시 응답 메시지
-   * @example "You have an error in your SQL syntax; check the manual..."
-   */
-  @Expose()
-  failMessage: string | null;
-
   /**
-   * 영향받은 행의 수
-   * @example 2
+   * 쿼리 결과 문구
    */
   @Expose()
-  affectedRows: number;
+  text: string;
 
   /**
    * 쿼리 결과 데이터 (테이블 형식)

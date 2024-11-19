@@ -1,4 +1,6 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Expose, Transform } from 'class-transformer';
+import { QueryType } from 'src/common/enums/query-type.enum';
 
 export class ResShellResultDto {
   /**
@@ -10,6 +12,13 @@ export class ResShellResultDto {
   id: number;
 
   /**
+   * 사용자 쿼리 요청
+   * @example "select * from users"
+   */
+  @Expose()
+  query: string;
+
+  /**
    * 쿼리 실행 성공 여부
    * @example true
    */
@@ -17,43 +26,27 @@ export class ResShellResultDto {
   queryStatus: boolean;
 
   /**
-   * 쿼리 실행 시간 (초)
-   * @example "0.01"
-   */
-  @Expose()
-  runTime: string;
-
-  /**
    * 쿼리의 타입
    * @example "CREATE"
    */
   @Expose()
-  query: string;
+  queryType: QueryType;
 
   /**
-   * 사용자 쿼리 요청
-   * @example "select * from users"
+   * 쿼리 결과 문구
    */
   @Expose()
-  queryType: string;
-
-  /**
-   * 실패 시 응답 메시지
-   * @example "You have an error in your SQL syntax; check the manual..."
-   */
-  @Expose()
-  failMessage: string;
-
-  /**
-   * 영향받은 행의 수
-   * @example 2
-   */
-  @Expose()
-  affectedRows: number;
+  text: string;
 
   /**
    * 쿼리 결과 데이터 (테이블 형식)
    */
+  @ApiProperty({
+    example: [
+      { id: 1, name: 'John Doe', email: 'johndoe@example.com' },
+      { id: 2, name: 'Jane Doe', email: 'janedoe@example.com' },
+    ],
+  })
   @Expose()
-  resultTable: object;
+  resultTable: any[];
 }
