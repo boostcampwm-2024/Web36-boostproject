@@ -40,7 +40,7 @@ export class ShellService {
 
     const shellInstance = new Shell();
     Object.keys(shellInstance).forEach((key) => {
-      if (!updatedShell[key]) {
+      if (updatedShell[key] === null) {
         updatedShell[key] = null;
       }
     });
