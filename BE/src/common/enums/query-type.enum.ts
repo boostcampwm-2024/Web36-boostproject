@@ -6,7 +6,17 @@ export const QueryType = {
   UPDATE: 'UPDATE',
   DELETE: 'DELETE',
   SELECT: 'SELECT',
-  UNKNOWN: 'UNKNOWN',
+  EXPLAIN: 'EXPLAIN',
+  SHOW: 'SHOW',
+  TRUNCATE: 'TRUNCATE',
+  RENAME: 'RENAME',
+  START: 'START',
+  COMMIT: 'COMMIT',
+  ROLLBACK: 'ROLLBACK',
+  SAVEPOINT: 'SAVEPOINT',
+  DESCRIBE: 'DESCRIBE',
+  SET: 'SET',
+  UNKNOWN: 'UNKNOWN', // USE, GRANT, REVOKE
 } as const;
 
 export type QueryType = (typeof QueryType)[keyof typeof QueryType];

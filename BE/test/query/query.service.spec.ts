@@ -3,8 +3,8 @@ import { QueryDto } from '../../src/query/dto/query.dto';
 import { QueryDBAdapter } from '../../src/config/query-database/query-db.adapter';
 import { Test, TestingModule } from '@nestjs/testing';
 import { QUERY_DB_ADAPTER } from '../../src/config/query-database/query-db.moudle';
-import { Connection } from 'mysql2/promise';
 import { ShellService } from '../../src/shell/shell.service';
+import { repl } from '@nestjs/core';
 
 describe('QueryService', () => {
   let queryService: QueryService;
@@ -27,6 +27,7 @@ describe('QueryService', () => {
           useValue: {
             findShellOrThrow: jest.fn(),
             update: jest.fn(),
+            replace: jest.fn(),
           },
         },
       ],
@@ -52,7 +53,7 @@ describe('QueryService', () => {
 
       await queryService.execute(sessionId, shellId, queryDto);
 
-      expect(mockShellService.update).toHaveBeenCalledWith(
+      expect(mockShellService.replace).toHaveBeenCalledWith(
         shellId,
         expect.objectContaining({
           resultTable: rows.slice(0, 100),
@@ -66,7 +67,7 @@ describe('QueryService', () => {
 
       await queryService.execute(sessionId, shellId, queryDto);
 
-      expect(mockShellService.update).toHaveBeenCalledWith(
+      expect(mockShellService.replace).toHaveBeenCalledWith(
         shellId,
         expect.objectContaining({
           resultTable: rows,

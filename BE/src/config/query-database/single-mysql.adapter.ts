@@ -74,7 +74,7 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
 
   public async run(identify: string, query: string): Promise<RowDataPacket[]> {
     const connection = this.userConnectionList[identify];
-    const [rows] = await connection.execute<RowDataPacket[]>(query);
+    const [rows] = await connection.query<RowDataPacket[]>(query);
     return rows;
   }
 
