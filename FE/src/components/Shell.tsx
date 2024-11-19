@@ -28,7 +28,7 @@ export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
   const prevQueryRef = useRef<string>(query ?? '')
   const executeShellMutation = useExecuteShell()
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     if (e.relatedTarget?.id === 'remove-shell-btn') return
     setFocused(false)
     if (inputValue === prevQueryRef.current) return
@@ -38,7 +38,8 @@ export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
 
   const handleClick = () => {
     if (!id) return
-    executeShellMutation.mutate(shell)
+    const processedQuery = shell.query?.replace(/\n/g, '') || null
+    executeShellMutation.mutate({ ...shell, query: processedQuery })
   }
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -46,23 +47,34 @@ export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
     if (id) removeShell(id)
   }
 
+  const handleOutput = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    e.target.style.height = 'auto' // 기존 높이 초기화
+    e.target.style.height = `${e.target.scrollHeight}px` // 내용에 맞게 높이 설정
+  }
+
   return (
     <>
-      <div className="flex h-12 w-full items-center overflow-hidden rounded-sm bg-secondary">
+      <div className="flex min-h-[2rem] w-full items-center overflow-hidden rounded-sm bg-secondary">
         <button
           type="button"
-          className="mr-3 h-full w-12 bg-primary p-3"
+          className="mr-3 h-full w-12 bg-primary p-3 disabled:cursor-not-allowed"
           onClick={handleClick}
+          disabled={inputValue.length === 0}
         >
-          <img src={PlayCircle} alt="play button" />
+          <img
+            src={PlayCircle}
+            alt="play button"
+            className={`${inputValue.length === 0 ? 'opacity-50' : ''}`}
+          />
         </button>
-        <input
-          type="text"
+        <textarea
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={handleBlur}
-          className="h-8 w-full border-none bg-secondary p-2 text-base font-medium text-foreground focus:outline-none"
+          rows={1}
+          onInput={handleOutput}
+          className="min-h-[2rem] w-full resize-none overflow-auto border-none bg-secondary p-2 text-base font-medium text-foreground focus:outline-none"
         />
         {focused && (
           <button
