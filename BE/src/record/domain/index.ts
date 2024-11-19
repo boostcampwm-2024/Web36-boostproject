@@ -7,5 +7,6 @@ import { NameGenerator } from "./name";
 import { NumberGenerator } from "./number";
 import { PhoneGenerator } from "./phone";
 import { SexGenerator } from "./sex";
+import { RandomValueGenerator } from "./random-value-generator.interface";
 
-export { BooleanGenerator, CityGenerator, CountryGenerator, EmailGenerator, EnumGenerator, NameGenerator, NumberGenerator, PhoneGenerator, SexGenerator }
+export { RandomValueGenerator, BooleanGenerator, CityGenerator, CountryGenerator, EmailGenerator, EnumGenerator, NameGenerator, NumberGenerator, PhoneGenerator, SexGenerator }

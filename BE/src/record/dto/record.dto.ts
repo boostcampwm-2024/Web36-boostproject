@@ -33,8 +33,8 @@ export class RandomRecordInsertDto {
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => ColumnInfo)
-  columns: ColumnInfo[];
+  @Type(() => RandomColumnInfo)
+  columns: RandomColumnInfo[];
 
   @IsInt()
   @Min(1)
@@ -42,7 +42,7 @@ export class RandomRecordInsertDto {
   count: number;
 }
 
-class ColumnInfo {
+export class RandomColumnInfo {
   @IsString()
   @IsNotEmpty()
   name: string;

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseFilters } from '@nestjs/common';
+import { Body, Controller, Post, Req, UseFilters } from '@nestjs/common';
 import { RecordService } from './record.service';
 import { RandomRecordInsertDto } from './dto/record.dto';
 import { ApiExtraModels } from '@nestjs/swagger';
@@ -11,7 +11,7 @@ export class RecordController {
     constructor(private recordService: RecordService) { }
 
     @Post()
-    insertRandomRecord(@Body() body: RandomRecordInsertDto) {
+    insertRandomRecord(@Body() body: RandomRecordInsertDto, @Req() req: Request) {
         console.log(body);
         const status = this.recordService.insertRandomRecord();
         return { status };
