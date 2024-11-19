@@ -6,6 +6,7 @@ export const QueryType = {
   UPDATE: 'UPDATE',
   DELETE: 'DELETE',
   SELECT: 'SELECT',
+  EXPLAIN: 'EXPLAIN',
   UNKNOWN: 'UNKNOWN',
 } as const;
 

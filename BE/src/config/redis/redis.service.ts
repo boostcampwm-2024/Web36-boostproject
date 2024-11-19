@@ -49,7 +49,7 @@ export class RedisService {
     if (!session) {
       await this.queryDBAdapter.initUserDatabase(key);
     }
-    this.queryDBAdapter.createConnection(key);
+    await this.queryDBAdapter.createConnection(key);
   }
 
   private subscribeToExpiredEvents() {

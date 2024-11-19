@@ -30,7 +30,7 @@ export class QueryService {
         ...baseUpdateData,
         affectedRows: rows.length,
         queryStatus: true,
-        ...(baseUpdateData.queryType === QueryType.SELECT && {
+        ...(this.existResultTable(baseUpdateData.queryType) && {
           resultTable: slicedRows,
         }),
         runTime: runTime,
@@ -48,6 +48,11 @@ export class QueryService {
       };
       return await this.shellService.replace(shellId, updateData);
     }
+  }
+
+  private existResultTable(type: QueryType) {
+    const validTypes: QueryType[] = [QueryType.SELECT, QueryType.EXPLAIN];
+    return validTypes.includes(type);
   }
 
   private async measureQueryRunTime(sessionId: string): Promise<string> {
@@ -81,6 +86,7 @@ export class QueryService {
     CREATE: QueryType.CREATE,
     DROP: QueryType.DROP,
     ALTER: QueryType.ALTER,
+    EXPLAIN: QueryType.EXPLAIN,
     UNKNOWN: QueryType.UNKNOWN,
   };
 }
