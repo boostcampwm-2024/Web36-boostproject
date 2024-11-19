@@ -24,7 +24,7 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
     return this.userConnectionList[identify];
   }
 
-  public getAdminPool(): Pool {
+  public getAdminPool() {
     return this.adminConnection;
   }
 

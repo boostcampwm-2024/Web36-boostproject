@@ -12,37 +12,35 @@ export class TableService {
   ) {}
 
   async findAll(sessionId: string) {
-    const pool = this.queryDBAdapter.getAdminPool(sessionId);
-
-    const tables = await this.getTables(pool, sessionId);
-    const columns = await this.getColumns(pool, sessionId);
-    const foreignKeys = await this.getForeignKeys(pool, sessionId);
+    const tables = await this.getTables(sessionId);
+    const columns = await this.getColumns(sessionId);
+    const foreignKeys = await this.getForeignKeys(sessionId);
 
     return new ResTablesDto(this.mapTablesWithColumnsAndKeys(tables, columns, foreignKeys));
   }
 
   async find(sessionId: string, tableName: string) {
-    const pool = this.queryDBAdapter.getAdminPool(sessionId);
-
-    const tables = await this.getTables(pool, sessionId, tableName);
-    const columns = await this.getColumns(pool, sessionId, tableName);
-    const foreignKeys = await this.getForeignKeys(pool, sessionId, tableName);
+    const tables = await this.getTables(sessionId, tableName);
+    const columns = await this.getColumns(sessionId, tableName);
+    const foreignKeys = await this.getForeignKeys(sessionId, tableName);
 
     return this.mapTablesWithColumnsAndKeys(tables, columns, foreignKeys)[0] || [];
   }
 
-  private async getTables(pool: Pool, schema: string, tableName?: string) {
+  private async getTables(schema: string, tableName?: string) {
+    const pool = this.queryDBAdapter.getAdminPool();
     const query = `
     SELECT TABLE_NAME
     FROM INFORMATION_SCHEMA.TABLES
     WHERE TABLE_SCHEMA = ? ${tableName ? 'AND TABLE_NAME = ?' : ''}
   `;
     const params = tableName ? [schema, tableName] : [schema];
-    const [tables] = await pool.query(query, params);
+    const [tables] = await pool.query(query, params);;
     return tables as any[];
   }
 
-  private async getColumns(pool: Pool, schema: string, tableName?: string) {
+  private async getColumns(schema: string, tableName?: string) {
+    const pool = this.queryDBAdapter.getAdminPool();
     const query = `
     SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE, COLUMN_KEY, EXTRA, IS_NULLABLE
     FROM INFORMATION_SCHEMA.COLUMNS
@@ -53,7 +51,8 @@ export class TableService {
     return columns as any[];
   }
 
-  private async getForeignKeys(pool: Pool, schema: string, tableName?: string) {
+  private async getForeignKeys(schema: string, tableName?: string) {
+    const pool = this.queryDBAdapter.getAdminPool();
     const query = `
     SELECT 
       TABLE_NAME, 
