@@ -5,6 +5,7 @@ import {QueryDBAdapter} from '../config/query-database/query-db.adapter';
 import {QueryType} from '../common/enums/query-type.enum';
 import {ShellService} from '../shell/shell.service';
 import {ResultSetHeader, RowDataPacket} from 'mysql2/promise';
+import {Shell} from "../shell/shell.entity";
 
 @Injectable()
 export class QueryService {
@@ -45,7 +46,7 @@ export class QueryService {
     }
   }
 
-  private async processQuery(baseUpdateData: any, sessionId: string, query: string)  {
+  private async processQuery(baseUpdateData: any, sessionId: string, query: string) : Promise<Partial<Shell>> {
     const isResultTable = this.existResultTable(baseUpdateData.queryType);
 
     const rows = await this.queryDBAdapter.run(sessionId, query);
