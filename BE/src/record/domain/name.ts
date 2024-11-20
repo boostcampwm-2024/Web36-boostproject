@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { RandomValueGenerator } from "./random-value-generator.interface";
 
 const firstNames: string[] = [
@@ -35,7 +36,7 @@ const lastNames: string[] = [
 ];
 
 export class NameGenerator extends RandomValueGenerator<string> {
-  getValue(): string {
+  getRandomValue(): string {
     const firstNameIdx = Math.floor(Math.random() * firstNames.length);
     const lastNameIdx = Math.floor(Math.random() * lastNames.length);
     return firstNames[firstNameIdx] + lastNames[lastNameIdx];

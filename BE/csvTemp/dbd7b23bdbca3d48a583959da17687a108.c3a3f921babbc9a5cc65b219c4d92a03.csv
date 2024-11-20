@@ -1,0 +1,11 @@
+my-name, my-city, my-country, my-email, my-phone, my-sex, my-enum, my-number, my-boolean
+오지혜,Budapest,BS,robert961@com.tw,010-4753-8787,Female,my enum2,61,false
+연아린,London,SY,isabella@mail.ru,010-1287-1748,Male,NULL,69,false
+강지완,Auckland,AW,NULL,NULL,Female,3333,67,false
+옥채현,Mexico City,AW,emily@zoho.com,010-6789-5515,Male,my enum1,60,false
+노소민,Singapore,TD,paul149@mail.com,010-8620-1170,Female,NULL,78,true
+설예빈,Budapest,KE,sophia462@protonmail.com,010-6178-4207,Male,my enum2,53,true
+이지우,Melbourne,BN,jane@com.br,NULL,Female,zzfQQ,55,true
+장지민,Shanghai,BO,isabella459@live.com,010-5377-6280,Female,3333,68,true
+육유진,Kuala Lumpur,IL,NULL,010-7105-9662,Female,my enum1,67,false
+NULL,Wellington,ML,dreamer@live.com,010-2114-1063,Male,NULL,55,true

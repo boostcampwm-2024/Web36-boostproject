@@ -14,7 +14,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-enum Domains {
+export enum Domains {
   NAME = 'name',
   COUNTRY = 'country',
   CITY = 'city',
@@ -23,7 +23,7 @@ enum Domains {
   SEX = 'sex',
   BOOLEAN = 'boolean',
   NUMBER = 'number',
-  ENUM = 'enum'
+  ENUM = 'enum',
 }
 
 export class RandomRecordInsertDto {

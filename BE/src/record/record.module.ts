@@ -6,6 +6,6 @@ import { QueryDBModule } from 'src/config/query-database/query-db.moudle';
 @Module({
   imports: [QueryDBModule],
   controllers: [RecordController],
-  providers: [RecordService]
+  providers: [RecordService],
 })
-export class RecordModule { }
+export class RecordModule {}
