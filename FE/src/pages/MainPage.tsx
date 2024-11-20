@@ -5,9 +5,20 @@ import LeftSidebar from '@/components/LeftSidebar'
 import RightSidebar from '@/components/RightSidebar'
 import ShellList from '@/components/ShellList'
 import { useShells } from '@/hooks/useShellQuery'
+import { useTables } from '@/hooks/useTableQuery'
 
 export default function Page() {
-  const { data: shells = [], isLoading, error } = useShells()
+  const {
+    data: shells = [],
+    isLoading: isShellsLoading,
+    error: shellsError,
+  } = useShells()
+  const {
+    data: tables = [],
+    isLoading: isTablesLoading,
+    error: tablesError,
+  } = useTables()
+
   const [activeItem, setActiveItem] = useState(MENU[0])
 
   return (
@@ -25,9 +36,9 @@ export default function Page() {
             Q-Lab
           </h2>
         </header>
-        {!isLoading && !error && <ShellList shells={shells} />}
+        {!isShellsLoading && !shellsError && <ShellList shells={shells} />}
       </SidebarInset>
-      <RightSidebar />
+      {!isTablesLoading && !tablesError && <RightSidebar tables={tables} />}
     </SidebarProvider>
   )
 }
