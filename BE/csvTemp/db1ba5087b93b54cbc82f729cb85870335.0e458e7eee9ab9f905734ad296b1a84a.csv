@@ -1,0 +1,31 @@
+my_name, my_city, my_country, my_email, my_phone, my_sex, my_enum, my_number, my_boolean
+송유림,New York,NZ,silverwolf@icloud.com,010-5865-7471,Female,my enum2,51,false
+범지한,Chicago,GA,nightowl597@com.br,010-3731-3819,Female,NULL,60,true
+여지우,Brisbane,PG,whitedove664@disroot.org,010-7980-9238,Female,my enum2,52,true
+표영수,Beijing,GF,NULL,010-1164-4410,Female,yo ma enumm,77,true
+남윤지,Auckland,TD,coolguy37@tech.com,NULL,Female,NULL,58,false
+주승아,Washington D.C.,PK,NULL,NULL,Female,my enum1,79,true
+천연우,Hong Kong,BT,foodie97@co.in,010-3590-7775,Female,NULL,75,false
+홍승훈,Tokyo,BG,sunshine@google.com,010-9778-2757,Female,NULL,54,true
+시은서,Kuala Lumpur,GA,chris@stanford.edu,010-3505-8112,Female,my enum1,69,false
+독고영훈,Auckland,CW,emma@runbox.com,010-5038-9866,Female,yo ma enumm,71,false
+양민호,Madrid,GR,nightowl@tech.com,010-3955-6476,Female,my enum2,56,true
+복지완,Jakarta,IQ,rockstar246@google.com,010-6890-2301,Male,NULL,75,false
+반재윤,Lima,CK,purplefish996@outlook.com,010-8455-4305,Male,NULL,70,true
+노하늘,Melbourne,CZ,NULL,010-8146-8087,Male,NULL,80,true
+홍시윤,New Delhi,SY,laura@facebook.com,010-5223-7622,Female,yyooo I'm EEENum,62,true
+복시우,Caracas,CG,nextgen86@mail.ru,010-9938-3703,Male,my enum2,67,false
+사채아,Paris,SS,greentree@amazon.com,NULL,Male,yyooo I'm EEENum,78,true
+임아린,Vancouver,GS,whitedove@hushmail.com,010-3355-8287,Male,my enum1,56,true
+강재혁,Casablanca,TO,bluefox523@outlook.com,010-6460-2150,Female,NULL,76,false
+라서윤,Madrid,SV,nightowl@outlook.com,010-1483-8999,Male,NULL,63,false
+제윤수,Prague,LI,james303@co.kr,010-6268-9496,Female,NULL,55,true
+명아윤,Nairobi,MP,chillzone21@lavabit.com,NULL,Male,yyooo I'm EEENum,67,true
+김성민,Beijing,SD,supernova99@stanford.edu,010-1876-5565,Male,my enum2,62,false
+인도아,Bogotá,CO,NULL,010-4709-9220,Female,yo ma enumm,74,true
+송현석,Lisbon,TL,emily338@aol.com,010-9287-4992,Male,my enum2,70,false
+배지아,Bangkok,CU,NULL,010-2245-3651,Female,NULL,78,true
+NULL,Washington D.C.,KI,olivia342@stanford.edu,010-2054-7298,Female,yyooo I'm EEENum,68,true
+인상현,Beijing,SB,NULL,010-4560-2572,Male,my enum1,74,true
+위다영,Miami,SR,david@tech.com,010-6957-9654,Male,NULL,53,true
+원민혁,Paris,AD,goldenlion@protonmail.com,010-3372-4210,Male,NULL,78,false

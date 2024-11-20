@@ -14,10 +14,11 @@ import {
   SexGenerator,
 } from './domain';
 import { RandomColumnInfo, RandomRecordInsertDto } from './dto/record.dto';
-import { RandomColumnEntity } from './RandomColumn.entity';
+import { RandomColumnEntity } from './randomColumn.entity';
 import fs from 'fs/promises';
 import crypto from 'crypto';
 import path from 'path';
+import { ResultSetHeader } from 'mysql2';
 
 const RANDOM_DATA_TEMP_DIR = 'csvTemp';
 
@@ -124,9 +125,9 @@ export class RecordService implements OnModuleInit {
     csvFilePath: string,
     tableName: string,
     columnNames: string[],
-  ): Promise<boolean> {
+  ): Promise<ResultSetHeader> {
     const sql = `
-      LOAD DATA LOCAL INFILE \'${csvFilePath}\'
+      LOAD DATA LOCAL INFILE \'${csvFilePath.replace(/\\/g, '\\\\')}\'
       INTO TABLE ${tableName}
       FIELDS TERMINATED BY ',' 
       LINES TERMINATED BY '\\n'
@@ -134,10 +135,21 @@ export class RecordService implements OnModuleInit {
       \(${columnNames.map((col) => `\`${col}\``).join(',')}\);
     `;
 
-    console.log('sql:', sql);
-    const result = await this.queryDBAdapter.run(sid, sql);
-    console.log(result);
-    return true;
+    return (await this.queryDBAdapter.run(
+      sid,
+      sql,
+    )) as unknown as ResultSetHeader;
+  }
+
+  private async deleteFile(filePath: string): Promise<boolean> {
+    try {
+      await fs.unlink(filePath);
+      console.log('File deleted successfully');
+      return true;
+    } catch (err) {
+      console.error('Error while deleting the file:', err);
+      return false;
+    }
   }
 
   async insertRandomRecord(
@@ -147,19 +159,25 @@ export class RecordService implements OnModuleInit {
     const columnEntities: RandomColumnEntity[] = recordDto.columns.map(
       (column) => this.toEntity(column),
     );
+    const columnNames = columnEntities.map((column) => column.name);
 
     const csvFilePath = await this.generateCsvFile(
       sid,
       columnEntities,
       recordDto.count,
     );
-    const columnNames = columnEntities.map((column) => column.name);
+
     const result = await this.insertCsvIntoDB(
       sid,
       csvFilePath,
       recordDto.tableName,
       columnNames,
     );
-    return { result, csvFilePath };
+    await this.deleteFile(csvFilePath);
+
+    return {
+      status: result.affectedRows === recordDto.count,
+      text: `${recordDto.tableName} 에 랜덤 레코드 ${recordDto.count}개 삽입되었습니다.`,
+    };
   }
 }
