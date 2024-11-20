@@ -1,4 +1,9 @@
-import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  OnModuleInit,
+} from '@nestjs/common';
 import { QueryDBAdapter } from 'src/config/query-database/query-db.adapter';
 import { QUERY_DB_ADAPTER } from 'src/config/query-database/query-db.moudle';
 import {
@@ -21,6 +26,7 @@ import path from 'path';
 import { ResultSetHeader } from 'mysql2';
 
 const RANDOM_DATA_TEMP_DIR = 'csvTemp';
+const RECORD_PROCESS_BATCH_SIZE = 10000;
 
 const generalDomain = [
   'name',
@@ -56,7 +62,7 @@ export class RecordService implements OnModuleInit {
         await fs.mkdir(RANDOM_DATA_TEMP_DIR, { recursive: true });
         console.log('csvTemp 폴더를 생성했습니다.');
       } else {
-        console.error('폴더 확인 중 요류 발생 : ', err);
+        console.error('폴더 확인 중 오류 발생 : ', err);
       }
     }
   }
@@ -82,22 +88,32 @@ export class RecordService implements OnModuleInit {
     columnEntities: RandomColumnEntity[],
     rows: number,
   ): Promise<string> {
-    const randomString = crypto.randomBytes(16).toString('hex');
+    const randomString = crypto.randomBytes(4).toString('hex');
     const filePath = path.join(
       RANDOM_DATA_TEMP_DIR,
       `${sid}.${randomString}.csv`,
     );
     const header = this.generateCsvHeader(columnEntities);
-    const data = this.generateCsvData(columnEntities, rows);
+    await fs.writeFile(filePath, header);
 
-    try {
-      await fs.writeFile(filePath, header);
-      await fs.writeFile(filePath, data, { flag: 'a' });
-    } catch (err) {
-      console.error(err);
+    let remainRows = rows;
+    while (remainRows > 0) {
+      const batchSize = Math.min(remainRows, RECORD_PROCESS_BATCH_SIZE);
+      const data = this.generateCsvData(columnEntities, batchSize);
+      try {
+        await fs.writeFile(filePath, data, { flag: 'a' });
+      } catch (err) {
+        console.error(err);
+        throw new InternalServerErrorException({
+          message: 'CSV 파일 쓰기 실패',
+          error: err.message,
+        });
+      }
+      remainRows -= batchSize;
     }
     return filePath;
   }
+
   private transpose(matrix) {
     return matrix.reduce(
       (acc, row) => row.map((_, i) => [...(acc[i] || []), row[i]]),
@@ -134,11 +150,22 @@ export class RecordService implements OnModuleInit {
       IGNORE 1 ROWS
       \(${columnNames.map((col) => `\`${col}\``).join(',')}\);
     `;
+    let queryResult: ResultSetHeader;
 
-    return (await this.queryDBAdapter.run(
-      sid,
-      sql,
-    )) as unknown as ResultSetHeader;
+    try {
+      queryResult = (await this.queryDBAdapter.run(
+        sid,
+        sql,
+      )) as unknown as ResultSetHeader;
+    } catch (err) {
+      console.error('Error while inserting data into DB:', err);
+      throw new InternalServerErrorException({
+        message: 'DB .csv load Data 실패',
+        error: err.message,
+      });
+    }
+
+    return queryResult;
   }
 
   private async deleteFile(filePath: string): Promise<boolean> {
@@ -147,7 +174,10 @@ export class RecordService implements OnModuleInit {
       return true;
     } catch (err) {
       console.error('Error while deleting the file:', err);
-      return false;
+      throw new InternalServerErrorException({
+        message: 'CSV 파일 쓰기 실패',
+        error: err.message,
+      });
     }
   }
 
