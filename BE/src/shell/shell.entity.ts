@@ -35,6 +35,9 @@ export class Shell {
   @Column({ nullable: true })
   affectedRows: number = null;
 
+  @Column({ nullable: true })
+  countRows: number = null;
+
   @Column({ type: 'json', nullable: true })
   resultTable: object = null;
 
