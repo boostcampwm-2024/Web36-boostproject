@@ -71,8 +71,8 @@ export class QueryService {
     try {
       const rows = await this.queryDBAdapter.run(sessionId, 'show profiles;');
       let lastQueryRunTime = rows[rows.length - 1]?.Duration;
-      lastQueryRunTime = Math.round(lastQueryRunTime * 100) / 100 || 0;
-      return lastQueryRunTime.toFixed(2);
+      lastQueryRunTime = Math.round(lastQueryRunTime * 1000) / 1000 || 0;
+      return lastQueryRunTime.toFixed(3);
     } catch (e) {
       console.error(e);
       return '0.00';
