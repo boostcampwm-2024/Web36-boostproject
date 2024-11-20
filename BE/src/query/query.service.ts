@@ -52,7 +52,7 @@ export class QueryService {
     const runTime = await this.measureQueryRunTime(sessionId);
 
     let text: string;
-    let resultTable: RowDataPacket[] | undefined = undefined;
+    let resultTable: RowDataPacket[];
 
     if (isResultTable) {
       const resultRows = rows as RowDataPacket[];
