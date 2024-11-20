@@ -8,12 +8,21 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { TableType } from '@/types/interfaces'
+import { TableType, TableColumnType } from '@/types/interfaces'
 import generateKey from '@/util'
 import { Check } from 'lucide-react'
+import { useTableByName } from '@/hooks/useTableQuery'
 
 export default function ViewTable({ tableData }: { tableData: TableType[] }) {
-  const [selectedTable, setSelectedTable] = useState(tableData[0])
+  const [selectedTableName, setSelectedTableName] = useState(
+    tableData[0]?.tableName || null
+  )
+
+  const {
+    data: selectedTable,
+    isLoading,
+    isError,
+  } = useTableByName(selectedTableName)
 
   return (
     <>
@@ -21,13 +30,11 @@ export default function ViewTable({ tableData }: { tableData: TableType[] }) {
         {tableData?.map((table) => (
           <Badge
             variant={
-              selectedTable.tableName === table.tableName
-                ? 'default'
-                : 'secondary'
+              selectedTableName === table.tableName ? 'default' : 'secondary'
             }
             className="mr-2 cursor-pointer"
             onClick={() => {
-              setSelectedTable(table)
+              setSelectedTableName(table.tableName)
             }}
             key={table.tableName}
           >
@@ -35,7 +42,9 @@ export default function ViewTable({ tableData }: { tableData: TableType[] }) {
           </Badge>
         ))}
       </div>
-      {selectedTable.columns && selectedTable.columns?.length > 0 && (
+      {isLoading && <p>Loading...</p>}
+      {isError && <p>Error loading table data.</p>}
+      {selectedTable?.columns && selectedTable.columns.length > 0 && (
         <Table>
           <TableHeader className="bg-secondary">
             <TableRow>
@@ -45,7 +54,7 @@ export default function ViewTable({ tableData }: { tableData: TableType[] }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {selectedTable.columns.map((row) => (
+            {selectedTable.columns.map((row: TableColumnType) => (
               <TableRow key={generateKey(row)}>
                 {Object.values(row).map((cell) => (
                   <TableCell key={generateKey(cell)}>
