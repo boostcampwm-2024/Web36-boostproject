@@ -1,31 +1,31 @@
 import { Table2, FileText, Network } from 'lucide-react'
 
-const USER = {
-  name: 'shadcn',
-  email: 'm@example.com',
-  avatar: '/avatars/shadcn.jpg',
+const QUERY_KEYS = {
+  shells: 'shells',
+} as const
+
+const MENU_TITLE = {
+  TABLE: 'Create/Edit Table',
+  RECORD: 'Add Random Record',
+  VIEW: 'Current Table',
 }
 
-const NAV_MENU = [
+const MENU = [
   {
-    title: 'Table',
+    title: MENU_TITLE.TABLE,
     icon: Table2,
     isActive: true,
   },
   {
-    title: 'Data',
+    title: MENU_TITLE.RECORD,
     icon: FileText,
     isActive: false,
   },
   {
-    title: 'ERD',
+    title: MENU_TITLE.VIEW,
     icon: Network,
     isActive: false,
   },
 ]
 
-const QUERY_KEYS = {
-  shells: 'shells',
-} as const
-
-export { USER, NAV_MENU, QUERY_KEYS }
+export { MENU, MENU_TITLE, QUERY_KEYS }
