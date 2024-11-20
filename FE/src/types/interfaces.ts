@@ -16,7 +16,7 @@ export interface TableType {
   columns: TableColumnType[]
 }
 
-interface TableColumnType {
+export interface TableColumnType {
   name: string
   type: string
   FK: string | null
