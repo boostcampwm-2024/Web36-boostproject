@@ -1,9 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { QueryDto } from './dto/query.dto';
-import { QUERY_DB_ADAPTER } from '../config/query-database/query-db.moudle';
-import { QueryDBAdapter } from '../config/query-database/query-db.adapter';
-import { QueryType } from '../common/enums/query-type.enum';
-import { ShellService } from '../shell/shell.service';
+import {Inject, Injectable} from '@nestjs/common';
+import {QueryDto} from './dto/query.dto';
+import {QUERY_DB_ADAPTER} from '../config/query-database/query-db.moudle';
+import {QueryDBAdapter} from '../config/query-database/query-db.adapter';
+import {QueryType} from '../common/enums/query-type.enum';
+import {ShellService} from '../shell/shell.service';
+import {ResultSetHeader, RowDataPacket} from 'mysql2/promise';
 
 @Injectable()
 export class QueryService {
@@ -28,21 +29,8 @@ export class QueryService {
           text: '지원하지 않는 쿼리입니다.',
         });
       }
-      const rows = await this.queryDBAdapter.run(sessionId, queryDto.query);
-      const slicedRows = rows.length > 100 ? rows.slice(0, 100) : rows;
-      const runTime = await this.measureQueryRunTime(sessionId);
-      const text = `Query OK, ${rows.length || 0} rows affected (${runTime || '0.00'} sec)`;
+      const updateData = await this.processQuery(baseUpdateData,sessionId,queryDto.query);
 
-      const updateData = {
-        ...baseUpdateData,
-        affectedRows: rows.length,
-        queryStatus: true,
-        ...(this.existResultTable(baseUpdateData.queryType) && {
-          resultTable: slicedRows,
-        }),
-        runTime: runTime,
-        text: text,
-      };
       return await this.shellService.replace(shellId, updateData);
     } catch (e) {
       const text = `ERROR ${e.errno || ''} (${e.sqlState || ''}): ${e.sqlMessage || ''}`;
@@ -57,6 +45,39 @@ export class QueryService {
     }
   }
 
+  private async processQuery(baseUpdateData: any, sessionId: string, query: string)  {
+    const isResultTable = this.existResultTable(baseUpdateData.queryType);
+
+    const rows = await this.queryDBAdapter.run(sessionId, query);
+    const runTime = await this.measureQueryRunTime(sessionId);
+
+    let text: string;
+    let resultTable: RowDataPacket[] | undefined = undefined;
+
+    if (isResultTable) {
+      const resultRows = rows as RowDataPacket[];
+      const slicedRows = resultRows.slice(0, Math.min(resultRows.length, 100));
+      text =
+          slicedRows.length === 0
+              ? `Empty set (${runTime} sec)`
+              : `${resultRows.length} in set, (${runTime} sec)`;
+      resultTable = slicedRows;
+    } else {
+      const resultHeader = rows as ResultSetHeader;
+      text = `Query OK, ${resultHeader.affectedRows} rows affected, (${runTime} sec)`;
+    }
+
+    return {
+      ...baseUpdateData,
+      affectedRows: isResultTable ? 0 : (rows as ResultSetHeader).affectedRows,
+      countRows: isResultTable ? (rows as RowDataPacket[]).length : 0,
+      queryStatus: true,
+      resultTable: isResultTable ? resultTable : [],
+      runTime,
+      text,
+    };
+  }
+
   private existResultTable(type: QueryType) {
     const validTypes: QueryType[] = [
       QueryType.SELECT,
@@ -69,13 +90,13 @@ export class QueryService {
 
   private async measureQueryRunTime(sessionId: string): Promise<string> {
     try {
-      const rows = await this.queryDBAdapter.run(sessionId, 'show profiles;');
+      const rows = await this.queryDBAdapter.run(sessionId, 'show profiles;') as RowDataPacket[];
       let lastQueryRunTime = rows[rows.length - 1]?.Duration;
       lastQueryRunTime = Math.round(lastQueryRunTime * 1000) / 1000 || 0;
       return lastQueryRunTime.toFixed(3);
     } catch (e) {
       console.error(e);
-      return '0.00';
+      return '0.000';
     }
   }
 
