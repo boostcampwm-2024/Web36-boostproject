@@ -15,7 +15,7 @@ import { useTableByName } from '@/hooks/useTableQuery'
 
 export default function ViewTable({ tableData }: { tableData: TableType[] }) {
   const [selectedTableName, setSelectedTableName] = useState(
-    tableData[0]?.tableName || null
+    tableData.length > 0 ? tableData[0].tableName : null
   )
 
   const {
@@ -23,6 +23,10 @@ export default function ViewTable({ tableData }: { tableData: TableType[] }) {
     isLoading,
     isError,
   } = useTableByName(selectedTableName)
+
+  if (!tableData || tableData.length === 0) {
+    return <p>No table data available.</p>
+  }
 
   return (
     <>
