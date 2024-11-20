@@ -144,7 +144,6 @@ export class RecordService implements OnModuleInit {
   private async deleteFile(filePath: string): Promise<boolean> {
     try {
       await fs.unlink(filePath);
-      console.log('File deleted successfully');
       return true;
     } catch (err) {
       console.error('Error while deleting the file:', err);
