@@ -206,7 +206,7 @@ export class RecordService implements OnModuleInit {
 
     return {
       status: result.affectedRows === recordDto.count,
-      text: `${recordDto.tableName} 에 랜덤 레코드 ${recordDto.count}개 삽입되었습니다.`,
+      text: `${recordDto.tableName} 에 랜덤 레코드 ${result.affectedRows}개 삽입되었습니다.`,
     };
   }
 }
