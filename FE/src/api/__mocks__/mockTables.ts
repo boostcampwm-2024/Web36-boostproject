@@ -6,7 +6,7 @@ const tableData: TableType[] = mocDataTable.tables
 
 export default function mockTables(mock: MockAdapter) {
   // fetch
-  mock.onGet('/tables').reply(200, { tables: tableData })
+  mock.onGet('/tables').reply(200, { data: { tables: tableData } })
 
   mock.onGet(/\/tables\/.+/).reply((config) => {
     const name = config.url!.split('/').pop()!
@@ -14,6 +14,6 @@ export default function mockTables(mock: MockAdapter) {
 
     if (!foundTable) return [404, { error: 'Table not found' }]
 
-    return [200, { tables: foundTable }]
+    return [200, { data: foundTable }]
   })
 }
