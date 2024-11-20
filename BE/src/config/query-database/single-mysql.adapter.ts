@@ -64,7 +64,6 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
         port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
         database: connectInfo.database,
         infileStreamFactory: (path) => {
-          console.log(`Reading file from path: ${path}`);
           return createReadStream(path);
         },
       } as ConnectionOptions);
