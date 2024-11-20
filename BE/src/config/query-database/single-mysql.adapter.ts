@@ -20,38 +20,12 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
     this.createAdminConnection();
   }
 
-  getConnection(identify: string): Connection {
+  public getConnection(identify: string): Connection {
     return this.userConnectionList[identify];
   }
 
-  private createAdminConnection() {
-    this.adminConnection = createPool({
-      host: process.env.QUERY_DB_HOST,
-      user: process.env.QUERY_DB_USER,
-      password: process.env.QUERY_DB_PASSWORD,
-      port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
-      connectionLimit: 10,
-    });
-  }
-
-  public async createConnection(identify: string) {
-    const connectInfo = {
-      name: identify.substring(0, 10),
-      password: identify,
-      host: '%',
-      database: identify,
-    };
-
-    if (!this.userConnectionList[identify]) {
-      this.userConnectionList[identify] = await createConnection({
-        host: process.env.QUERY_DB_HOST,
-        user: connectInfo.name,
-        password: connectInfo.password,
-        port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
-        database: connectInfo.database,
-      });
-      await this.run(identify, 'set profiling = 1;');
-    }
+  public getAdminPool() {
+    return this.adminConnection;
   }
 
   public async initUserDatabase(identify: string) {
@@ -73,6 +47,25 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
     );
   }
 
+  public async createConnection(identify: string) {
+    const connectInfo = {
+      name: identify.substring(0, 10),
+      password: identify,
+      host: '%',
+      database: identify,
+    };
+    if (!this.userConnectionList[identify]) {
+      this.userConnectionList[identify] = await createConnection({
+        host: process.env.QUERY_DB_HOST,
+        user: connectInfo.name,
+        password: connectInfo.password,
+        port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
+        database: connectInfo.database,
+      });
+      await this.run(identify, 'set profiling = 1;');
+    }
+  }
+
   public async closeConnection(identify: string) {
     await this.userConnectionList[identify].end();
     await this.removeDatabaseInfo(identify);
@@ -81,8 +74,18 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
 
   public async run(identify: string, query: string): Promise<RowDataPacket[]> {
     const connection = this.userConnectionList[identify];
-    const [rows] = await connection.execute<RowDataPacket[]>(query);
+    const [rows] = await connection.query<RowDataPacket[]>(query);
     return rows;
+  }
+
+  private createAdminConnection() {
+    this.adminConnection = createPool({
+      host: process.env.QUERY_DB_HOST,
+      user: process.env.QUERY_DB_USER,
+      password: process.env.QUERY_DB_PASSWORD,
+      port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
+      connectionLimit: 10,
+    });
   }
 
   private async removeDatabaseInfo(identify: string) {

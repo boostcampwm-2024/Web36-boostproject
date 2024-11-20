@@ -14,33 +14,36 @@ export class Shell {
   id: number;
 
   @Index()
-  @Column({ nullable: true })
+  @Column()
   sessionId: string;
 
   @ManyToOne(() => User, (user) => user.id)
   user: User;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   query: string;
 
   @Column({ nullable: true })
-  runTime: string;
+  runTime: string = null;
 
   @Column({ nullable: true })
-  queryType: string;
+  queryType: string = null;
 
   @Column({ nullable: true })
-  failMessage: string;
+  failMessage: string = null;
 
   @Column({ nullable: true })
-  affectedRows: number;
+  affectedRows: number = null;
 
   @Column({ type: 'json', nullable: true })
-  resultTable: object;
+  resultTable: object = null;
 
   @Column({ nullable: true })
-  queryStatus: boolean;
+  queryStatus: boolean = null;
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @Column({ type: 'text', nullable: true })
+  text: string = null;
 }
