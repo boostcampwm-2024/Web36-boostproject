@@ -41,8 +41,7 @@ export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
 
   const handleClick = async () => {
     if (!id) return
-    const processedQuery = query?.replace(/\n/g, '') || null
-    await executeShellMutation.mutateAsync({ ...shell, query: processedQuery })
+    await executeShellMutation.mutateAsync({ ...shell, query })
     if (['CREATE', 'ALTER', 'DROP'].includes(queryType || '')) refetch()
   }
 
