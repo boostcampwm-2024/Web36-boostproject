@@ -4,11 +4,13 @@ import { QUERY_DB_ADAPTER } from '../config/query-database/query-db.moudle';
 import { QueryDBAdapter } from '../config/query-database/query-db.adapter';
 import { QueryType } from '../common/enums/query-type.enum';
 import { ShellService } from '../shell/shell.service';
+import { UsageService } from 'src/usage/usage.service';
 
 @Injectable()
 export class QueryService {
   constructor(
     @Inject(QUERY_DB_ADAPTER) private readonly queryDBAdapter: QueryDBAdapter,
+    private readonly usageService: UsageService,
     private shellService: ShellService,
   ) {}
 
@@ -20,6 +22,9 @@ export class QueryService {
       query: queryDto.query,
       queryType: this.detectQueryType(queryDto.query),
     };
+    if (baseUpdateData.queryType === QueryType.INSERT) {
+      await this.usageService.detectFullUsage(sessionId, 1);
+    }
     try {
       if (baseUpdateData.queryType === QueryType.UNKNOWN) {
         return await this.shellService.replace(shellId, {
