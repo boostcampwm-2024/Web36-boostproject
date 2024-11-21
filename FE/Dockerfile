@@ -3,6 +3,8 @@ FROM node:22 AS build
 
 WORKDIR /app
 
+ENV VITE_BASE_URL=http://223.130.155.9/api
+
 COPY package*.json /app
 
 RUN npm config set registry https://registry.npmjs.org/
