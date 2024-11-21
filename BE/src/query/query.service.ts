@@ -23,7 +23,7 @@ export class QueryService {
       queryType: this.detectQueryType(queryDto.query),
     };
     if (baseUpdateData.queryType === QueryType.INSERT) {
-      await this.usageService.detectFullUsage(sessionId, 1);
+      await this.usageService.detectFullUsage(sessionId);
     }
     try {
       if (baseUpdateData.queryType === QueryType.UNKNOWN) {
