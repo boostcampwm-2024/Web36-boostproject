@@ -1,4 +1,4 @@
-import shellResultDataRaw from '@/api/__mocks__/mocdataResult.json'
+import shellResultDataRaw from '@/api/__mocks__/mocDataResult.json'
 import { ShellType } from '@/types/interfaces'
 
 const { resultPlain, resultError, resultTableShort } = shellResultDataRaw
