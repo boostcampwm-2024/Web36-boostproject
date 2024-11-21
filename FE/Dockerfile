@@ -3,7 +3,7 @@ FROM node:22 AS build
 
 WORKDIR /app
 
-ENV VITE_BASE_URL=http://223.130.155.9/api
+ENV VITE_BASE_URL=http://q-lab.site/api
 
 COPY package*.json /app
 
