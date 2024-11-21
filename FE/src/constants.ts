@@ -1,7 +1,8 @@
 import { Table2, FileText, Network } from 'lucide-react'
 
 const QUERY_KEYS = {
-  shells: 'shells',
+  SHELLS: 'shells',
+  TABLES: 'tables',
 } as const
 
 const MENU_TITLE = {

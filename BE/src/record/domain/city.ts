@@ -1,4 +1,5 @@
-import { RandomValueGenerator } from "./random-value-generator.interface";
+/* eslint-disable prettier/prettier */
+import { RandomValueGenerator } from './random-value-generator.interface';
 
 const cities: string[] = [
     // Asia
@@ -26,8 +27,8 @@ const cities: string[] = [
 ];
 
 export class CityGenerator extends RandomValueGenerator<string> {
-    getValue(): string {
-        const cityIdx = Math.floor(Math.random() * cities.length);
-        return cities[cityIdx]
-    }
+  getRandomValue(): string {
+    const cityIdx = Math.floor(Math.random() * cities.length);
+    return cities[cityIdx];
+  }
 }

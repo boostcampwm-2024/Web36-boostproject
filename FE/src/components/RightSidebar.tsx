@@ -1,4 +1,5 @@
 import { MENU_TITLE } from '@/constants'
+import { TableType } from '@/types/interfaces'
 import {
   Sidebar,
   SidebarContent,
@@ -6,10 +7,14 @@ import {
   SidebarGroup,
   SidebarGroupContent,
 } from '@/components/ui/sidebar'
-import tableData from '@/api/__mocks__/mocDataTable.json' // 임시 데이터
 import ViewTable from './ViewTable'
 
-export default function RightSidebar({ ...props }) {
+export default function RightSidebar({
+  tables = [],
+  ...props
+}: {
+  tables: TableType[]
+}) {
   return (
     <Sidebar
       collapsible="none"
@@ -28,7 +33,7 @@ export default function RightSidebar({ ...props }) {
       <SidebarContent>
         <SidebarGroup className="p-0">
           <SidebarGroupContent>
-            <ViewTable tableData={tableData.tables} />
+            <ViewTable tableData={tables} />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
