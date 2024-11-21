@@ -52,7 +52,7 @@ const TypeToConstructor = {
 export class RecordService implements OnModuleInit {
   constructor(
     @Inject(QUERY_DB_ADAPTER) private readonly queryDBAdapter: QueryDBAdapter,
-  ) {}
+  ) { }
 
   async onModuleInit() {
     try {
@@ -105,7 +105,7 @@ export class RecordService implements OnModuleInit {
       } catch (err) {
         console.error(err);
         throw new InternalServerErrorException({
-          message: 'CSV 파일 쓰기 실패',
+          message: 'CSV 파일 쓰기 실패 : ' + err.message,
           error: err.message,
         });
       }
@@ -160,7 +160,7 @@ export class RecordService implements OnModuleInit {
     } catch (err) {
       console.error('Error while inserting data into DB:', err);
       throw new InternalServerErrorException({
-        message: 'DB .csv load Data 실패',
+        message: 'DB .csv load Data 실패 :' + err.message,
         error: err.message,
       });
     }
@@ -175,7 +175,7 @@ export class RecordService implements OnModuleInit {
     } catch (err) {
       console.error('Error while deleting the file:', err);
       throw new InternalServerErrorException({
-        message: 'CSV 파일 쓰기 실패',
+        message: 'CSV 파일 쓰기 실패 : ' + err.message,
         error: err.message,
       });
     }
