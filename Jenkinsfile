@@ -47,7 +47,7 @@ pipeline {
                                 sh 'docker-compose build'
 
                                 // Docker Compose 실행
-                                sh 'docker-compose up -d'
+                                sh 'docker-compose up --build -d'
                             }
                         }
                     }
