@@ -34,7 +34,11 @@ import { TableType, TableColumnType } from '@/types/interfaces'
 import { COLUMN_TYPES } from '@/constants'
 import generateKey from '@/util'
 
-export default function TableTool({ tableData }: { tableData: TableType[] }) {
+export default function TableTool({
+  tableData = [],
+}: {
+  tableData: TableType[]
+}) {
   const [selectedTable, setSelectedTable] = useState(tableData[0] || null)
 
   return (
@@ -76,11 +80,21 @@ export default function TableTool({ tableData }: { tableData: TableType[] }) {
                   ([key, value]) =>
                     ['name', 'type', 'PK', 'UQ', 'AI', 'NN'].includes(key) && (
                       <TableCell key={generateKey(value)}>
-                        {key !== 'type' ? (
-                          value
-                        ) : (
+                        {key === 'name' && (
+                          <Input
+                            type="text"
+                            value={value}
+                            className="h-[32px] w-[70px] p-2"
+                          />
+                        )}
+
+                        {typeof value === 'boolean' && (
+                          <Checkbox checked={value} />
+                        )}
+
+                        {key === 'type' && (
                           <Select>
-                            <SelectTrigger className="w-[90px]">
+                            <SelectTrigger className="h-[32px] w-[120px] p-2">
                               <SelectValue placeholder={value} />
                             </SelectTrigger>
                             <SelectContent>
@@ -91,9 +105,6 @@ export default function TableTool({ tableData }: { tableData: TableType[] }) {
                               ))}
                             </SelectContent>
                           </Select>
-                        )}
-                        {typeof value === 'boolean' && (
-                          <Checkbox checked={value} />
                         )}
                       </TableCell>
                     )
