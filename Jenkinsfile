@@ -4,6 +4,18 @@ pipeline {
         NODE_ENV = 'test'  // 테스트 환경 설정
     }
     stages {
+        stage('environment var logging') {
+            steps {
+                script {
+                    // 환경 변수 출력
+                    echo "Checking environment variables:"
+                    echo "CHANGE_ID: ${env.CHANGE_ID}"
+                    echo "CHANGE_TARGET: ${env.CHANGE_TARGET}"
+                    echo "GITHUB_EVENT_TYPE: ${env.GITHUB_EVENT_TYPE}"
+                    echo "BRANCH_NAME: ${env.BRANCH_NAME}"
+                }
+            }
+        }
         stage('main Branch : Deployment'){
             when{
                 allOf{
@@ -13,7 +25,7 @@ pipeline {
                     }
                     expression {
                         // 메인 브랜치에 대한 업데이트인지 확인
-                        return env.BRANCH_NME == 'main'
+                        return env.BRANCH_NAME == 'main'
                     }
                 }
             }
@@ -43,17 +55,6 @@ pipeline {
                             }
                         }
                     }
-                }
-            }
-        }
-        
-        stage('environment var logging') {
-            steps {
-                script {
-                    // 환경 변수 출력
-                    echo "Checking environment variables:"
-                    echo "CHANGE_ID: ${env.CHANGE_ID}"
-                    echo "CHANGE_TARGET: ${env.CHANGE_TARGET}"
                 }
             }
         }
