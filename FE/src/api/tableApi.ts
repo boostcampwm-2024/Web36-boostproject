@@ -6,7 +6,7 @@ const axiosInstance =
 
 export async function fetchTables() {
   const response = await axiosInstance.get('/tables')
-  return response.data.data
+  return response.data.data.tables
 }
 
 export async function fetchTablesByName(tableName: string) {
