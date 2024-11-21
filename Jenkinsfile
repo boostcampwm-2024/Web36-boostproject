@@ -20,10 +20,6 @@ pipeline {
             when{
                 allOf{
                     expression {
-                        // 푸시 이벤트인지 확인
-                        return env.GITHUB_EVENT_TYPE == 'push'
-                    }
-                    expression {
                         // 메인 브랜치에 대한 업데이트인지 확인
                         return env.BRANCH_NAME == 'main'
                     }
