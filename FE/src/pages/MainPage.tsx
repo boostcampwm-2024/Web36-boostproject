@@ -29,7 +29,11 @@ export default function Page() {
         } as React.CSSProperties
       }
     >
-      <LeftSidebar activeItem={activeItem} setActiveItem={setActiveItem} />
+      <LeftSidebar
+        activeItem={activeItem}
+        setActiveItem={setActiveItem}
+        tables={tables}
+      />
       <SidebarInset>
         <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-2.5">
           <h2 className="h-full pt-1 text-2xl font-bold text-foreground">
