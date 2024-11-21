@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { QueryDto } from './dto/query.dto';
 import { QUERY_DB_ADAPTER } from '../config/query-database/query-db.moudle';
 import { QueryDBAdapter } from '../config/query-database/query-db.adapter';
@@ -25,7 +25,10 @@ export class QueryService {
       queryType: this.detectQueryType(queryDto.query),
     };
     if (baseUpdateData.queryType === QueryType.INSERT) {
-      await this.usageService.detectFullUsage(sessionId);
+      const isFull = await this.usageService.detectFullUsage(sessionId);
+      if (isFull) {
+        throw new BadRequestException('테이블 최대 용량을 초과하였습니다.');
+      }
     }
     try {
       if (baseUpdateData.queryType === QueryType.UNKNOWN) {

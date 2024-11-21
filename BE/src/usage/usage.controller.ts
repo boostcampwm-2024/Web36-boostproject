@@ -16,7 +16,7 @@ export class UsageController {
   @Serialize(ResUsageDto)
   async getUsage(@Req() req: Request) {
     const sessionId = req.sessionID;
-    const totalRowCount = await this.usageService.getDiskUsage(sessionId);
-    return { totalRowCount: totalRowCount };
+    const diskUsage = await this.usageService.getDiskUsage(sessionId);
+    return { diskUsage: diskUsage };
   }
 }

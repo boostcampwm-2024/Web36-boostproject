@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -24,6 +25,7 @@ import fs from 'fs/promises';
 import crypto from 'crypto';
 import path from 'path';
 import { ResultSetHeader } from 'mysql2';
+import { UsageService } from 'src/usage/usage.service';
 
 const RANDOM_DATA_TEMP_DIR = 'csvTemp';
 const RECORD_PROCESS_BATCH_SIZE = 10000;
@@ -52,7 +54,8 @@ const TypeToConstructor = {
 export class RecordService implements OnModuleInit {
   constructor(
     @Inject(QUERY_DB_ADAPTER) private readonly queryDBAdapter: QueryDBAdapter,
-  ) { }
+    private readonly usageService: UsageService,
+  ) {}
 
   async onModuleInit() {
     try {
@@ -195,6 +198,13 @@ export class RecordService implements OnModuleInit {
       columnEntities,
       recordDto.count,
     );
+
+    const fileSize = (await fs.stat(csvFilePath)).size / 1024;
+    const isFull = await this.usageService.detectFullUsage(sid, fileSize);
+    if (isFull) {
+      this.deleteFile(csvFilePath);
+      throw new BadRequestException('테이블 최대 용량을 초과하였습니다.');
+    }
 
     const result = await this.insertCsvIntoDB(
       sid,
