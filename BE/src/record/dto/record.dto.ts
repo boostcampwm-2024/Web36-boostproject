@@ -14,7 +14,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-enum Domains {
+export enum Domains {
   NAME = 'name',
   COUNTRY = 'country',
   CITY = 'city',
@@ -23,7 +23,7 @@ enum Domains {
   SEX = 'sex',
   BOOLEAN = 'boolean',
   NUMBER = 'number',
-  ENUM = 'enum'
+  ENUM = 'enum',
 }
 
 export class RandomRecordInsertDto {
@@ -33,16 +33,16 @@ export class RandomRecordInsertDto {
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => ColumnInfo)
-  columns: ColumnInfo[];
+  @Type(() => RandomColumnInfo)
+  columns: RandomColumnInfo[];
 
   @IsInt()
   @Min(1)
-  @Max(10000)
+  @Max(100000)
   count: number;
 }
 
-class ColumnInfo {
+export class RandomColumnInfo {
   @IsString()
   @IsNotEmpty()
   name: string;

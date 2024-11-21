@@ -1,4 +1,6 @@
-import { RandomValueGenerator } from "./random-value-generator.interface";
+/* eslint-disable prettier/prettier */
+import { RandomValueGenerator } from './random-value-generator.interface';
+
 
 const emailNames: string[] = [
     // 일반적인 이름
@@ -51,10 +53,11 @@ const emailDomains: string[] = [
 ];
 
 export class EmailGenerator extends RandomValueGenerator<string> {
-    getValue(): string {
-        const domainIdx = Math.floor(Math.random() * emailDomains.length);
-        const nameIdx = Math.floor(Math.random() * emailNames.length);
-        const suffix = (Math.random() > 0.5) ? '' : Math.floor(Math.random() * 1000) + 1;
-        return emailNames[nameIdx] + suffix + '@' + emailDomains[domainIdx];
-    }
+  getRandomValue(): string {
+    const domainIdx = Math.floor(Math.random() * emailDomains.length);
+    const nameIdx = Math.floor(Math.random() * emailNames.length);
+    const suffix =
+      Math.random() > 0.5 ? '' : Math.floor(Math.random() * 1000) + 1;
+    return emailNames[nameIdx] + suffix + '@' + emailDomains[domainIdx];
+  }
 }
