@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { useTables } from '@/hooks/useTableQuery'
 
 interface ShellProps {
   shell: ShellType
@@ -20,7 +21,9 @@ interface ShellProps {
 }
 
 export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
-  const { id, queryStatus, query, text, resultTable } = shell
+  const { id, queryStatus, query, text, queryType, resultTable } = shell
+
+  const { refetch } = useTables()
 
   const [focused, setFocused] = useState(false)
   const [inputValue, setInputValue] = useState(query ?? '')
@@ -36,10 +39,11 @@ export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
     prevQueryRef.current = inputValue
   }
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (!id) return
-    const processedQuery = shell.query?.replace(/\n/g, '') || null
-    executeShellMutation.mutate({ ...shell, query: processedQuery })
+    const processedQuery = query?.replace(/\n/g, '') || null
+    await executeShellMutation.mutateAsync({ ...shell, query: processedQuery })
+    if (['CREATE', 'ALTER', 'DROP'].includes(queryType || '')) refetch()
   }
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -48,8 +52,8 @@ export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
   }
 
   const handleOutput = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-    e.target.style.height = 'auto' // 기존 높이 초기화
-    e.target.style.height = `${e.target.scrollHeight}px` // 내용에 맞게 높이 설정
+    e.target.style.height = 'auto'
+    e.target.style.height = `${e.target.scrollHeight}px`
   }
 
   return (

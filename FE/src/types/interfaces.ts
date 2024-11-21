@@ -11,6 +11,22 @@ export interface ShellType {
   resultTable: TableRow[] | null
 }
 
+export interface TableType {
+  tableName: string
+  columns: TableColumnType[]
+}
+
+export interface TableColumnType {
+  name: string
+  type: string
+  FK: string | null
+  PK: boolean
+  IDX: boolean
+  UQ: boolean
+  AI: boolean
+  NN: boolean
+}
+
 export type QueryType =
   | 'SELECT'
   | 'INSERT'

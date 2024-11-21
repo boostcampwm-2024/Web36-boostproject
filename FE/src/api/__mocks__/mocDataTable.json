@@ -1,0 +1,109 @@
+{
+  "tables": [
+    {
+      "tableName": "table1",
+      "columns": [
+        {
+          "name": "id",
+          "type": "INT",
+          "FK": null,
+          "PK": true,
+          "IDX": true,
+          "UQ": false,
+          "AI": true,
+          "NN": true
+        },
+        {
+          "name": "name",
+          "type": "VARCHAR(255)",
+          "FK": null,
+          "PK": false,
+          "IDX": false,
+          "UQ": true,
+          "AI": false,
+          "NN": true
+        },
+        {
+          "name": "user_id",
+          "type": "INT",
+          "FK": "users.id",
+          "PK": false,
+          "IDX": true,
+          "UQ": false,
+          "AI": false,
+          "NN": false
+        }
+      ]
+    },
+    {
+      "tableName": "table2",
+      "columns": [
+        {
+          "name": "id",
+          "type": "INT",
+          "FK": null,
+          "PK": true,
+          "IDX": true,
+          "UQ": false,
+          "AI": true,
+          "NN": true
+        },
+        {
+          "name": "created_at",
+          "type": "DATETIME",
+          "FK": null,
+          "PK": false,
+          "IDX": false,
+          "UQ": false,
+          "AI": false,
+          "NN": true
+        },
+        {
+          "name": "updated_at",
+          "type": "DATETIME",
+          "FK": null,
+          "PK": false,
+          "IDX": false,
+          "UQ": false,
+          "AI": false,
+          "NN": false
+        }
+      ]
+    },
+    {
+      "tableName": "table3",
+      "columns": [
+        {
+          "name": "id",
+          "type": "INT",
+          "FK": null,
+          "PK": true,
+          "IDX": true,
+          "UQ": false,
+          "AI": true,
+          "NN": true
+        },
+        {
+          "name": "description",
+          "type": "TEXT",
+          "FK": null,
+          "PK": false,
+          "IDX": false,
+          "UQ": false,
+          "AI": false,
+          "NN": false
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR(255)",
+          "FK": null,
+          "PK": false,
+          "IDX": true,
+          "UQ": false,
+          "AI": false,
+          "NN": true
+        }
+      ]
+    }
+  ]
+}

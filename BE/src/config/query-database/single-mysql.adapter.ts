@@ -7,7 +7,7 @@ import {
   createConnection,
   createPool,
   Pool,
-  RowDataPacket,
+  QueryResult, ResultSetHeader, RowDataPacket
 } from 'mysql2/promise';
 import { createReadStream } from 'fs';
 
@@ -77,10 +77,12 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
     delete this.userConnectionList[identify];
   }
 
-  public async run(identify: string, query: string): Promise<RowDataPacket[]> {
+  public async run(
+    identify: string,
+    query: string){
     const connection = this.userConnectionList[identify];
-    const [rows] = await connection.query<RowDataPacket[]>(query);
-    return rows;
+    const [result] = await connection.query(query);
+    return result;
   }
 
   private createAdminConnection() {
