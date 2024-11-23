@@ -27,6 +27,21 @@ export interface TableColumnType {
   NN: boolean
 }
 
+export interface TableToolType {
+  tableName: string
+  columns: TableToolColumnType[]
+}
+
+export interface TableToolColumnType {
+  id: string
+  name: string
+  type: string
+  PK: boolean
+  UQ: boolean
+  AI: boolean
+  NN: boolean
+}
+
 export type QueryType =
   | 'SELECT'
   | 'INSERT'

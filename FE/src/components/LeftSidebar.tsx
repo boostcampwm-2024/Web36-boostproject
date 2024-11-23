@@ -1,4 +1,4 @@
-import { MENU } from '@/constants'
+import { MENU, MENU_TITLE } from '@/constants'
 import { X } from 'lucide-react'
 
 import {
@@ -13,15 +13,19 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import logo from '@/assets/logo.svg'
+import TableTool from '@/components/TableTool'
+import { TableType } from '@/types/interfaces'
 
 type LeftSidebarProps = React.ComponentProps<typeof Sidebar> & {
   activeItem: (typeof MENU)[0]
   setActiveItem: React.Dispatch<React.SetStateAction<(typeof MENU)[0]>>
+  tables: TableType[]
 }
 
 export default function LeftSidebar({
   activeItem,
   setActiveItem,
+  tables,
   ...props
 }: LeftSidebarProps) {
   const menu = MENU.slice(0, -1)
@@ -74,7 +78,10 @@ export default function LeftSidebar({
           </SidebarGroup>
         </SidebarContent>
       </div>
-      <Sidebar collapsible="none" className="hidden flex-1 md:flex">
+      <Sidebar
+        collapsible="none"
+        className="sticky hidden flex-1 overflow-auto md:flex"
+      >
         <SidebarHeader className="gap-3.5 border-b p-4">
           <div className="flex w-full items-center justify-between">
             <div className="text-base font-medium text-foreground">
@@ -89,12 +96,13 @@ export default function LeftSidebar({
             </button>
           </div>
         </SidebarHeader>
-        <div className="p-4 font-medium">{activeItem.title}</div>
         <SidebarContent>
-          <SidebarGroup className="px-0">
+          <SidebarGroup className="p-0">
             <SidebarGroupContent>
-              {/* {activeItem.title === MENU_TITLE.TABLE && 'table'}
-              {activeItem.title === MENU_TITLE.RECORD && 'record'} */}
+              {activeItem.title === MENU_TITLE.TABLE && (
+                <TableTool tableData={tables} />
+              )}
+              {activeItem.title === MENU_TITLE.RECORD && 'record'}
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>

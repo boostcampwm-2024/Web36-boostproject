@@ -1,4 +1,5 @@
-import { RandomValueGenerator } from "./random-value-generator.interface";
+/* eslint-disable prettier/prettier */
+import { RandomValueGenerator } from './random-value-generator.interface';
 
 const contries: string[] = [
     "AF", "AL", "DZ", "AS", "AD", "AO", "AI", "AQ", "AG", "AR", "AM", "AW", "AU", "AT", "AZ",
@@ -21,8 +22,8 @@ const contries: string[] = [
 ];
 
 export class CountryGenerator extends RandomValueGenerator<string> {
-    getValue(): string {
-        const countryIdx = Math.floor(Math.random() * contries.length);
-        return contries[countryIdx]
-    }
+  getRandomValue(): string {
+    const countryIdx = Math.floor(Math.random() * contries.length);
+    return contries[countryIdx];
+  }
 }

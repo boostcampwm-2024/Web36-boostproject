@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
+import { TableToolType } from '@/types/interfaces'
 
 export default function generateKey(data: Record<string, unknown> | unknown) {
   if (data !== null && typeof data === 'object' && 'id' in data)
@@ -6,22 +7,7 @@ export default function generateKey(data: Record<string, unknown> | unknown) {
   return `${JSON.stringify(data)}-${uuidv4()}`
 }
 
-interface Column {
-  id: string
-  name: string
-  type: string
-  PK: boolean
-  UQ: boolean
-  AI: boolean
-  NN: boolean
-}
-
-interface Table {
-  tableName: string
-  columns: Column[]
-}
-
-export function generateCreateTableQuery(table: Table): string {
+export function generateCreateTableQuery(table: TableToolType): string {
   const { tableName, columns } = table
 
   const columnDefinitions = columns.map((column) => {
@@ -38,8 +24,8 @@ export function generateCreateTableQuery(table: Table): string {
 }
 
 export function generateAlterTableQuery(
-  previousTable: Table,
-  currentTable: Table
+  previousTable: TableToolType,
+  currentTable: TableToolType
 ): string {
   const { tableName } = currentTable
   const previousColumns = previousTable.columns

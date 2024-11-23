@@ -4,16 +4,24 @@ pipeline {
         NODE_ENV = 'test'  // 테스트 환경 설정
     }
     stages {
+        stage('environment var logging') {
+            steps {
+                script {
+                    // 환경 변수 출력
+                    echo "Checking environment variables:"
+                    echo "CHANGE_ID: ${env.CHANGE_ID}"
+                    echo "CHANGE_TARGET: ${env.CHANGE_TARGET}"
+                    echo "GITHUB_EVENT_TYPE: ${env.GITHUB_EVENT_TYPE}"
+                    echo "BRANCH_NAME: ${env.BRANCH_NAME}"
+                }
+            }
+        }
         stage('main Branch : Deployment'){
             when{
                 allOf{
                     expression {
-                        // 푸시 이벤트인지 확인
-                        return env.GITHUB_EVENT_TYPE == 'push'
-                    }
-                    expression {
                         // 메인 브랜치에 대한 업데이트인지 확인
-                        return env.BRANCH_NME == 'main'
+                        return env.BRANCH_NAME == 'main'
                     }
                 }
             }
@@ -39,21 +47,10 @@ pipeline {
                                 sh 'docker-compose build'
 
                                 // Docker Compose 실행
-                                sh 'docker-compose up -d'
+                                sh 'docker-compose up --build -d'
                             }
                         }
                     }
-                }
-            }
-        }
-        
-        stage('environment var logging') {
-            steps {
-                script {
-                    // 환경 변수 출력
-                    echo "Checking environment variables:"
-                    echo "CHANGE_ID: ${env.CHANGE_ID}"
-                    echo "CHANGE_TARGET: ${env.CHANGE_TARGET}"
                 }
             }
         }

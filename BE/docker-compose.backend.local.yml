@@ -54,6 +54,7 @@ services:
       MYSQL_DATABASE: qlab
     ports:
       - "3307:3306"
+    command: --local-infile=1
     volumes:
       - ../db/query:/var/lib/mysql
     networks:

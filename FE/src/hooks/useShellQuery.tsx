@@ -11,23 +11,23 @@ import { ShellType } from '@/types/interfaces'
 import { QUERY_KEYS } from '@/constants'
 
 export function useShells() {
-  return useQuery<ShellType[]>(QUERY_KEYS.shells, fetchShells, {
+  return useQuery<ShellType[]>(QUERY_KEYS.SHELLS, fetchShells, {
     refetchOnWindowFocus: false,
   })
 }
 
 export function useAddShell() {
-  return useCustomMutation(addShell, QUERY_KEYS.shells)
+  return useCustomMutation(addShell, QUERY_KEYS.SHELLS)
 }
 
 export function useDeleteShell() {
-  return useCustomMutation(deleteShell, QUERY_KEYS.shells)
+  return useCustomMutation(deleteShell, QUERY_KEYS.SHELLS)
 }
 
 export function useUpdateShell() {
-  return useCustomMutation(updateShell, QUERY_KEYS.shells)
+  return useCustomMutation(updateShell, QUERY_KEYS.SHELLS)
 }
 
 export function useExecuteShell() {
-  return useCustomMutation(executeShell, QUERY_KEYS.shells)
+  return useCustomMutation(executeShell, QUERY_KEYS.SHELLS)
 }

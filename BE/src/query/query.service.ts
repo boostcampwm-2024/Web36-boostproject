@@ -89,7 +89,7 @@ export class QueryService {
     return validTypes.includes(type);
   }
 
-  private async measureQueryRunTime(sessionId: string): Promise<string> {
+  async measureQueryRunTime(sessionId: string): Promise<string> {
     try {
       const rows = await this.queryDBAdapter.run(sessionId, 'show profiles;') as RowDataPacket[];
       let lastQueryRunTime = rows[rows.length - 1]?.Duration;

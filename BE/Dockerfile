@@ -2,6 +2,8 @@ FROM node:20
 
 WORKDIR /app
 
+RUN npm install -g pm2
+
 COPY package*.json /app
 
 RUN npm install
@@ -12,4 +14,4 @@ RUN npm run build
 
 EXPOSE 3000
 
-CMD npm run start:prod
+CMD ["pm2-runtime", "ecosystem.config.js"]

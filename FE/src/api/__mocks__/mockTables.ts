@@ -6,7 +6,7 @@ const tableData: TableType[] = mocDataTable.tables
 
 export default function mockTables(mock: MockAdapter) {
   // fetch
-  mock.onGet('/tables').reply(200, { data: tableData })
+  mock.onGet('/tables').reply(200, { data: { tables: tableData } })
 
   mock.onGet(/\/tables\/.+/).reply((config) => {
     const name = config.url!.split('/').pop()!
