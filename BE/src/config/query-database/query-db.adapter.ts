@@ -1,14 +1,10 @@
-import {
-  Connection,
-  Pool, QueryResult,
-} from 'mysql2/promise';
-
+import { Connection, Pool, QueryResult } from 'mysql2/promise';
 
 export interface QueryDBAdapter {
-  createConnection(identify: string): void;
-  initUserDatabase(identify: string): Promise<void>;
-  closeConnection(identify: string): void;
-  run(identify: string, query: string): Promise<QueryResult>;
-  getConnection(identify: string): Connection;
+  createConnection(): void;
+  initUserDatabase(): Promise<void>;
+  closeConnection(): void;
+  run(query: string): Promise<QueryResult>;
+  getConnection(): Connection;
   getAdminPool(): Pool;
 }
