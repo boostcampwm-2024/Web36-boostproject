@@ -22,6 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -49,33 +50,52 @@ export default function TableTool({
 }: {
   tableData: TableType[]
 }) {
-  const tableToolData = convertTableData(tableData)
-
   const initialTableData = useRef<TableToolType[]>([])
-  const [selectedTable, setSelectedTable] = useState(tableToolData[0] || null)
+  const [tables, setTables] = useState<TableToolType[]>([])
+  const [selectedTableName, setSelectedTableName] = useState<string>('')
+  const [newTableName, setNewTableName] = useState('')
 
   useEffect(() => {
+    const tableToolData = convertTableData(tableData)
     initialTableData.current = tableToolData
-  }, [tableToolData])
+    setTables(tableToolData)
+    setSelectedTableName(tableToolData[0]?.tableName)
+  }, [tableData])
 
   const handleOnChange = (row: number, id: string, value: unknown) => {
-    const updatedColumns = [...selectedTable.columns]
+    setTables((prevTables) =>
+      prevTables.map((table) =>
+        table.tableName === selectedTableName
+          ? {
+              ...table,
+              columns: table.columns.map((col, colIdx) =>
+                colIdx === row ? { ...col, [id]: value } : col
+              ),
+            }
+          : table
+      )
+    )
+  }
 
-    updatedColumns[row] = {
-      ...updatedColumns[row],
-      [id]: value,
+  const handleAddTable = () => {
+    const newTable: TableToolType = {
+      tableName: newTableName,
+      columns: [],
     }
 
-    setSelectedTable({
-      ...selectedTable,
-      columns: updatedColumns,
-    })
+    setTables((prev) => [...prev, newTable])
+    setNewTableName('')
+    setSelectedTableName(newTableName)
   }
 
   const handleSubmit = () => {
+    const selectedTable = tables.find(
+      (table) => table.tableName === selectedTableName
+    )
     if (!selectedTable) return
+
     const previousTable = initialTableData.current.find(
-      (table) => table.tableName === selectedTable.tableName
+      (table) => table.tableName === selectedTableName
     )
 
     const query = previousTable
@@ -85,27 +105,27 @@ export default function TableTool({
     console.log(previousTable, query)
   }
 
+  const selectedTable = tables.find(
+    (table) => table.tableName === selectedTableName
+  )
+
   return (
     <>
       <div className="sticky top-0 items-center gap-3 border-b p-2">
-        {tableToolData?.map((table) => (
+        {tables.map((table) => (
           <Badge
             variant={
-              selectedTable?.tableName === table.tableName
-                ? 'default'
-                : 'secondary'
+              selectedTableName === table.tableName ? 'default' : 'secondary'
             }
             className="mr-2 cursor-pointer"
-            onClick={() => {
-              setSelectedTable(table)
-            }}
+            onClick={() => setSelectedTableName(table.tableName)}
             key={table.tableName}
           >
             {table.tableName}
           </Badge>
         ))}
       </div>
-      {selectedTable?.columns && selectedTable?.columns.length > 0 && (
+      {selectedTable?.columns && selectedTable.columns.length > 0 && (
         <Table>
           <TableHeader className="bg-secondary">
             <TableRow>
@@ -198,12 +218,18 @@ export default function TableTool({
               </Label>
               <Input
                 id="username"
+                value={newTableName}
                 placeholder="table name"
                 className="col-span-3"
+                onChange={(e) => setNewTableName(e.target.value)}
               />
             </div>
             <DialogFooter>
-              <Button type="submit">Save changes</Button>
+              <DialogClose asChild>
+                <Button type="submit" onClick={handleAddTable}>
+                  Add
+                </Button>
+              </DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>
