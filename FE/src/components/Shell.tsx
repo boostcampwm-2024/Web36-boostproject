@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import PlayCircle from '@/assets/play_circle.svg'
 import { ShellType } from '@/types/interfaces'
 import { useExecuteShell } from '@/hooks/useShellQuery'
-import generateKey from '@/util'
+import { generateKey } from '@/util'
 import { X } from 'lucide-react'
 import {
   Table,
