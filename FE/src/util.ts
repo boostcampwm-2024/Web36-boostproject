@@ -1,10 +1,25 @@
 import { v4 as uuidv4 } from 'uuid'
-import { TableToolType } from '@/types/interfaces'
+import { TableType, TableToolType } from '@/types/interfaces'
 
-export default function generateKey(data: Record<string, unknown> | unknown) {
+export function generateKey(data: Record<string, unknown> | unknown) {
   if (data !== null && typeof data === 'object' && 'id' in data)
     return `${data.id}-${uuidv4()}`
   return `${JSON.stringify(data)}-${uuidv4()}`
+}
+
+export function convertTableData(tableData: TableType[]): TableToolType[] {
+  return tableData.map((table) => ({
+    tableName: table.tableName,
+    columns: table.columns.map((column) => ({
+      id: uuidv4(),
+      name: column.name,
+      type: column.type,
+      PK: column.PK,
+      UQ: column.UQ,
+      AI: column.AI,
+      NN: column.NN,
+    })),
+  }))
 }
 
 export function generateCreateTableQuery(table: TableToolType): string {
