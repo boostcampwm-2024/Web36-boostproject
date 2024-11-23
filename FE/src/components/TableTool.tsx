@@ -29,7 +29,8 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Label from '@/components/ui/label'
-import { Plus, Minus } from 'lucide-react'
+import { Plus, X } from 'lucide-react'
+import { v4 as uuidv4 } from 'uuid'
 
 import {
   TableType,
@@ -62,6 +63,10 @@ export default function TableTool({
     setSelectedTableName(tableToolData[0]?.tableName)
   }, [tableData])
 
+  const selectedTable = tables.find(
+    (table) => table.tableName === selectedTableName
+  )
+
   const handleOnChange = (row: number, id: string, value: unknown) => {
     setTables((prevTables) =>
       prevTables.map((table) =>
@@ -88,10 +93,45 @@ export default function TableTool({
     setSelectedTableName(newTableName)
   }
 
-  const handleSubmit = () => {
-    const selectedTable = tables.find(
-      (table) => table.tableName === selectedTableName
+  const handleAddRow = () => {
+    if (!selectedTable) return
+    selectedTable?.columns.push({
+      id: uuidv4(),
+      name: 'new_column',
+      type: 'VARCHAR(255)',
+      PK: false,
+      UQ: false,
+      AI: false,
+      NN: false,
+    })
+
+    setTables((prevTables) =>
+      prevTables.map((table) =>
+        table.tableName === selectedTable.tableName ? selectedTable : table
+      )
     )
+  }
+
+  const handleDeleteRow = (id: string) => {
+    if (!selectedTable) return
+
+    const updatedColumns = selectedTable.columns.filter(
+      (column) => column.id !== id
+    )
+
+    const updatedTable = {
+      ...selectedTable,
+      columns: updatedColumns,
+    }
+
+    setTables((prevTables) =>
+      prevTables.map((table) =>
+        table.tableName === selectedTable.tableName ? updatedTable : table
+      )
+    )
+  }
+
+  const handleSubmit = () => {
     if (!selectedTable) return
 
     const previousTable = initialTableData.current.find(
@@ -104,10 +144,6 @@ export default function TableTool({
 
     console.log(previousTable, query)
   }
-
-  const selectedTable = tables.find(
-    (table) => table.tableName === selectedTableName
-  )
 
   return (
     <>
@@ -125,82 +161,88 @@ export default function TableTool({
           </Badge>
         ))}
       </div>
-      {selectedTable?.columns && selectedTable.columns.length > 0 && (
-        <Table>
-          <TableHeader className="bg-secondary">
-            <TableRow>
-              <TableHead />
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>PK</TableHead>
-              <TableHead>UQ</TableHead>
-              <TableHead>AI</TableHead>
-              <TableHead>NN</TableHead>
+      <Table>
+        <TableHeader className="bg-secondary">
+          <TableRow>
+            <TableHead>Del</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead>PK</TableHead>
+            <TableHead>UQ</TableHead>
+            <TableHead>AI</TableHead>
+            <TableHead>NN</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {selectedTable?.columns.map((row: TableToolColumnType, rowIdx) => (
+            <TableRow key={generateKey(row.id)}>
+              <TableCell>
+                <button
+                  type="button"
+                  className="mr-1 h-3"
+                  onClick={() => handleDeleteRow(row.id)}
+                >
+                  <X className="h-4" />
+                </button>
+              </TableCell>
+              {Object.entries(row).map(
+                ([key, value]) =>
+                  key !== 'id' && (
+                    <TableCell key={generateKey(value)}>
+                      {key === 'name' && (
+                        <EditableInput
+                          value={String(value)}
+                          rowIdx={rowIdx}
+                          handleOnChange={handleOnChange}
+                        />
+                      )}
+
+                      {typeof value === 'boolean' && (
+                        <Checkbox
+                          checked={value}
+                          onCheckedChange={(checked) =>
+                            handleOnChange(rowIdx, key, checked)
+                          }
+                        />
+                      )}
+
+                      {key === 'type' && (
+                        <Select
+                          value={value}
+                          onValueChange={(newValue) =>
+                            handleOnChange(rowIdx, 'type', newValue)
+                          }
+                        >
+                          <SelectTrigger className="h-[32px] w-[120px] p-2">
+                            <SelectValue placeholder={value} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {COLUMN_TYPES.map((types) => (
+                              <SelectItem value={types} key={types}>
+                                {types}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    </TableCell>
+                  )
+              )}
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {selectedTable.columns.map((row: TableToolColumnType, rowIdx) => (
-              <TableRow key={generateKey(row)}>
-                <TableCell>
-                  <Checkbox />
-                </TableCell>
-                {Object.entries(row).map(
-                  ([key, value]) =>
-                    key !== 'id' && (
-                      <TableCell key={generateKey(value)}>
-                        {key === 'name' && (
-                          <EditableInput
-                            value={String(value)}
-                            rowIdx={rowIdx}
-                            handleOnChange={handleOnChange}
-                          />
-                        )}
-
-                        {typeof value === 'boolean' && (
-                          <Checkbox
-                            checked={value}
-                            onCheckedChange={(checked) =>
-                              handleOnChange(rowIdx, key, checked)
-                            }
-                          />
-                        )}
-
-                        {key === 'type' && (
-                          <Select
-                            value={value}
-                            onValueChange={(newValue) =>
-                              handleOnChange(rowIdx, 'type', newValue)
-                            }
-                          >
-                            <SelectTrigger className="h-[32px] w-[120px] p-2">
-                              <SelectValue placeholder={value} />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {COLUMN_TYPES.map((types) => (
-                                <SelectItem value={types} key={types}>
-                                  {types}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        )}
-                      </TableCell>
-                    )
-                )}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      )}
+          ))}
+        </TableBody>
+      </Table>
       <div className="flex justify-end p-2">
-        <Button variant="outline" size="icon" className="mr-1 h-8">
+        <Button
+          variant="outline"
+          size="icon"
+          className="mr-1 h-8"
+          onClick={handleAddRow}
+        >
           <Plus />
         </Button>
-        <Button variant="outline" size="icon" className="h-8">
-          <Minus />
-        </Button>
       </div>
-      <div className="mt-8 flex justify-center">
+      <div className="mt-5 flex justify-center">
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="secondary" className="h-8">
