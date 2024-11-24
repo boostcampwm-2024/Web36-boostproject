@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+
 import {
   Select,
   SelectContent,
@@ -30,8 +31,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Label from '@/components/ui/label'
 import { Plus, X } from 'lucide-react'
-import { v4 as uuidv4 } from 'uuid'
 
+import { v4 as uuidv4 } from 'uuid'
+import useShellHandlers from '@/hooks/useShellHandler'
 import {
   TableType,
   TableToolType,
@@ -51,6 +53,7 @@ export default function TableTool({
 }: {
   tableData: TableType[]
 }) {
+  const { addShell, updateShell } = useShellHandlers()
   const initialTableData = useRef<TableToolType[]>([])
   const [tables, setTables] = useState<TableToolType[]>([])
   const [selectedTableName, setSelectedTableName] = useState<string>('')
@@ -131,7 +134,7 @@ export default function TableTool({
     )
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedTable) return
 
     const previousTable = initialTableData.current.find(
@@ -142,7 +145,8 @@ export default function TableTool({
       ? generateAlterTableQuery(previousTable, selectedTable)
       : generateCreateTableQuery(selectedTable)
 
-    console.log(previousTable, query)
+    const { id } = await addShell()
+    await updateShell({ id, query })
   }
 
   return (

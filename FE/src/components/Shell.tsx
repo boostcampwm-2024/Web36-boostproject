@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import PlayCircle from '@/assets/play_circle.svg'
 import { ShellType } from '@/types/interfaces'
-import { useExecuteShell } from '@/hooks/useShellQuery'
+import useShellHandlers from '@/hooks/useShellHandler'
 import { generateKey } from '@/util'
 import { X } from 'lucide-react'
 import {
@@ -14,41 +14,42 @@ import {
 } from '@/components/ui/table'
 import { useTables } from '@/hooks/useTableQuery'
 
-interface ShellProps {
+type ShellProps = {
   shell: ShellType
-  removeShell: (id: number) => void
-  updateShell: (shell: ShellType) => void
 }
 
-export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
+export default function Shell({ shell }: ShellProps) {
   const { id, queryStatus, query, text, queryType, resultTable } = shell
 
   const { refetch } = useTables()
+  const { executeShell, updateShell, deleteShell } = useShellHandlers()
 
+  const prevQueryRef = useRef<string>(query ?? '')
   const [focused, setFocused] = useState(false)
   const [inputValue, setInputValue] = useState(query ?? '')
 
-  const prevQueryRef = useRef<string>(query ?? '')
-  const executeShellMutation = useExecuteShell()
+  useEffect(() => {
+    setInputValue(shell.query ?? '')
+  }, [shell.query])
 
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     if (e.relatedTarget?.id === 'remove-shell-btn') return
     setFocused(false)
-    if (inputValue === prevQueryRef.current) return
-    updateShell({ ...shell, query: inputValue })
+    if (inputValue === prevQueryRef.current || shell.id === null) return
+    updateShell({ id: shell.id, query: inputValue })
     prevQueryRef.current = inputValue
   }
 
   const handleClick = async () => {
     if (!id) return
-    await executeShellMutation.mutateAsync({ ...shell, query })
+    await executeShell({ ...shell, query })
     if (!queryType || ['CREATE', 'ALTER', 'DROP'].includes(queryType || ''))
       await refetch()
   }
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault() // Blur 이벤트 방지
-    if (id) removeShell(id)
+    if (id) deleteShell(id)
   }
 
   const handleOutput = (e: React.FocusEvent<HTMLTextAreaElement>) => {
