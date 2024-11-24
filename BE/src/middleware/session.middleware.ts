@@ -20,8 +20,7 @@ export class SessionMiddleware implements NestMiddleware {
         prefix: '',
       }),
       genid: () => {
-        const uuid = 'db' + uuidv4().replace(/[^a-zA-Z0-9]/g, '');
-        return uuid;
+        return 'db' + uuidv4().replace(/[^a-zA-Z0-9]/g, '');
       },
       cookie: {
         maxAge: 1000 * 60 * 60,

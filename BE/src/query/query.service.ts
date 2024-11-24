@@ -129,6 +129,7 @@ export class QueryService {
     ROLLBACK: QueryType.ROLLBACK,
     SAVEPOINT: QueryType.SAVEPOINT,
     DESCRIBE: QueryType.DESCRIBE,
+    DESC: QueryType.DESCRIBE,
     SET: QueryType.SET,
     UNKNOWN: QueryType.UNKNOWN,
   };
