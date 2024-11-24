@@ -66,10 +66,8 @@ export default function LeftSidebar({
                       }}
                       onClick={() => handleClick(item)}
                       isActive={activeItem.title === item.title}
-                      className="px-2.5 md:px-2"
                     >
                       <item.icon />
-                      <span>{item.title}</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
