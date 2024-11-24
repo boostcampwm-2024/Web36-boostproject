@@ -1,109 +1,116 @@
-import dotenv from 'dotenv';
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  Scope,
+  Inject,
+  ConflictException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { QueryDBAdapter } from './query-db.adapter';
+import { Request } from 'express';
 import {
   Connection,
   ConnectionOptions,
   createConnection,
-  createPool,
   Pool,
-  QueryResult, ResultSetHeader, RowDataPacket
 } from 'mysql2/promise';
+import { REQUEST } from '@nestjs/core';
+import { SingleMySQLConnectionManager } from './single-mysql-connection-manager';
+import { ConfigService } from '@nestjs/config';
 import { createReadStream } from 'fs';
 
-dotenv.config();
-
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class SingleMySQLAdapter implements QueryDBAdapter {
-  private adminConnection: Pool;
-  private userConnectionList: Record<string, Connection> = {};
+  constructor(
+    private singleMySQLConnectionManager: SingleMySQLConnectionManager,
+    @Inject(REQUEST) private readonly request: Request,
+    private readonly configService: ConfigService,
+  ) {}
 
-  constructor() {
-    this.createAdminConnection();
+  private getSID(): string {
+    return this.request.sessionID;
   }
 
-  public getConnection(identify: string): Connection {
-    return this.userConnectionList[identify];
+  getAdminPool(): Pool {
+    return this.singleMySQLConnectionManager.getAdminPool();
   }
 
-  public getAdminPool() {
-    return this.adminConnection;
+  getConnection(): Connection {
+    return this.singleMySQLConnectionManager.getConnection(this.getSID());
   }
 
-  public async initUserDatabase(identify: string) {
-    const connectInfo = {
-      name: identify.substring(0, 10),
-      password: identify,
-      host: '%',
-      database: identify,
-    };
+  public async initUserDatabase() {
+    const adminConnection = this.singleMySQLConnectionManager.getAdminPool();
+    const identify = this.getSID();
+    try {
+      const connectInfo = {
+        name: identify.substring(0, 10),
+        password: identify,
+        host: '%',
+        database: identify,
+      };
 
-    await this.adminConnection.query(
-      `create database ${connectInfo.database};`,
+      await adminConnection.query(`create database ${connectInfo.database};`);
+      await adminConnection.query(
+        `create user '${connectInfo.name}'@'${connectInfo.host}' identified by '${connectInfo.password}';`,
+      );
+      await adminConnection.query(
+        `grant all privileges on ${connectInfo.database}.* to '${connectInfo.name}'@'${connectInfo.host}';`,
+      );
+    } catch (error) {
+      if (error.code === 'ER_DB_CREATE_EXISTS') {
+        throw new ConflictException(
+          `Database already exists for user: ${identify}`,
+        );
+      }
+      throw new InternalServerErrorException(
+        `Database initialization failed for user: ${identify}`,
+      );
+    }
+  }
+
+  public async createConnection() {
+    const identify = this.getSID();
+    let userConnection = this.singleMySQLConnectionManager.getConnection(
+      this.getSID(),
     );
-    await this.adminConnection.query(
-      `create user '${connectInfo.name}'@'${connectInfo.host}' identified by '${connectInfo.password}';`,
-    );
-    await this.adminConnection.query(
-      `grant all privileges on ${connectInfo.database}.* to '${connectInfo.name}'@'${connectInfo.host}';`,
-    );
-  }
-
-  public async createConnection(identify: string) {
-    const connectInfo = {
-      name: identify.substring(0, 10),
-      password: identify,
-      host: '%',
-      database: identify,
-    };
-    if (!this.userConnectionList[identify]) {
-      this.userConnectionList[identify] = await createConnection({
-        host: process.env.QUERY_DB_HOST,
-        user: connectInfo.name,
-        password: connectInfo.password,
-        port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
-        database: connectInfo.database,
+    if (!userConnection) {
+      userConnection = await createConnection({
+        host: this.configService.get<string>('QUERY_DB_HOST'),
+        user: identify.substring(0, 10),
+        password: identify,
+        port: this.configService.get<number>('QUERY_DB_PORT', 3306),
+        database: identify,
         infileStreamFactory: (path) => {
           return createReadStream(path);
         },
       } as ConnectionOptions);
-      await this.run(identify, 'set profiling = 1;');
+      this.singleMySQLConnectionManager.setConnection(identify, userConnection);
     }
+    await this.run('set profiling = 1;');
   }
 
-  public async closeConnection(identify: string) {
-    await this.userConnectionList[identify].end();
-    await this.removeDatabaseInfo(identify);
-    delete this.userConnectionList[identify];
+  public async closeConnection() {
+    await this.singleMySQLConnectionManager.closeConnection(this.getSID());
+    await this.removeDatabaseInfo();
+    this.singleMySQLConnectionManager.deleteConnection(this.getSID());
   }
 
-  public async run(
-    identify: string,
-    query: string){
-    const connection = this.userConnectionList[identify];
+  public async run(query: string) {
+    const connection = this.getConnection();
     const [result] = await connection.query(query);
     return result;
   }
 
-  private createAdminConnection() {
-    this.adminConnection = createPool({
-      host: process.env.QUERY_DB_HOST,
-      user: process.env.QUERY_DB_USER,
-      password: process.env.QUERY_DB_PASSWORD,
-      port: parseInt(process.env.QUERY_DB_PORT || '3306', 10),
-      connectionLimit: 10,
-    });
-  }
-
-  private async removeDatabaseInfo(identify: string) {
+  private async removeDatabaseInfo() {
     try {
-      const dropDatabase = `drop database ${identify};`;
-      await this.adminConnection.execute(dropDatabase);
+      const adminConnection = this.singleMySQLConnectionManager.getAdminPool();
+      const dropDatabase = `drop database ${this.getSID()};`;
+      await adminConnection.execute(dropDatabase);
 
-      const dropUser = `drop user '${identify.substring(0, 10)}';`;
-      await this.adminConnection.execute(dropUser);
+      const dropUser = `drop user '${this.getSID().substring(0, 10)}';`;
+      await adminConnection.execute(dropUser);
     } catch (e) {
-      // console.error(e);
+      console.error(e);
     }
   }
 }
