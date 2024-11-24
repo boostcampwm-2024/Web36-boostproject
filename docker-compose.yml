@@ -5,7 +5,7 @@ services:
       context: ./FE
     container_name: QLab-Front-Server
     environment:
-      VITE_BASE_URL: 223.130.155.9/api
+      VITE_BASE_URL: http://q-lab.site/api
       VITE_NODE_ENV: production
     expose:
       - 80

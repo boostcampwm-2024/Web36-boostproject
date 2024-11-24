@@ -41,9 +41,9 @@ export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
 
   const handleClick = async () => {
     if (!id) return
-    const processedQuery = query?.replace(/\n/g, '') || null
-    await executeShellMutation.mutateAsync({ ...shell, query: processedQuery })
-    if (['CREATE', 'ALTER', 'DROP'].includes(queryType || '')) refetch()
+    await executeShellMutation.mutateAsync({ ...shell, query })
+    if (!queryType || ['CREATE', 'ALTER', 'DROP'].includes(queryType || ''))
+      await refetch()
   }
 
   const handleMouseDown = (e: React.MouseEvent) => {

@@ -40,6 +40,8 @@ pipeline {
                                 string(credentialsId: 'QUERY_DB_PASSWORD', variable: 'QUERY_DB_PASSWORD'),
                                 string(credentialsId: 'SESSION_SECRET', variable: 'SESSION_SECRET')
                             ]) {
+                                sh 'printenv'
+                                
                                 // 기존 컨테이너 제거
                                 sh 'docker-compose down'
                                 
