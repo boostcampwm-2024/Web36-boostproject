@@ -3,7 +3,7 @@ import { QUERY_DB_ADAPTER } from '../config/query-database/query-db.moudle';
 import { QueryDBAdapter } from '../config/query-database/query-db.adapter';
 import { Pool } from 'mysql2/promise';
 import { ColumnDto, ResTableDto } from './dto/res-table.dto';
-import {ResTablesDto} from "./dto/res-tables.dto";
+import { ResTablesDto } from './dto/res-tables.dto';
 
 @Injectable()
 export class TableService {
@@ -16,7 +16,9 @@ export class TableService {
     const columns = await this.getColumns(sessionId);
     const foreignKeys = await this.getForeignKeys(sessionId);
 
-    return new ResTablesDto(this.mapTablesWithColumnsAndKeys(tables, columns, foreignKeys));
+    return new ResTablesDto(
+      this.mapTablesWithColumnsAndKeys(tables, columns, foreignKeys),
+    );
   }
 
   async find(sessionId: string, tableName: string) {
@@ -24,7 +26,9 @@ export class TableService {
     const columns = await this.getColumns(sessionId, tableName);
     const foreignKeys = await this.getForeignKeys(sessionId, tableName);
 
-    return this.mapTablesWithColumnsAndKeys(tables, columns, foreignKeys)[0] || [];
+    return (
+      this.mapTablesWithColumnsAndKeys(tables, columns, foreignKeys)[0] || []
+    );
   }
 
   private async getTables(schema: string, tableName?: string) {
@@ -35,7 +39,7 @@ export class TableService {
     WHERE TABLE_SCHEMA = ? ${tableName ? 'AND TABLE_NAME = ?' : ''}
   `;
     const params = tableName ? [schema, tableName] : [schema];
-    const [tables] = await pool.query(query, params);;
+    const [tables] = await pool.query(query, params);
     return tables as any[];
   }
 
