@@ -5,6 +5,9 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react(), tsConfigPaths()],
+  server: {
+    port: 4173,
+  },
   build: {
     target: 'esnext',
     sourcemap: true,
