@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
 import PlayCircle from '@/assets/play_circle.svg'
 import { ShellType } from '@/types/interfaces'
-import { useExecuteShell } from '@/hooks/useShellQuery'
-import generateKey from '@/util'
+import useShellHandlers from '@/hooks/useShellHandler'
+import { generateKey } from '@/util'
 import { X } from 'lucide-react'
 import {
   Table,
@@ -18,26 +18,27 @@ import 'ace-builds/src-noconflict/mode-sql'
 import 'ace-builds/src-noconflict/theme-monokai'
 import 'ace-builds/src-noconflict/ext-language_tools'
 
-interface ShellProps {
+type ShellProps = {
   shell: ShellType
-  removeShell: (id: number) => void
-  updateShell: (shell: ShellType) => void
 }
 
-export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
+export default function Shell({ shell }: ShellProps) {
   const { id, queryStatus, query, text, queryType, resultTable } = shell
   const { refetch } = useTables()
+  const { executeShell, updateShell, deleteShell } = useShellHandlers()
 
   const LINE_HEIGHT = 1.38
 
+  const prevQueryRef = useRef<string>(query ?? '')
   const [focused, setFocused] = useState(false)
   const [showPlaceholder, setShowPlaceholder] = useState(true)
   const [inputValue, setInputValue] = useState(query ?? '')
   const [editorHeight, setEditorHeight] = useState(LINE_HEIGHT)
   const editorRef = useRef<AceEditor>(null)
 
-  const prevQueryRef = useRef<string>(query ?? '')
-  const executeShellMutation = useExecuteShell()
+  useEffect(() => {
+    setInputValue(shell.query ?? '')
+  }, [shell.query])
 
   useEffect(() => {
     const renderer = editorRef.current?.editor.renderer as any
@@ -53,21 +54,21 @@ export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     if (e.relatedTarget?.id === 'remove-shell-btn') return
     setFocused(false)
-    if (inputValue === prevQueryRef.current) return
-    updateShell({ ...shell, query: inputValue })
+    if (inputValue === prevQueryRef.current || shell.id === null) return
+    updateShell({ id: shell.id, query: inputValue })
     prevQueryRef.current = inputValue
   }
 
   const handleClick = async () => {
     if (!id) return
-    await executeShellMutation.mutateAsync({ ...shell, query })
+    await executeShell({ ...shell, query })
     if (!queryType || ['CREATE', 'ALTER', 'DROP'].includes(queryType || ''))
       await refetch()
   }
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault() // Blur 이벤트 방지
-    if (id) removeShell(id)
+    if (id) deleteShell(id)
   }
 
   const handleEditorChange = (value: string) => {
