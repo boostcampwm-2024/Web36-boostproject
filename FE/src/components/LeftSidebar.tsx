@@ -15,6 +15,7 @@ import {
 import logo from '@/assets/logo.svg'
 import TableTool from '@/components/TableTool'
 import { TableType } from '@/types/interfaces'
+import TestQueryTool from './TestTool'
 
 type LeftSidebarProps = React.ComponentProps<typeof Sidebar> & {
   activeItem: (typeof MENU)[0]
@@ -101,6 +102,7 @@ export default function LeftSidebar({
                 <TableTool tableData={tables} />
               )}
               {activeItem.title === MENU_TITLE.RECORD && 'record'}
+              {activeItem.title === MENU_TITLE.TESTQUERY && <TestQueryTool />}
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
