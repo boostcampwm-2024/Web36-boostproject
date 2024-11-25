@@ -25,7 +25,10 @@ export function useDeleteShell() {
 }
 
 export function useUpdateShell() {
-  return useCustomMutation(updateShell, QUERY_KEYS.SHELLS)
+  return useCustomMutation<
+    { id: number; query: string },
+    { id: number; query: string }
+  >(updateShell, QUERY_KEYS.SHELLS)
 }
 
 export function useExecuteShell() {

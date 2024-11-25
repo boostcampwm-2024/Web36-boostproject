@@ -1,8 +1,8 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import PlayCircle from '@/assets/play_circle.svg'
 import { ShellType } from '@/types/interfaces'
-import { useExecuteShell } from '@/hooks/useShellQuery'
-import generateKey from '@/util'
+import useShellHandlers from '@/hooks/useShellHandler'
+import { generateKey } from '@/util'
 import { X } from 'lucide-react'
 import {
   Table,
@@ -13,55 +13,83 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { useTables } from '@/hooks/useTableQuery'
+import AceEditor from 'react-ace'
+import 'ace-builds/src-noconflict/mode-sql'
+import 'ace-builds/src-noconflict/theme-monokai'
+import 'ace-builds/src-noconflict/ext-language_tools'
 
-interface ShellProps {
+type ShellProps = {
   shell: ShellType
-  removeShell: (id: number) => void
-  updateShell: (shell: ShellType) => void
 }
 
-export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
+export default function Shell({ shell }: ShellProps) {
   const { id, queryStatus, query, text, queryType, resultTable } = shell
-
   const { refetch } = useTables()
+  const { executeShell, updateShell, deleteShell } = useShellHandlers()
 
-  const [focused, setFocused] = useState(false)
-  const [inputValue, setInputValue] = useState(query ?? '')
+  const LINE_HEIGHT = 1.38
 
   const prevQueryRef = useRef<string>(query ?? '')
-  const executeShellMutation = useExecuteShell()
+  const [focused, setFocused] = useState(false)
+  const [showPlaceholder, setShowPlaceholder] = useState(true)
+  const [inputValue, setInputValue] = useState(query ?? '')
+  const [editorHeight, setEditorHeight] = useState(LINE_HEIGHT)
+  const editorRef = useRef<AceEditor>(null)
+
+  useEffect(() => {
+    setInputValue(shell.query ?? '')
+  }, [shell.query])
+
+  useEffect(() => {
+    const renderer = editorRef.current?.editor.renderer as any
+    if (renderer) {
+      if (!focused) {
+        renderer.$cursorLayer.element.style.display = 'none'
+      } else {
+        renderer.$cursorLayer.element.style.display = ''
+      }
+    }
+  }, [focused])
 
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     if (e.relatedTarget?.id === 'remove-shell-btn') return
     setFocused(false)
-    if (inputValue === prevQueryRef.current) return
-    updateShell({ ...shell, query: inputValue })
+    if (inputValue === prevQueryRef.current || shell.id === null) return
+    updateShell({ id: shell.id, query: inputValue })
     prevQueryRef.current = inputValue
   }
 
   const handleClick = async () => {
     if (!id) return
-    await executeShellMutation.mutateAsync({ ...shell, query })
+    await executeShell({ ...shell, query })
     if (!queryType || ['CREATE', 'ALTER', 'DROP'].includes(queryType || ''))
       await refetch()
   }
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault() // Blur 이벤트 방지
-    if (id) removeShell(id)
+    if (id) deleteShell(id)
   }
 
-  const handleOutput = (e: React.FocusEvent<HTMLTextAreaElement>) => {
-    e.target.style.height = 'auto'
-    e.target.style.height = `${e.target.scrollHeight}px`
+  const handleEditorChange = (value: string) => {
+    if (value === inputValue) return
+    setInputValue(value)
+    const lineCount = value.split('\n').length
+    const newHeight = Math.max(lineCount * LINE_HEIGHT)
+    setEditorHeight(newHeight)
+  }
+
+  const handleFocus = () => {
+    setShowPlaceholder(false)
+    setFocused(true)
   }
 
   return (
     <>
-      <div className="flex min-h-[2rem] w-full items-center overflow-hidden rounded-sm bg-secondary">
+      <div className="flex overflow-hidden rounded-sm bg-secondary">
         <button
           type="button"
-          className="mr-3 h-full w-12 bg-primary p-3 disabled:cursor-not-allowed"
+          className="h-full bg-primary p-3 disabled:cursor-not-allowed"
           onClick={handleClick}
           disabled={inputValue.length === 0}
         >
@@ -71,20 +99,36 @@ export default function Shell({ shell, removeShell, updateShell }: ShellProps) {
             className={`${inputValue.length === 0 ? 'opacity-50' : ''}`}
           />
         </button>
-        <textarea
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onFocus={() => setFocused(true)}
-          onBlur={handleBlur}
-          rows={1}
-          onInput={handleOutput}
-          className="min-h-[2rem] w-full resize-none overflow-auto border-none bg-secondary p-2 text-base font-medium text-foreground focus:outline-none"
-        />
+        <div className="h-full w-full rounded-sm bg-secondary">
+          <style>{`.ace_placeholder {margin: 0;}`}</style>
+          <AceEditor
+            ref={editorRef}
+            placeholder={showPlaceholder ? '쿼리를 입력하세요' : ''}
+            mode="sql"
+            value={inputValue}
+            onChange={handleEditorChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            fontSize={16}
+            width="100%"
+            height={`${editorHeight}rem`}
+            setOptions={{
+              highlightActiveLine: false,
+              showGutter: false,
+              useWorker: false,
+              enableBasicAutocompletion: true,
+              enableLiveAutocompletion: true,
+              enableSnippets: true,
+              tabSize: 2,
+            }}
+            className="mx-2 my-3 bg-secondary"
+          />
+        </div>
         {focused && (
           <button
             type="button"
             id="remove-shell-btn"
-            className="mr-3 cursor-pointer fill-current"
+            className="h-full cursor-pointer bg-secondary px-2 text-blue-950"
             onMouseDown={handleMouseDown}
           >
             <X />

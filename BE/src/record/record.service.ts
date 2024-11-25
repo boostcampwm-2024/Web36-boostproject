@@ -52,7 +52,7 @@ const TypeToConstructor = {
 export class RecordService implements OnModuleInit {
   constructor(
     @Inject(QUERY_DB_ADAPTER) private readonly queryDBAdapter: QueryDBAdapter,
-  ) { }
+  ) {}
 
   async onModuleInit() {
     try {
@@ -154,7 +154,6 @@ export class RecordService implements OnModuleInit {
 
     try {
       queryResult = (await this.queryDBAdapter.run(
-        sid,
         sql,
       )) as unknown as ResultSetHeader;
     } catch (err) {

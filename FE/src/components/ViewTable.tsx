@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { TableType, TableColumnType } from '@/types/interfaces'
-import generateKey from '@/util'
+import { generateKey } from '@/util'
 import { Check } from 'lucide-react'
 import { useTableByName } from '@/hooks/useTableQuery'
 
