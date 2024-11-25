@@ -49,23 +49,33 @@ VALUES
   const { addShell, updateShell } = useShellHandlers()
   const [selectedQueryId, setSelectedQueryId] = useState<string | null>(null)
   const [hoveredQuery, setHoveredQuery] = useState<string | null>(null)
-  const [queryInput, setQueryInput] = useState<string>('')
+  const [queryInput, setQueryInput] = useState<string>('No query selected.')
+  const [customQuery, setCustomQuery] = useState<boolean>(false)
 
   const handleSelectQuery = (id: string) => {
     setSelectedQueryId(id)
     setHoveredQuery(null)
+    setCustomQuery(false)
     const selectedQuery = testQueries.find((q) => q.id === id)?.query || ''
-    setQueryInput(selectedQuery) // 선택 시 쿼리 내용을 상태에 저장
+    setQueryInput(selectedQuery)
   }
 
   const handleRunQuery = async () => {
-    if (!selectedQueryId) {
+    if (!selectedQueryId && !customQuery) {
       alert('Please select a query first.')
       return
     }
 
     const { id } = await addShell()
     await updateShell({ id, query: queryInput })
+  }
+
+  const onInputChange = (value: string) => {
+    setQueryInput(value)
+    setCustomQuery(true)
+    if (testQueries.find((q) => q.id === selectedQueryId)?.query === value) {
+      setCustomQuery(false)
+    }
   }
 
   return (
@@ -125,18 +135,20 @@ VALUES
 
       {/* Selected Query Display */}
       <div className="mb-4">
-        <p
-          id="selected-query-label"
-          className="mb-3 block flex h-10 items-center border-b border-t bg-secondary pl-3 text-sm font-medium text-muted-foreground transition-colors"
-        >
-          Preview / Edit Query
-        </p>
+        <div className="mb-3 block flex h-10 items-center justify-between border-b border-t bg-secondary pl-3 text-sm font-medium text-muted-foreground transition-colors">
+          <p id="selected-query-label">Preview / Edit Query</p>
+          {customQuery && (
+            <div className="border-1 mr-2 rounded-xl p-1 font-semibold text-primary">
+              custom
+            </div>
+          )}
+        </div>
+
         <AceEditor
-          placeholder="쿼리를 입력하거나 수정하세요"
           mode="sql"
-          value={hoveredQuery || queryInput || 'No query selected.'}
-          onChange={(value) => setQueryInput(value)}
-          fontSize={12}
+          value={hoveredQuery || queryInput}
+          onChange={onInputChange}
+          fontSize={14}
           width="100%"
           height="200px"
           setOptions={{
