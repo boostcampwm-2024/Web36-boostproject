@@ -31,7 +31,6 @@ export default function Shell({ shell }: ShellProps) {
 
   const prevQueryRef = useRef<string>(query ?? '')
   const [focused, setFocused] = useState(false)
-  const [showPlaceholder, setShowPlaceholder] = useState(true)
   const [inputValue, setInputValue] = useState(query ?? '')
   const [editorHeight, setEditorHeight] = useState(LINE_HEIGHT)
   const editorRef = useRef<AceEditor>(null)
@@ -41,14 +40,9 @@ export default function Shell({ shell }: ShellProps) {
   }, [shell.query])
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const renderer = editorRef.current?.editor.renderer as any
-    if (renderer) {
-      if (!focused) {
-        renderer.$cursorLayer.element.style.display = 'none'
-      } else {
-        renderer.$cursorLayer.element.style.display = ''
-      }
-    }
+    renderer.$cursorLayer.element.style.display = !focused ? 'none' : ''
   }, [focused])
 
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
@@ -80,7 +74,6 @@ export default function Shell({ shell }: ShellProps) {
   }
 
   const handleFocus = () => {
-    setShowPlaceholder(false)
     setFocused(true)
   }
 
@@ -103,7 +96,7 @@ export default function Shell({ shell }: ShellProps) {
           <style>{`.ace_placeholder {margin: 0;}`}</style>
           <AceEditor
             ref={editorRef}
-            placeholder={showPlaceholder ? '쿼리를 입력하세요' : ''}
+            placeholder={!focused ? '쿼리를 입력하세요' : ''}
             mode="sql"
             value={inputValue}
             onChange={handleEditorChange}
