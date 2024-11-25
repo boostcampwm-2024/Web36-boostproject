@@ -42,7 +42,7 @@ import {
 import { COLUMN_TYPES } from '@/constants'
 import {
   generateKey,
-  convertTableData,
+  convertTableDataToTableToolData,
   generateCreateTableQuery,
   generateAlterTableQuery,
 } from '@/util'
@@ -60,7 +60,7 @@ export default function TableTool({
   const [newTableName, setNewTableName] = useState('')
 
   useEffect(() => {
-    const tableToolData = convertTableData(tableData)
+    const tableToolData = convertTableDataToTableToolData(tableData)
     initialTableData.current = tableToolData
     setTables(tableToolData)
     setSelectedTableName(tableToolData[0]?.tableName)

@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { TableType, TableToolType } from '@/types/interfaces'
+import { TableType, TableToolType, RecordToolType } from '@/types/interfaces'
 
 export function generateKey(data: Record<string, unknown> | unknown) {
   if (data !== null && typeof data === 'object' && 'id' in data)
@@ -7,7 +7,9 @@ export function generateKey(data: Record<string, unknown> | unknown) {
   return `${JSON.stringify(data)}-${uuidv4()}`
 }
 
-export function convertTableData(tableData: TableType[]): TableToolType[] {
+export function convertTableDataToTableToolData(
+  tableData: TableType[]
+): TableToolType[] {
   return tableData.map((table) => ({
     tableName: table.tableName,
     columns: table.columns.map((column) => ({
@@ -18,6 +20,22 @@ export function convertTableData(tableData: TableType[]): TableToolType[] {
       UQ: column.UQ,
       AI: column.AI,
       NN: column.NN,
+    })),
+  }))
+}
+
+export function convertTableDataToRecordToolData(
+  tableData: TableType[]
+): RecordToolType[] {
+  return tableData.map((table) => ({
+    tableName: table.tableName,
+    columns: table.columns.map((column) => ({
+      name: column.name,
+      type: column.type,
+      blank: 0,
+      min: 0,
+      max: 0,
+      enum: [],
     })),
   }))
 }
