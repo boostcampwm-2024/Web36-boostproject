@@ -8,7 +8,7 @@ export default function ShellList({ shells = [] }: { shells: ShellType[] }) {
   const { addShell } = useShellHandlers()
   return (
     <>
-      <div className="sticky top-0 flex items-center justify-between border-b bg-background p-2">
+      <div className="sticky top-0 flex items-center justify-between border-b bg-background p-2 px-4">
         {/* 버튼 그룹 */}
         <div className="flex items-center gap-2">
           <Badge
@@ -25,9 +25,7 @@ export default function ShellList({ shells = [] }: { shells: ShellType[] }) {
       </div>
       {shells.length > 0 && (
         <div className="flex flex-1 flex-col gap-3 p-4">
-          {shells.map((shell) => (
-            <Shell key={shell.id} shell={shell} />
-          ))}
+          {shells?.map((shell) => <Shell key={shell.id} shell={shell} />)}
         </div>
       )}
     </>
