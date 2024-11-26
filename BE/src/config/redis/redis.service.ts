@@ -1,7 +1,6 @@
 import Redis from 'ioredis';
-import { Inject, Injectable } from '@nestjs/common';
-import { QueryDBAdapter } from '../query-database/query-db.adapter';
-import { QUERY_DB_ADAPTER } from '../query-database/query-db.moudle';
+import {Injectable} from '@nestjs/common';
+import {AdminDBManager} from "../query-database/admin-db-manager.service";
 
 @Injectable()
 export class RedisService {
@@ -9,7 +8,7 @@ export class RedisService {
   private eventConnection: Redis;
 
   constructor(
-    @Inject(QUERY_DB_ADAPTER) private readonly queryDBAdapter: QueryDBAdapter,
+    private readonly adminDBManager: AdminDBManager,
   ) {
     this.setDefaultConnection();
     this.setEventConnection();
@@ -46,25 +45,18 @@ export class RedisService {
 
   public async setNewSession(key: string) {
     const session = await this.getSession(key);
-    if (!session) {
-      await this.queryDBAdapter.initUserDatabase();
-    }
-    await this.queryDBAdapter.createConnection();
+    if (!session) await this.adminDBManager.initUserDatabase(key);
   }
 
   private subscribeToExpiredEvents() {
     this.eventConnection.subscribe('__keyevent@0__:expired');
 
-    this.eventConnection.on('message', () => {
-      this.queryDBAdapter.closeConnection();
+    this.eventConnection.on('message', (event,session) => {
+      this.adminDBManager.removeDatabaseInfo(session);
     });
   }
 
   public getDefaultConnection() {
     return this.defaultConnection;
-  }
-
-  public getEventConnection() {
-    return this.eventConnection;
   }
 }

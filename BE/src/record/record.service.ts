@@ -11,36 +11,20 @@ import {
   RandomValueGenerator,
   SexGenerator,
 } from './domain';
-import {RandomColumnInfo, RandomRecordInsertDto} from './dto/record.dto';
+import {CreateRandomRecordDto, RandomColumnInfo} from './dto/create-random-record.dto';
 import {RandomColumnEntity} from './random-column.entity';
 import fs from 'fs/promises';
 import crypto from 'crypto';
 import path from 'path';
 import {ResultSetHeader} from 'mysql2';
 import {UserDBManager} from "../config/query-database/user-db-manager.service";
-
-const RANDOM_DATA_TEMP_DIR = 'csvTemp';
-const RECORD_PROCESS_BATCH_SIZE = 10000;
-
-const generalDomain = [
-  'name',
-  'country',
-  'city',
-  'email',
-  'phone',
-  'sex',
-  'boolean',
-];
-
-const TypeToConstructor = {
-  name: NameGenerator,
-  country: CountryGenerator,
-  city: CityGenerator,
-  email: EmailGenerator,
-  phone: PhoneGenerator,
-  sex: SexGenerator,
-  boolean: BooleanGenerator,
-};
+import {ResRecordDto} from "./dto/res-record.dto";
+import {
+  generalDomain,
+  RANDOM_DATA_TEMP_DIR,
+  RECORD_PROCESS_BATCH_SIZE,
+  TypeToConstructor
+} from "./constant/random-record.constant";
 
 @Injectable()
 export class RecordService implements OnModuleInit {
@@ -54,39 +38,49 @@ export class RecordService implements OnModuleInit {
     } catch (err) {
       if (err.code === 'ENOENT') {
         await fs.mkdir(RANDOM_DATA_TEMP_DIR, { recursive: true });
-        console.log('csvTemp 폴더를 생성했습니다.');
       } else {
-        console.error('폴더 확인 중 오류 발생 : ', err);
+        console.error('csv 폴더 접근 오류: ', err);
       }
     }
   }
 
-  private toEntity(column: RandomColumnInfo): RandomColumnEntity {
+  async insertRandomRecord(createRandomRecordDto: CreateRandomRecordDto): Promise<ResRecordDto> {
+    const columnEntities: RandomColumnEntity[] = createRandomRecordDto.columns.map((column) => this.toEntity(column));
+    const columnNames = columnEntities.map((column) => column.name);
+
+    const csvFilePath = await this.generateCsvFile(columnEntities, createRandomRecordDto.count);
+
+    const result = await this.insertCsvIntoDB(
+        csvFilePath,
+        createRandomRecordDto.tableName,
+        columnNames,
+    );
+
+    await this.deleteFile(csvFilePath);
+
+    return new ResRecordDto({
+      status: result.affectedRows === createRandomRecordDto.count,
+      text: `${createRandomRecordDto.tableName} 에 랜덤 레코드 ${result.affectedRows}개 삽입되었습니다.`,
+    });
+  }
+
+  private toEntity(randomColumnInfo: RandomColumnInfo): RandomColumnEntity {
     let generator: RandomValueGenerator<any>;
-    if (generalDomain.includes(column.type))
-      generator = new TypeToConstructor[column.type]();
-    if (column.type === 'enum') generator = new EnumGenerator(column.enum);
-    if (column.type === 'number')
-      generator = new NumberGenerator(column.min ?? 0, column.max ?? 100);
+    if (generalDomain.includes(randomColumnInfo.type)) generator = new TypeToConstructor[randomColumnInfo.type]();
+    if (randomColumnInfo.type === 'enum') generator = new EnumGenerator(randomColumnInfo.enum);
+    if (randomColumnInfo.type === 'number') generator = new NumberGenerator(randomColumnInfo.min ?? 0, randomColumnInfo.max ?? 100);
     return {
-      name: column.name,
-      type: column.type,
+      name: randomColumnInfo.name,
+      type: randomColumnInfo.type,
       generator,
       data: [],
-      blank: column.blank,
+      blank: randomColumnInfo.blank,
     };
   }
 
-  private async generateCsvFile(
-    sid: string,
-    columnEntities: RandomColumnEntity[],
-    rows: number,
-  ): Promise<string> {
-    const randomString = crypto.randomBytes(4).toString('hex');
-    const filePath = path.join(
-      RANDOM_DATA_TEMP_DIR,
-      `${sid}.${randomString}.csv`,
-    );
+  private async generateCsvFile(columnEntities: RandomColumnEntity[], rows: number): Promise<string> {
+    const randomString = crypto.randomBytes(10).toString('hex');
+    const filePath = path.join(RANDOM_DATA_TEMP_DIR, `${randomString}.csv`);
     const header = this.generateCsvHeader(columnEntities);
     await fs.writeFile(filePath, header);
 
@@ -97,9 +91,9 @@ export class RecordService implements OnModuleInit {
       try {
         await fs.writeFile(filePath, data, { flag: 'a' });
       } catch (err) {
-        console.error(err);
+        console.error('CSV 파일 쓰기 실패:',err);
         throw new InternalServerErrorException({
-          message: 'CSV 파일 쓰기 실패 : ' + err.message,
+          message: 'CSV 파일 쓰기 실패:: ' + err.message,
           error: err.message,
         });
       }
@@ -119,10 +113,7 @@ export class RecordService implements OnModuleInit {
     return columnEntities.map((column) => column.name).join(', ') + '\n';
   }
 
-  private generateCsvData(
-    columnEntities: RandomColumnEntity[],
-    rows: number,
-  ): string {
+  private generateCsvData(columnEntities: RandomColumnEntity[], rows: number): string {
     let data = columnEntities.map((column) =>
       column.generator.getRandomValues(rows, column.blank),
     );
@@ -130,13 +121,8 @@ export class RecordService implements OnModuleInit {
     return data.map((row) => row.join(',')).join('\n') + '\n';
   }
 
-  async insertCsvIntoDB(
-    sid: string,
-    csvFilePath: string,
-    tableName: string,
-    columnNames: string[],
-  ): Promise<ResultSetHeader> {
-    const sql = `
+  async insertCsvIntoDB(csvFilePath: string, tableName: string, columnNames: string[]): Promise<ResultSetHeader> {
+    const query = `
       LOAD DATA LOCAL INFILE \'${csvFilePath.replace(/\\/g, '\\\\')}\'
       INTO TABLE ${tableName}
       FIELDS TERMINATED BY ',' 
@@ -147,13 +133,11 @@ export class RecordService implements OnModuleInit {
     let queryResult: ResultSetHeader;
 
     try {
-      queryResult = (await this.userDBManager.run(
-        sql,
-      )) as unknown as ResultSetHeader;
+      queryResult = await this.userDBManager.run(query) as ResultSetHeader;
     } catch (err) {
-      console.error('Error while inserting data into DB:', err);
+      console.error('랜덤 데이터 DB 삽입중 에러:', err);
       throw new InternalServerErrorException({
-        message: 'DB .csv load Data 실패 :' + err.message,
+        message: '랜덤 데이터 DB 삽입중 에러:' + err.message,
         error: err.message,
       });
     }
@@ -166,40 +150,11 @@ export class RecordService implements OnModuleInit {
       await fs.unlink(filePath);
       return true;
     } catch (err) {
-      console.error('Error while deleting the file:', err);
+      console.error('CSV 파일 삭제 실패:', err);
       throw new InternalServerErrorException({
-        message: 'CSV 파일 쓰기 실패 : ' + err.message,
+        message: 'CSV 파일 삭제 실패: ' + err.message,
         error: err.message,
       });
     }
-  }
-
-  async insertRandomRecord(
-    sid: string,
-    recordDto: RandomRecordInsertDto,
-  ): Promise<object> {
-    const columnEntities: RandomColumnEntity[] = recordDto.columns.map(
-      (column) => this.toEntity(column),
-    );
-    const columnNames = columnEntities.map((column) => column.name);
-
-    const csvFilePath = await this.generateCsvFile(
-      sid,
-      columnEntities,
-      recordDto.count,
-    );
-
-    const result = await this.insertCsvIntoDB(
-      sid,
-      csvFilePath,
-      recordDto.tableName,
-      columnNames,
-    );
-    await this.deleteFile(csvFilePath);
-
-    return {
-      status: result.affectedRows === recordDto.count,
-      text: `${recordDto.tableName} 에 랜덤 레코드 ${result.affectedRows}개 삽입되었습니다.`,
-    };
   }
 }

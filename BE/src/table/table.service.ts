@@ -1,14 +1,13 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { QUERY_DB_ADAPTER } from '../config/query-database/query-db.moudle';
-import { QueryDBAdapter } from '../config/query-database/query-db.adapter';
-import { Pool } from 'mysql2/promise';
+import { Injectable } from '@nestjs/common';
 import { ColumnDto, ResTableDto } from './dto/res-table.dto';
 import { ResTablesDto } from './dto/res-tables.dto';
+import {AdminDBManager} from "../config/query-database/admin-db-manager.service";
+import {RowDataPacket} from "mysql2/promise";
 
 @Injectable()
 export class TableService {
   constructor(
-    @Inject(QUERY_DB_ADAPTER) private readonly queryDBAdapter: QueryDBAdapter,
+      private readonly adminDBManager: AdminDBManager,
   ) {}
 
   async findAll(sessionId: string) {
@@ -32,31 +31,28 @@ export class TableService {
   }
 
   private async getTables(schema: string, tableName?: string) {
-    const pool = this.queryDBAdapter.getAdminPool();
     const query = `
     SELECT TABLE_NAME
     FROM INFORMATION_SCHEMA.TABLES
     WHERE TABLE_SCHEMA = ? ${tableName ? 'AND TABLE_NAME = ?' : ''}
   `;
     const params = tableName ? [schema, tableName] : [schema];
-    const [tables] = await pool.query(query, params);
-    return tables as any[];
+    const [tables] = await this.adminDBManager.run(query,params) as RowDataPacket[];
+    return tables as string[];
   }
 
   private async getColumns(schema: string, tableName?: string) {
-    const pool = this.queryDBAdapter.getAdminPool();
     const query = `
     SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE, COLUMN_KEY, EXTRA, IS_NULLABLE
     FROM INFORMATION_SCHEMA.COLUMNS
     WHERE TABLE_SCHEMA = ? ${tableName ? 'AND TABLE_NAME = ?' : ''}
   `;
     const params = tableName ? [schema, tableName] : [schema];
-    const [columns] = await pool.query(query, params);
-    return columns as any[];
+    const [columns] = await this.adminDBManager.run(query,params) as RowDataPacket[];
+    return columns as string[];
   }
 
   private async getForeignKeys(schema: string, tableName?: string) {
-    const pool = this.queryDBAdapter.getAdminPool();
     const query = `
     SELECT 
       TABLE_NAME, 
@@ -69,8 +65,8 @@ export class TableService {
     AND REFERENCED_TABLE_NAME IS NOT NULL
   `;
     const params = tableName ? [schema, tableName] : [schema];
-    const [foreignKeys] = await pool.query(query, params);
-    return foreignKeys as any[];
+    const [foreignKey] = await this.adminDBManager.run(query,params) as RowDataPacket[];
+    return foreignKey as string[];
   }
 
   private mapTablesWithColumnsAndKeys(

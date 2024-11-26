@@ -1,4 +1,4 @@
-import { Domains } from './dto/record.dto';
+import { Domains } from './dto/create-random-record.dto';
 import { RandomValueGenerator } from './domain';
 
 export interface RandomColumnEntity {
