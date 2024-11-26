@@ -24,6 +24,7 @@ import fs from 'fs/promises';
 import crypto from 'crypto';
 import path from 'path';
 import { ResultSetHeader } from 'mysql2';
+import { UsageService } from 'src/usage/usage.service';
 
 const RANDOM_DATA_TEMP_DIR = 'csvTemp';
 const RECORD_PROCESS_BATCH_SIZE = 10000;
@@ -52,6 +53,7 @@ const TypeToConstructor = {
 export class RecordService implements OnModuleInit {
   constructor(
     @Inject(QUERY_DB_ADAPTER) private readonly queryDBAdapter: QueryDBAdapter,
+    private readonly usageService: UsageService,
   ) {}
 
   async onModuleInit() {
@@ -202,6 +204,8 @@ export class RecordService implements OnModuleInit {
       columnNames,
     );
     await this.deleteFile(csvFilePath);
+
+    this.usageService.updateRowCount(sid);
 
     return {
       status: result.affectedRows === recordDto.count,

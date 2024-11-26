@@ -41,23 +41,44 @@ export class RedisService {
     if (!key) {
       return null;
     }
-    return this.defaultConnection.get(key);
+    return this.defaultConnection.hget(key, 'session');
+  }
+
+  public async existSession(key: string) {
+    return this.defaultConnection.exists(key);
   }
 
   public async setNewSession(key: string) {
-    const session = await this.getSession(key);
+    const session = await this.existSession(key);
     if (!session) {
+      await this.defaultConnection.hset(key, 'rowCount', 0);
       await this.queryDBAdapter.initUserDatabase();
     }
     await this.queryDBAdapter.createConnection();
   }
 
+  public async deleteSession(key: string) {
+    await this.defaultConnection.del(key);
+  }
+
+  public async setExpireTime(key: string, ttl: number) {
+    await this.defaultConnection.expire(key, ttl);
+  }
+
   private subscribeToExpiredEvents() {
     this.eventConnection.subscribe('__keyevent@0__:expired');
 
-    this.eventConnection.on('message', () => {
-      this.queryDBAdapter.closeConnection();
+    this.eventConnection.on('message', (event, session) => {
+      this.queryDBAdapter.closeConnection(session);
     });
+  }
+
+  public async getRowCount(key: string) {
+    return this.defaultConnection.hget(key, 'rowCount');
+  }
+
+  public async updateRowCount(key: string, rowCount: number) {
+    await this.defaultConnection.hset(key, 'rowCount', rowCount);
   }
 
   public getDefaultConnection() {

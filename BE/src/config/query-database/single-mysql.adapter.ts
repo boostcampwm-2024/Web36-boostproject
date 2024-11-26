@@ -89,10 +89,10 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
     await this.run('set profiling = 1;');
   }
 
-  public async closeConnection() {
-    await this.singleMySQLConnectionManager.closeConnection(this.getSID());
-    await this.removeDatabaseInfo();
-    this.singleMySQLConnectionManager.deleteConnection(this.getSID());
+  public async closeConnection(identify: string) {
+    await this.singleMySQLConnectionManager.closeConnection(identify);
+    await this.removeDatabaseInfo(identify);
+    this.singleMySQLConnectionManager.deleteConnection(identify);
   }
 
   public async run(query: string) {
@@ -101,13 +101,13 @@ export class SingleMySQLAdapter implements QueryDBAdapter {
     return result;
   }
 
-  private async removeDatabaseInfo() {
+  private async removeDatabaseInfo(identify: string) {
     try {
       const adminConnection = this.singleMySQLConnectionManager.getAdminPool();
-      const dropDatabase = `drop database ${this.getSID()};`;
+      const dropDatabase = `drop database ${identify};`;
       await adminConnection.execute(dropDatabase);
 
-      const dropUser = `drop user '${this.getSID().substring(0, 10)}';`;
+      const dropUser = `drop user '${identify.substring(0, 10)}';`;
       await adminConnection.execute(dropUser);
     } catch (e) {
       console.error(e);
