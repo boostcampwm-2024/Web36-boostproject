@@ -27,7 +27,7 @@ export default function Shell({ shell }: ShellProps) {
   const { refetch } = useTables()
   const { executeShell, updateShell, deleteShell } = useShellHandlers()
 
-  const LINE_HEIGHT = 1.38
+  const LINE_HEIGHT = 1.2
 
   const prevQueryRef = useRef<string>(query ?? '')
   const [focused, setFocused] = useState(false)
@@ -68,41 +68,33 @@ export default function Shell({ shell }: ShellProps) {
   const handleEditorChange = (value: string) => {
     if (value === inputValue) return
     setInputValue(value)
-    const lineCount = value.split('\n').length
-    const newHeight = Math.max(lineCount * LINE_HEIGHT)
-    setEditorHeight(newHeight)
   }
-
-  const handleFocus = () => {
-    setFocused(true)
-  }
-
   return (
     <>
-      <div className="flex overflow-hidden rounded-sm bg-secondary">
+      <div className="flex overflow-hidden rounded-sm bg-secondary shadow-md">
         <button
           type="button"
-          className="h-full bg-primary p-3 disabled:cursor-not-allowed"
+          className="h-full bg-primary p-3 shadow-lg"
           onClick={handleClick}
           disabled={inputValue.length === 0}
         >
           <img
             src={PlayCircle}
             alt="play button"
-            className={`${inputValue.length === 0 ? 'opacity-50' : ''}`}
+            className={`${inputValue.length === 0 ? 'opacity-50' : ''} `}
           />
         </button>
         <div className="h-full w-full rounded-sm bg-secondary">
           <style>{`.ace_placeholder {margin: 0;}`}</style>
           <AceEditor
             ref={editorRef}
-            placeholder={!focused ? '쿼리를 입력하세요' : ''}
+            placeholder="쿼리를 입력하세요"
             mode="sql"
             value={inputValue}
             onChange={handleEditorChange}
-            onFocus={handleFocus}
+            onFocus={() => setFocused(true)}
             onBlur={handleBlur}
-            fontSize={16}
+            fontSize={14}
             width="100%"
             height={`${editorHeight}rem`}
             setOptions={{
@@ -113,8 +105,17 @@ export default function Shell({ shell }: ShellProps) {
               enableLiveAutocompletion: true,
               enableSnippets: true,
               tabSize: 2,
+              wrap: true,
+              behavioursEnabled: false,
             }}
-            className="mx-2 my-3 bg-secondary"
+            onLoad={(editor) => {
+              editor.on('change', () => {
+                setEditorHeight(
+                  editor.getSession().getScreenLength() * LINE_HEIGHT
+                )
+              })
+            }}
+            className="my-3.5 ml-2 bg-secondary"
           />
         </div>
         {focused && (

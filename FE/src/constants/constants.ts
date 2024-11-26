@@ -1,4 +1,4 @@
-import { Table2, FileText, Network } from 'lucide-react'
+import { Table2, FileText, Network, AlignLeft } from 'lucide-react'
 
 export const QUERY_KEYS = {
   SHELLS: 'shells',
@@ -8,6 +8,7 @@ export const QUERY_KEYS = {
 export const MENU_TITLE = {
   TABLE: 'Create/Edit Table',
   RECORD: 'Add Random Record',
+  TESTQUERY: 'Add Example Query',
   VIEW: 'Current Table',
 }
 
@@ -20,6 +21,11 @@ export const MENU = [
   {
     title: MENU_TITLE.RECORD,
     icon: FileText,
+    isActive: false,
+  },
+  {
+    title: MENU_TITLE.TESTQUERY,
+    icon: AlignLeft,
     isActive: false,
   },
   {

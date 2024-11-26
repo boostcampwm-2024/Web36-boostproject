@@ -39,7 +39,7 @@ import {
   TableToolType,
   TableToolColumnType,
 } from '@/types/interfaces'
-import { COLUMN_TYPES } from '@/constants'
+import { COLUMN_TYPES } from '@/constants/constants'
 import {
   generateKey,
   convertTableDataToTableToolData,

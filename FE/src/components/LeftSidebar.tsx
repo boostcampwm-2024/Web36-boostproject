@@ -1,4 +1,4 @@
-import { MENU, MENU_TITLE } from '@/constants'
+import { MENU, MENU_TITLE } from '@/constants/constants'
 import { X } from 'lucide-react'
 
 import {
@@ -16,6 +16,7 @@ import logo from '@/assets/logo.svg'
 import TableTool from '@/components/TableTool'
 import RecordTool from '@/components/RecordTool'
 import { TableType } from '@/types/interfaces'
+import TestQueryTool from './TestTool'
 
 type LeftSidebarProps = React.ComponentProps<typeof Sidebar> & {
   activeItem: (typeof MENU)[0]
@@ -104,6 +105,7 @@ export default function LeftSidebar({
               {activeItem.title === MENU_TITLE.RECORD && (
                 <RecordTool tableData={tables} />
               )}
+              {activeItem.title === MENU_TITLE.TESTQUERY && <TestQueryTool />}
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
