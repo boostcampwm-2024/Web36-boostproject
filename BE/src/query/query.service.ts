@@ -6,12 +6,14 @@ import { QueryType } from '../common/enums/query-type.enum';
 import { ShellService } from '../shell/shell.service';
 import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import { Shell } from '../shell/shell.entity';
+import { UsageService } from 'src/usage/usage.service';
 
 @Injectable()
 export class QueryService {
   constructor(
     @Inject(QUERY_DB_ADAPTER) private readonly queryDBAdapter: QueryDBAdapter,
     private shellService: ShellService,
+    private readonly usageService: UsageService,
   ) {}
 
   async execute(sessionId: string, shellId: number, queryDto: QueryDto) {
@@ -59,6 +61,9 @@ export class QueryService {
 
     const rows = await this.queryDBAdapter.run(query);
     const runTime = await this.measureQueryRunTime(sessionId);
+
+    // Update usage
+    this.usageService.updateRowCount(sessionId);
 
     let text: string;
     let resultTable: RowDataPacket[];

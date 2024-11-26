@@ -56,6 +56,7 @@ export class RedisService {
     const session = await this.existSession(key);
     if (!session) {
       await this.defaultConnection.hset(key, 'session', JSON.stringify(sessionInfo));
+      await this.defaultConnection.hset(key, 'rowCount', 0);
       await this.queryDBAdapter.initUserDatabase();
     }
     await this.queryDBAdapter.createConnection();
@@ -75,6 +76,14 @@ export class RedisService {
     this.eventConnection.on('message', (event, session) => {
       this.queryDBAdapter.closeConnection(session);
     });
+  }
+
+  public async getRowCount(identify: string) {
+    return this.defaultConnection.hget(identify, 'rowCount');
+  }
+
+  public async updateRowCount(identify: string, rowCount: number) {
+    await this.defaultConnection.hset(identify, 'rowCount', rowCount);
   }
 
   public getDefaultConnection() {
