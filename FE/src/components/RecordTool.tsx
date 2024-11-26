@@ -35,7 +35,7 @@ import {
   RecordToolType,
   RecordToolColumnType,
 } from '@/types/interfaces'
-import { RECORD_TYPES } from '@/constants'
+import { RECORD_TYPES } from '@/constants/constants'
 import { generateKey, convertTableDataToRecordToolData } from '@/util'
 
 export default function RecordTool({
