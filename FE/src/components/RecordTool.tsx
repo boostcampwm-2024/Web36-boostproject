@@ -38,6 +38,7 @@ import {
 import { RECORD_TYPES } from '@/constants/constants'
 import { generateKey, convertTableDataToRecordToolData } from '@/util'
 import TagInputForm from '@/components/TagInputForm'
+import InputWithLocalState from '@/components/InputWithLocalState'
 
 export default function RecordTool({
   tableData = [],
@@ -48,6 +49,7 @@ export default function RecordTool({
   const [selectedTable, setSelectedTable] = useState<RecordToolType>({
     tableName: '',
     columns: [],
+    count: 0,
   })
 
   useEffect(() => {
@@ -56,31 +58,42 @@ export default function RecordTool({
     setSelectedTable(recordToolData[0] || { tableName: '', columns: [] })
   }, [tableData])
 
-  const handleOnChange = (
+  const handleColumnChange = (
     row: number,
     id: keyof RecordToolColumnType,
     value: unknown
   ) => {
-    const updatedTables = tables.map((table) => {
-      if (table.tableName !== selectedTable.tableName) return table
-
-      const updatedColumns = table.columns.map((col, colIdx) => {
-        if (colIdx !== row) return col
-
-        const updatedValue = Array.isArray(value)
-          ? [...(Array.isArray(col[id]) ? col[id] : []), ...value]
-          : value
-
-        return { ...col, [id]: updatedValue }
-      })
-      return { ...table, columns: updatedColumns }
-    })
-
-    setTables(updatedTables)
-    const updatedSelectedTable = updatedTables.find(
-      (table) => table.tableName === selectedTable.tableName
+    const updatedColumns = selectedTable.columns.map((col, colIdx) =>
+      colIdx !== row ? col : { ...col, [id]: value }
     )
-    if (updatedSelectedTable) setSelectedTable(updatedSelectedTable)
+
+    const updatedSelectedTable = {
+      ...selectedTable,
+      columns: updatedColumns,
+    }
+    setSelectedTable(updatedSelectedTable)
+
+    setTables((prevTables) =>
+      prevTables.map((table) =>
+        table.tableName === updatedSelectedTable.tableName
+          ? updatedSelectedTable
+          : table
+      )
+    )
+  }
+
+  const handleCountChange = (count: number) => {
+    const updatedSelectedTable = { ...selectedTable, count }
+
+    setSelectedTable(updatedSelectedTable)
+
+    setTables((prevTables) =>
+      prevTables.map((table) =>
+        table.tableName === updatedSelectedTable.tableName
+          ? updatedSelectedTable
+          : table
+      )
+    )
   }
 
   return (
@@ -118,7 +131,7 @@ export default function RecordTool({
                 <Select
                   value={row.type}
                   onValueChange={(newValue) =>
-                    handleOnChange(rowIdx, 'type', newValue)
+                    handleColumnChange(rowIdx, 'type', newValue)
                   }
                 >
                   <SelectTrigger className="h-8 w-20 p-2">
@@ -134,28 +147,40 @@ export default function RecordTool({
                 </Select>
               </TableCell>
               <TableCell className="flex items-center">
-                <Input
+                <InputWithLocalState<number>
                   type="number"
                   id="row"
                   className="mr-2 h-8 w-12 p-1"
                   placeholder="0"
+                  value={row.blank}
+                  onChange={(updatedValue) =>
+                    handleColumnChange(rowIdx, 'blank', Number(updatedValue))
+                  }
                 />
                 <span>%</span>
               </TableCell>
               <TableCell>
                 {row.type === 'number' && (
                   <div className="flex">
-                    <Input
+                    <InputWithLocalState<number>
                       type="number"
-                      id="row"
+                      id="row-min"
                       className="mr-2 h-8 w-16 p-2"
                       placeholder="min"
+                      value={row.min}
+                      onChange={(updatedValue) =>
+                        handleColumnChange(rowIdx, 'min', Number(updatedValue))
+                      }
                     />
-                    <Input
+                    <InputWithLocalState<number>
                       type="number"
-                      id="row"
+                      id="row-max"
                       className="h-8 w-16 p-2"
                       placeholder="max"
+                      value={row.max}
+                      onChange={(updatedValue) =>
+                        handleColumnChange(rowIdx, 'max', Number(updatedValue))
+                      }
                     />
                   </div>
                 )}
@@ -175,7 +200,7 @@ export default function RecordTool({
                         type="enum"
                         preTag={row.enum}
                         onAdd={(newEnum) =>
-                          handleOnChange(rowIdx, 'enum', newEnum)
+                          handleColumnChange(rowIdx, 'enum', newEnum)
                         }
                       >
                         <DialogFooter className="pt-3">
@@ -201,10 +226,17 @@ export default function RecordTool({
           id="Rows"
           placeholder="max 100,000"
           className="h-8 w-28 p-2"
+          onChange={(e) => handleCountChange(Number(e.target.value))}
         />
       </div>
       <div className="mt-5 flex justify-center">
-        <Button variant="default" className="ml-3 h-8">
+        <Button
+          variant="default"
+          className="ml-3 h-8"
+          onClick={() => {
+            console.log(selectedTable) // 확인을 위한 임시 console.log
+          }}
+        >
           Add Random Data
         </Button>
       </div>
