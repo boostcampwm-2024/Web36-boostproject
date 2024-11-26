@@ -37,6 +37,7 @@ import {
 } from '@/types/interfaces'
 import { RECORD_TYPES } from '@/constants/constants'
 import { generateKey, convertTableDataToRecordToolData } from '@/util'
+import TagInputForm from '@/components/TagInputForm'
 
 export default function RecordTool({
   tableData = [],
@@ -44,31 +45,42 @@ export default function RecordTool({
   tableData: TableType[]
 }) {
   const [tables, setTables] = useState<RecordToolType[]>([])
-  const [selectedTableName, setSelectedTableName] = useState<string>('')
+  const [selectedTable, setSelectedTable] = useState<RecordToolType>({
+    tableName: '',
+    columns: [],
+  })
 
   useEffect(() => {
     const recordToolData = convertTableDataToRecordToolData(tableData)
     setTables(recordToolData)
-    setSelectedTableName(recordToolData[0]?.tableName)
+    setSelectedTable(recordToolData[0] || { tableName: '', columns: [] })
   }, [tableData])
 
-  const selectedTable = tables.find(
-    (table) => table.tableName === selectedTableName
-  )
+  const handleOnChange = (
+    row: number,
+    id: keyof RecordToolColumnType,
+    value: unknown
+  ) => {
+    const updatedTables = tables.map((table) => {
+      if (table.tableName !== selectedTable.tableName) return table
 
-  const handleOnChange = (row: number, id: string, value: unknown) => {
-    setTables((prevTables) =>
-      prevTables.map((table) =>
-        table.tableName === selectedTableName
-          ? {
-              ...table,
-              columns: table.columns.map((col, colIdx) =>
-                colIdx === row ? { ...col, [id]: value } : col
-              ),
-            }
-          : table
-      )
+      const updatedColumns = table.columns.map((col, colIdx) => {
+        if (colIdx !== row) return col
+
+        const updatedValue = Array.isArray(value)
+          ? [...(Array.isArray(col[id]) ? col[id] : []), ...value]
+          : value
+
+        return { ...col, [id]: updatedValue }
+      })
+      return { ...table, columns: updatedColumns }
+    })
+
+    setTables(updatedTables)
+    const updatedSelectedTable = updatedTables.find(
+      (table) => table.tableName === selectedTable.tableName
     )
+    if (updatedSelectedTable) setSelectedTable(updatedSelectedTable)
   }
 
   return (
@@ -77,10 +89,12 @@ export default function RecordTool({
         {tables.map((table) => (
           <Badge
             variant={
-              selectedTableName === table.tableName ? 'default' : 'secondary'
+              selectedTable.tableName === table.tableName
+                ? 'default'
+                : 'secondary'
             }
             className="mr-2 cursor-pointer"
-            onClick={() => setSelectedTableName(table.tableName)}
+            onClick={() => setSelectedTable(table)}
             key={table.tableName}
           >
             {table.tableName}
@@ -120,7 +134,12 @@ export default function RecordTool({
                 </Select>
               </TableCell>
               <TableCell className="flex items-center">
-                <Input type="number" id="row" className="mr-2 h-8 w-12 p-1" />
+                <Input
+                  type="number"
+                  id="row"
+                  className="mr-2 h-8 w-12 p-1"
+                  placeholder="0"
+                />
                 <span>%</span>
               </TableCell>
               <TableCell>
@@ -152,36 +171,19 @@ export default function RecordTool({
                         <DialogTitle>Add Enum</DialogTitle>
                         <DialogDescription>write Enum</DialogDescription>
                       </DialogHeader>
-                      <div className="grid grid-cols-5 items-center gap-4">
-                        <Label htmlFor="username" className="text-right">
-                          Enum
-                        </Label>
-                        <Input
-                          id="username"
-                          placeholder="write enum"
-                          className="col-span-3"
-                          onChange={(e) => e.target.value}
-                        />
-                        <Button type="submit" variant="secondary">
-                          Add
-                        </Button>
-                      </div>
-                      <div className="sticky top-0 min-h-10 items-center gap-3 border-b p-2">
-                        {row.enum.map((enumText) => (
-                          <Badge
-                            variant="default"
-                            className="mr-2 cursor-pointer"
-                            key={generateKey(enumText)}
-                          >
-                            {enumText}
-                          </Badge>
-                        ))}
-                      </div>
-                      <DialogFooter>
-                        <DialogClose asChild>
-                          <Button type="submit">Save</Button>
-                        </DialogClose>
-                      </DialogFooter>
+                      <TagInputForm
+                        type="enum"
+                        preTag={row.enum}
+                        onAdd={(newEnum) =>
+                          handleOnChange(rowIdx, 'enum', newEnum)
+                        }
+                      >
+                        <DialogFooter className="pt-3">
+                          <DialogClose asChild>
+                            <Button type="submit">Save</Button>
+                          </DialogClose>
+                        </DialogFooter>
+                      </TagInputForm>
                     </DialogContent>
                   </Dialog>
                 )}
@@ -191,12 +193,12 @@ export default function RecordTool({
         </TableBody>
       </Table>
       <div className="mt-5 flex items-center px-3">
-        <Label htmlFor="row" className="pr-3">
+        <Label htmlFor="Rows" className="pr-3">
           Rows
         </Label>
         <Input
           type="number"
-          id="row"
+          id="Rows"
           placeholder="max 100,000"
           className="h-8 w-28 p-2"
         />
