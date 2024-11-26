@@ -91,7 +91,7 @@ export default function RecordTool({
         <TableHeader className="bg-secondary">
           <TableRow>
             <TableHead>Name</TableHead>
-            <TableHead>Type</TableHead>
+            <TableHead>Domain</TableHead>
             <TableHead>Blank</TableHead>
             <TableHead>Options</TableHead>
           </TableRow>
@@ -197,8 +197,8 @@ export default function RecordTool({
         <Input
           type="number"
           id="row"
-          placeholder="1,000"
-          className="h-8 w-24 p-2"
+          placeholder="max 100,000"
+          className="h-8 w-28 p-2"
         />
       </div>
       <div className="mt-5 flex justify-center">
