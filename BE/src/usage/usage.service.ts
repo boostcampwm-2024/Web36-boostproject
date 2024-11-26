@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { RowDataPacket } from 'mysql2';
 import { QueryDBAdapter } from 'src/config/query-database/query-db.adapter';
 import { QUERY_DB_ADAPTER } from 'src/config/query-database/query-db.moudle';
 import { RedisService } from 'src/config/redis/redis.service';
@@ -43,7 +42,7 @@ export class UsageService {
 
     const [tableList] = await this.queryDBAdapter
       .getAdminPool()
-      .query<RowDataPacket[]>(getTabelListQuery);
+      .query(getTabelListQuery);
     const tableNameList = tableList[0].table_name.split(',');
     return tableNameList;
   }
