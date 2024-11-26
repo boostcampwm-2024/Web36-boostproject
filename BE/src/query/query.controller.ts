@@ -5,7 +5,7 @@ import {
   Post,
   Req,
   UseFilters,
-  UseGuards,
+  UseGuards, UseInterceptors,
 } from '@nestjs/common';
 import { QueryService } from './query.service';
 import { QueryDto } from './dto/query.dto';
@@ -17,6 +17,7 @@ import { Request } from 'express';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { ExceptionHandler } from '../common/exception/exception.handler';
 import { ShellGuard } from '../guard/shell.guard';
+import { UserDBConnectionInterceptor } from '../interceptors/user-db-connection.interceptor';
 
 @ApiExtraModels(ResponseDto, ResQueryDto)
 @ApiTags('쿼리 API')
@@ -25,6 +26,7 @@ import { ShellGuard } from '../guard/shell.guard';
 export class QueryController {
   constructor(private readonly queryService: QueryService) {}
 
+  @UseInterceptors(UserDBConnectionInterceptor)
   @ExecuteQuerySwagger()
   @Serialize(ResQueryDto)
   @Post('/:shellId/execute')

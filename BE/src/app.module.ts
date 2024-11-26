@@ -6,14 +6,12 @@ import { QueryModule } from './query/query.module';
 import { Shell } from 'src/shell/shell.entity';
 import { User } from 'src/user/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import dotenv from 'dotenv';
 import { SessionMiddleware } from './middleware/session.middleware';
 import { RedisModule } from './config/redis/redis.module';
 import { ServiceDBModule } from './config/service-database/service-db.module';
 import { RecordModule } from './record/record.module';
 import { TableModule } from './table/table.module';
 
-dotenv.config();
 
 @Module({
   imports: [
