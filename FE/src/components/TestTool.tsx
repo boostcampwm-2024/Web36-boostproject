@@ -34,7 +34,6 @@ export default function TestQueryTool() {
 
   return (
     <div className="shadow-sm">
-      {/* Query List */}
       <div className="mb-4">
         <p
           id="query-list-label"
@@ -70,7 +69,6 @@ export default function TestQueryTool() {
         </div>
       </div>
 
-      {/* Selected Query Display */}
       <div className="mb-4">
         <div className="mb-3 block flex h-10 items-center justify-between border-b border-t bg-secondary pl-3 text-sm font-medium text-muted-foreground transition-colors">
           <p id="selected-query-label">Preview / Edit Query</p>
@@ -97,7 +95,6 @@ export default function TestQueryTool() {
         />
       </div>
 
-      {/* Action Button */}
       <div className="px-4">
         <Button onClick={handleRunQuery} variant="default" className="w-full">
           Add Query
