@@ -45,7 +45,6 @@ export default function RecordTool({
 }) {
   const [tables, setTables] = useState<RecordToolType[]>([])
   const [selectedTableName, setSelectedTableName] = useState<string>('')
-  const [newTableName, setNewTableName] = useState('')
 
   useEffect(() => {
     const recordToolData = convertTableDataToRecordToolData(tableData)
@@ -71,10 +70,6 @@ export default function RecordTool({
       )
     )
   }
-
-  //   const handleSubmit = async () => {
-  //     if (!selectedTable) return
-  //   }
 
   return (
     <>
@@ -112,7 +107,7 @@ export default function RecordTool({
                     handleOnChange(rowIdx, 'type', newValue)
                   }
                 >
-                  <SelectTrigger className="h-8 w-32 p-2">
+                  <SelectTrigger className="h-8 w-20 p-2">
                     <SelectValue placeholder={row.type} />
                   </SelectTrigger>
                   <SelectContent>
@@ -124,45 +119,91 @@ export default function RecordTool({
                   </SelectContent>
                 </Select>
               </TableCell>
-              <TableCell />
-              <TableCell />
+              <TableCell className="flex items-center">
+                <Input type="number" id="row" className="mr-2 h-8 w-12 p-1" />
+                <span>%</span>
+              </TableCell>
+              <TableCell>
+                {row.type === 'number' && (
+                  <div className="flex">
+                    <Input
+                      type="number"
+                      id="row"
+                      className="mr-2 h-8 w-16 p-2"
+                      placeholder="min"
+                    />
+                    <Input
+                      type="number"
+                      id="row"
+                      className="h-8 w-16 p-2"
+                      placeholder="max"
+                    />
+                  </div>
+                )}
+                {row.type === 'enum' && (
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="secondary" className="h-8">
+                        Add Enum
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Add Enum</DialogTitle>
+                        <DialogDescription>write Enum</DialogDescription>
+                      </DialogHeader>
+                      <div className="grid grid-cols-5 items-center gap-4">
+                        <Label htmlFor="username" className="text-right">
+                          Enum
+                        </Label>
+                        <Input
+                          id="username"
+                          placeholder="write enum"
+                          className="col-span-3"
+                          onChange={(e) => e.target.value}
+                        />
+                        <Button type="submit" variant="secondary">
+                          Add
+                        </Button>
+                      </div>
+                      <div className="sticky top-0 min-h-10 items-center gap-3 border-b p-2">
+                        {row.enum.map((enumText) => (
+                          <Badge
+                            variant="default"
+                            className="mr-2 cursor-pointer"
+                            key={generateKey(enumText)}
+                          >
+                            {enumText}
+                          </Badge>
+                        ))}
+                      </div>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button type="submit">Save</Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                )}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+      <div className="mt-5 flex items-center px-3">
+        <Label htmlFor="row" className="pr-3">
+          Rows
+        </Label>
+        <Input
+          type="number"
+          id="row"
+          placeholder="1,000"
+          className="h-8 w-24 p-2"
+        />
+      </div>
       <div className="mt-5 flex justify-center">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="secondary" className="h-8">
-              Add Table
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Add Table</DialogTitle>
-              <DialogDescription>write table name</DialogDescription>
-            </DialogHeader>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="username" className="text-right">
-                Tablename
-              </Label>
-              <Input
-                id="username"
-                value={newTableName}
-                placeholder="table name"
-                className="col-span-3"
-                onChange={(e) => setNewTableName(e.target.value)}
-              />
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button type="submit">Add</Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
         <Button variant="default" className="ml-3 h-8">
-          Generate Query
+          Add Random Data
         </Button>
       </div>
     </>
