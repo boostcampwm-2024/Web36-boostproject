@@ -16,6 +16,11 @@ export interface TableType {
   columns: TableColumnType[]
 }
 
+export interface UsageType {
+  currentUsage: number
+  availUsage: number
+}
+
 export interface TableColumnType {
   name: string
   type: string
