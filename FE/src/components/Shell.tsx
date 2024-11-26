@@ -69,6 +69,7 @@ export default function Shell({ shell }: ShellProps) {
     if (value === inputValue) return
     setInputValue(value)
   }
+
   return (
     <>
       <div className="flex overflow-hidden rounded-sm bg-secondary shadow-md">
