@@ -8,7 +8,7 @@ import {
   executeShell,
 } from '@/api/shellApi'
 import { ShellType } from '@/types/interfaces'
-import { QUERY_KEYS } from '@/constants'
+import { QUERY_KEYS } from '@/constants/constants'
 
 export function useShells() {
   return useQuery<ShellType[]>(QUERY_KEYS.SHELLS, fetchShells, {

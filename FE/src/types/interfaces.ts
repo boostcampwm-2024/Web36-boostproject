@@ -42,6 +42,20 @@ export interface TableToolColumnType {
   NN: boolean
 }
 
+export interface RecordToolType {
+  tableName: string
+  columns: RecordToolColumnType[]
+}
+
+export interface RecordToolColumnType {
+  name: string
+  type: string
+  blank: number
+  min: number
+  max: number
+  enum: string[]
+}
+
 export type QueryType =
   | 'SELECT'
   | 'INSERT'
@@ -51,3 +65,9 @@ export type QueryType =
   | 'CREATE'
   | 'DROP'
   | null
+
+export interface ExampleQuery {
+  id: string
+  name: string
+  query: string
+}

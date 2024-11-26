@@ -1,17 +1,18 @@
-import { Table2, FileText, Network } from 'lucide-react'
+import { Table2, FileText, Network, AlignLeft } from 'lucide-react'
 
-const QUERY_KEYS = {
+export const QUERY_KEYS = {
   SHELLS: 'shells',
   TABLES: 'tables',
 } as const
 
-const MENU_TITLE = {
+export const MENU_TITLE = {
   TABLE: 'Create/Edit Table',
   RECORD: 'Add Random Record',
+  TESTQUERY: 'Add Example Query',
   VIEW: 'Current Table',
 }
 
-const MENU = [
+export const MENU = [
   {
     title: MENU_TITLE.TABLE,
     icon: Table2,
@@ -23,13 +24,18 @@ const MENU = [
     isActive: false,
   },
   {
+    title: MENU_TITLE.TESTQUERY,
+    icon: AlignLeft,
+    isActive: false,
+  },
+  {
     title: MENU_TITLE.VIEW,
     icon: Network,
     isActive: false,
   },
 ]
 
-const COLUMN_TYPES = [
+export const COLUMN_TYPES = [
   'TINYINT',
   'SMALLINT',
   'MEDIUMINT',
@@ -59,4 +65,14 @@ const COLUMN_TYPES = [
   'YEAR',
 ]
 
-export { MENU, MENU_TITLE, QUERY_KEYS, COLUMN_TYPES }
+export const RECORD_TYPES = [
+  'name',
+  'country',
+  'city',
+  'email',
+  'phone',
+  'sex',
+  'boolean',
+  'number',
+  'enum',
+]

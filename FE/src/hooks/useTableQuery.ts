@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query'
 import { TableType } from '@/types/interfaces'
-import { QUERY_KEYS } from '@/constants'
+import { QUERY_KEYS } from '@/constants/constants'
 import { fetchTables, fetchTablesByName } from '@/api/tableApi'
 
 export function useTables() {

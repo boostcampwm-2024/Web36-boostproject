@@ -21,7 +21,7 @@ export default function EditableInput({
         <Input
           type="text"
           value={inputValue}
-          className="h-[32px] w-[70px] p-2"
+          className="h-8 w-16 p-2"
           onChange={(e) => setInputValue(e.target.value)}
           onBlur={() => {
             setIsEditing(false)
