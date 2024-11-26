@@ -1,6 +1,11 @@
-import {ConflictException, Injectable, InternalServerErrorException, OnModuleInit} from '@nestjs/common';
-import {ConfigService} from '@nestjs/config';
-import {createPool, Pool, QueryResult} from 'mysql2/promise';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  OnModuleInit,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { createPool, Pool, QueryResult } from 'mysql2/promise';
 
 @Injectable()
 export class AdminDBManager implements OnModuleInit {
@@ -21,12 +26,12 @@ export class AdminDBManager implements OnModuleInit {
       connectionLimit: 10,
     });
   }
-  async run(query:string,params?:string[]) : Promise<QueryResult>{
-    const [result] = await this.adminConnection.query(query,params);
+  async run(query: string, params?: string[]): Promise<QueryResult> {
+    const [result] = await this.adminConnection.query(query, params);
     return result;
   }
 
-  public async initUserDatabase(identify :string) {
+  public async initUserDatabase(identify: string) {
     try {
       const connectInfo = {
         name: identify.substring(0, 10),
@@ -37,24 +42,24 @@ export class AdminDBManager implements OnModuleInit {
 
       await this.run(`create database ${connectInfo.database};`);
       await this.run(
-          `create user '${connectInfo.name}'@'${connectInfo.host}' identified by '${connectInfo.password}';`,
+        `create user '${connectInfo.name}'@'${connectInfo.host}' identified by '${connectInfo.password}';`,
       );
       await this.run(
-          `grant all privileges on ${connectInfo.database}.* to '${connectInfo.name}'@'${connectInfo.host}';`,
+        `grant all privileges on ${connectInfo.database}.* to '${connectInfo.name}'@'${connectInfo.host}';`,
       );
     } catch (error) {
       if (error.code === 'ER_DB_CREATE_EXISTS') {
         throw new ConflictException(
-            `Database already exists for user: ${identify}`,
+          `Database already exists for user: ${identify}`,
         );
       }
       throw new InternalServerErrorException(
-          `Database initialization failed for user: ${identify}`,
+        `Database initialization failed for user: ${identify}`,
       );
     }
   }
 
-  public async removeDatabaseInfo(identify:string) {
+  public async removeDatabaseInfo(identify: string) {
     try {
       const dropDatabase = `drop database ${identify};`;
       await this.run(dropDatabase);
@@ -64,5 +69,4 @@ export class AdminDBManager implements OnModuleInit {
       console.error(e);
     }
   }
-
 }

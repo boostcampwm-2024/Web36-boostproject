@@ -1,10 +1,10 @@
-import {Injectable} from '@nestjs/common';
-import {QueryDto} from './dto/query.dto';
-import {QueryType} from '../common/enums/query-type.enum';
-import {ShellService} from '../shell/shell.service';
-import {ResultSetHeader, RowDataPacket} from 'mysql2/promise';
-import {Shell} from '../shell/shell.entity';
-import {UserDBManager} from "../config/query-database/user-db-manager.service";
+import { Injectable } from '@nestjs/common';
+import { QueryDto } from './dto/query.dto';
+import { QueryType } from '../common/enums/query-type.enum';
+import { ShellService } from '../shell/shell.service';
+import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
+import { Shell } from '../shell/shell.entity';
+import { UserDBManager } from '../config/query-database/user-db-manager.service';
 
 @Injectable()
 export class QueryService {

@@ -1,15 +1,13 @@
 import Redis from 'ioredis';
-import {Injectable} from '@nestjs/common';
-import {AdminDBManager} from "../query-database/admin-db-manager.service";
+import { Injectable } from '@nestjs/common';
+import { AdminDBManager } from '../query-database/admin-db-manager.service';
 
 @Injectable()
 export class RedisService {
   private defaultConnection: Redis;
   private eventConnection: Redis;
 
-  constructor(
-    private readonly adminDBManager: AdminDBManager,
-  ) {
+  constructor(private readonly adminDBManager: AdminDBManager) {
     this.setDefaultConnection();
     this.setEventConnection();
   }
@@ -51,7 +49,7 @@ export class RedisService {
   private subscribeToExpiredEvents() {
     this.eventConnection.subscribe('__keyevent@0__:expired');
 
-    this.eventConnection.on('message', (event,session) => {
+    this.eventConnection.on('message', (event, session) => {
       this.adminDBManager.removeDatabaseInfo(session);
     });
   }

@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ColumnDto, ResTableDto } from './dto/res-table.dto';
 import { ResTablesDto } from './dto/res-tables.dto';
-import {AdminDBManager} from "../config/query-database/admin-db-manager.service";
-import {RowDataPacket} from "mysql2/promise";
+import { AdminDBManager } from '../config/query-database/admin-db-manager.service';
+import { RowDataPacket } from 'mysql2/promise';
 
 @Injectable()
 export class TableService {
-  constructor(
-      private readonly adminDBManager: AdminDBManager,
-  ) {}
+  constructor(private readonly adminDBManager: AdminDBManager) {}
 
   async findAll(sessionId: string) {
     const tables = await this.getTables(sessionId);
@@ -37,7 +35,10 @@ export class TableService {
     WHERE TABLE_SCHEMA = ? ${tableName ? 'AND TABLE_NAME = ?' : ''}
   `;
     const params = tableName ? [schema, tableName] : [schema];
-    const [tables] = await this.adminDBManager.run(query,params) as RowDataPacket[];
+    const [tables] = (await this.adminDBManager.run(
+      query,
+      params,
+    )) as RowDataPacket[];
     return tables as string[];
   }
 
@@ -48,7 +49,10 @@ export class TableService {
     WHERE TABLE_SCHEMA = ? ${tableName ? 'AND TABLE_NAME = ?' : ''}
   `;
     const params = tableName ? [schema, tableName] : [schema];
-    const [columns] = await this.adminDBManager.run(query,params) as RowDataPacket[];
+    const [columns] = (await this.adminDBManager.run(
+      query,
+      params,
+    )) as RowDataPacket[];
     return columns as string[];
   }
 
@@ -65,7 +69,10 @@ export class TableService {
     AND REFERENCED_TABLE_NAME IS NOT NULL
   `;
     const params = tableName ? [schema, tableName] : [schema];
-    const [foreignKey] = await this.adminDBManager.run(query,params) as RowDataPacket[];
+    const [foreignKey] = (await this.adminDBManager.run(
+      query,
+      params,
+    )) as RowDataPacket[];
     return foreignKey as string[];
   }
 

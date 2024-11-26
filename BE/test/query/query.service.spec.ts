@@ -29,45 +29,44 @@ describe('QueryService', () => {
   //       },
   //     ],
   //   }).compile();
+  // queryService = module.get<QueryService>(QueryService);
+  // mockQueryDBAdapter = module.get<QueryDBAdapter>(QUERY_DB_ADAPTER);
+  // mockShellService = module.get<ShellService>(ShellService);
+});
 
-    // queryService = module.get<QueryService>(QueryService);
-    // mockQueryDBAdapter = module.get<QueryDBAdapter>(QUERY_DB_ADAPTER);
-    // mockShellService = module.get<ShellService>(ShellService);
-  });
+describe('테이블 결과값은 최대 100개 까지만 반환한다.', () => {
+  // const shellId = 1;
+  // const sessionId = 'sessionId';
+  // const queryDto: QueryDto = { query: 'SELECT * FROM users' };
+  //
+  // beforeEach(() => {
+  //   jest.spyOn(mockShellService, 'findShellOrThrow').mockResolvedValue(null);
+  // });
+  //
+  // it('테이블 결과값이 100개가 넘어가면 100개만 반환한다..', async () => {
+  //   const rows = new Array(150).fill({ test: 'data' });
+  //   jest.spyOn(mockQueryDBAdapter, 'run').mockResolvedValue(rows);
+  //
+  //   await queryService.execute(sessionId, shellId, queryDto);
+  //
+  //   expect(mockShellService.replace).toHaveBeenCalledWith(
+  //     shellId,
+  //     expect.objectContaining({
+  //       resultTable: rows.slice(0, 100),
+  //     }),
+  //   );
+});
 
-  describe('테이블 결과값은 최대 100개 까지만 반환한다.', () => {
-    // const shellId = 1;
-    // const sessionId = 'sessionId';
-    // const queryDto: QueryDto = { query: 'SELECT * FROM users' };
-    //
-    // beforeEach(() => {
-    //   jest.spyOn(mockShellService, 'findShellOrThrow').mockResolvedValue(null);
-    // });
-    //
-    // it('테이블 결과값이 100개가 넘어가면 100개만 반환한다..', async () => {
-    //   const rows = new Array(150).fill({ test: 'data' });
-    //   jest.spyOn(mockQueryDBAdapter, 'run').mockResolvedValue(rows);
-    //
-    //   await queryService.execute(sessionId, shellId, queryDto);
-    //
-    //   expect(mockShellService.replace).toHaveBeenCalledWith(
-    //     shellId,
-    //     expect.objectContaining({
-    //       resultTable: rows.slice(0, 100),
-    //     }),
-    //   );
-    });
-
-    it('테이블 결과값이 100개보다 적으면 그대로 반환한다.', async () => {
-      // const rows = new Array(99).fill({ test: 'data' });
-      // jest.spyOn(mockQueryDBAdapter, 'run').mockResolvedValue(rows);
-      //
-      // await queryService.execute(sessionId, shellId, queryDto);
-      //
-      // expect(mockShellService.replace).toHaveBeenCalledWith(
-      //   shellId,
-      //   expect.objectContaining({
-      //     resultTable: rows,
-      //   }),
-      // );});
-})
+it('테이블 결과값이 100개보다 적으면 그대로 반환한다.', async () => {
+  // const rows = new Array(99).fill({ test: 'data' });
+  // jest.spyOn(mockQueryDBAdapter, 'run').mockResolvedValue(rows);
+  //
+  // await queryService.execute(sessionId, shellId, queryDto);
+  //
+  // expect(mockShellService.replace).toHaveBeenCalledWith(
+  //   shellId,
+  //   expect.objectContaining({
+  //     resultTable: rows,
+  //   }),
+  // );});
+});

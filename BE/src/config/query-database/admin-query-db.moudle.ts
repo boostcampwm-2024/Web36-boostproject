@@ -1,6 +1,6 @@
-import {Module} from '@nestjs/common';
-import {AdminDBManager} from './admin-db-manager.service';
-import {ConfigModule} from '@nestjs/config';
+import { Module } from '@nestjs/common';
+import { AdminDBManager } from './admin-db-manager.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [

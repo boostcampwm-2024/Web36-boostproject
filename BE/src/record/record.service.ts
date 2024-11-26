@@ -1,4 +1,8 @@
-import {Injectable, InternalServerErrorException, OnModuleInit,} from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  OnModuleInit,
+} from '@nestjs/common';
 import {
   BooleanGenerator,
   CityGenerator,
@@ -11,26 +15,27 @@ import {
   RandomValueGenerator,
   SexGenerator,
 } from './domain';
-import {CreateRandomRecordDto, RandomColumnInfo} from './dto/create-random-record.dto';
-import {RandomColumnEntity} from './random-column.entity';
+import {
+  CreateRandomRecordDto,
+  RandomColumnInfo,
+} from './dto/create-random-record.dto';
+import { RandomColumnEntity } from './random-column.entity';
 import fs from 'fs/promises';
 import crypto from 'crypto';
 import path from 'path';
-import {ResultSetHeader} from 'mysql2';
-import {UserDBManager} from "../config/query-database/user-db-manager.service";
-import {ResRecordDto} from "./dto/res-record.dto";
+import { ResultSetHeader } from 'mysql2';
+import { UserDBManager } from '../config/query-database/user-db-manager.service';
+import { ResRecordDto } from './dto/res-record.dto';
 import {
   generalDomain,
   RANDOM_DATA_TEMP_DIR,
   RECORD_PROCESS_BATCH_SIZE,
-  TypeToConstructor
-} from "./constant/random-record.constant";
+  TypeToConstructor,
+} from './constant/random-record.constant';
 
 @Injectable()
 export class RecordService implements OnModuleInit {
-  constructor(
-      private readonly userDBManager: UserDBManager,
-  ) {}
+  constructor(private readonly userDBManager: UserDBManager) {}
 
   async onModuleInit() {
     try {
@@ -44,16 +49,22 @@ export class RecordService implements OnModuleInit {
     }
   }
 
-  async insertRandomRecord(createRandomRecordDto: CreateRandomRecordDto): Promise<ResRecordDto> {
-    const columnEntities: RandomColumnEntity[] = createRandomRecordDto.columns.map((column) => this.toEntity(column));
+  async insertRandomRecord(
+    createRandomRecordDto: CreateRandomRecordDto,
+  ): Promise<ResRecordDto> {
+    const columnEntities: RandomColumnEntity[] =
+      createRandomRecordDto.columns.map((column) => this.toEntity(column));
     const columnNames = columnEntities.map((column) => column.name);
 
-    const csvFilePath = await this.generateCsvFile(columnEntities, createRandomRecordDto.count);
+    const csvFilePath = await this.generateCsvFile(
+      columnEntities,
+      createRandomRecordDto.count,
+    );
 
     const result = await this.insertCsvIntoDB(
-        csvFilePath,
-        createRandomRecordDto.tableName,
-        columnNames,
+      csvFilePath,
+      createRandomRecordDto.tableName,
+      columnNames,
     );
 
     await this.deleteFile(csvFilePath);
@@ -66,9 +77,15 @@ export class RecordService implements OnModuleInit {
 
   private toEntity(randomColumnInfo: RandomColumnInfo): RandomColumnEntity {
     let generator: RandomValueGenerator<any>;
-    if (generalDomain.includes(randomColumnInfo.type)) generator = new TypeToConstructor[randomColumnInfo.type]();
-    if (randomColumnInfo.type === 'enum') generator = new EnumGenerator(randomColumnInfo.enum);
-    if (randomColumnInfo.type === 'number') generator = new NumberGenerator(randomColumnInfo.min ?? 0, randomColumnInfo.max ?? 100);
+    if (generalDomain.includes(randomColumnInfo.type))
+      generator = new TypeToConstructor[randomColumnInfo.type]();
+    if (randomColumnInfo.type === 'enum')
+      generator = new EnumGenerator(randomColumnInfo.enum);
+    if (randomColumnInfo.type === 'number')
+      generator = new NumberGenerator(
+        randomColumnInfo.min ?? 0,
+        randomColumnInfo.max ?? 100,
+      );
     return {
       name: randomColumnInfo.name,
       type: randomColumnInfo.type,
@@ -78,7 +95,10 @@ export class RecordService implements OnModuleInit {
     };
   }
 
-  private async generateCsvFile(columnEntities: RandomColumnEntity[], rows: number): Promise<string> {
+  private async generateCsvFile(
+    columnEntities: RandomColumnEntity[],
+    rows: number,
+  ): Promise<string> {
     const randomString = crypto.randomBytes(10).toString('hex');
     const filePath = path.join(RANDOM_DATA_TEMP_DIR, `${randomString}.csv`);
     const header = this.generateCsvHeader(columnEntities);
@@ -91,7 +111,7 @@ export class RecordService implements OnModuleInit {
       try {
         await fs.writeFile(filePath, data, { flag: 'a' });
       } catch (err) {
-        console.error('CSV 파일 쓰기 실패:',err);
+        console.error('CSV 파일 쓰기 실패:', err);
         throw new InternalServerErrorException({
           message: 'CSV 파일 쓰기 실패:: ' + err.message,
           error: err.message,
@@ -113,7 +133,10 @@ export class RecordService implements OnModuleInit {
     return columnEntities.map((column) => column.name).join(', ') + '\n';
   }
 
-  private generateCsvData(columnEntities: RandomColumnEntity[], rows: number): string {
+  private generateCsvData(
+    columnEntities: RandomColumnEntity[],
+    rows: number,
+  ): string {
     let data = columnEntities.map((column) =>
       column.generator.getRandomValues(rows, column.blank),
     );
@@ -121,7 +144,11 @@ export class RecordService implements OnModuleInit {
     return data.map((row) => row.join(',')).join('\n') + '\n';
   }
 
-  async insertCsvIntoDB(csvFilePath: string, tableName: string, columnNames: string[]): Promise<ResultSetHeader> {
+  async insertCsvIntoDB(
+    csvFilePath: string,
+    tableName: string,
+    columnNames: string[],
+  ): Promise<ResultSetHeader> {
     const query = `
       LOAD DATA LOCAL INFILE \'${csvFilePath.replace(/\\/g, '\\\\')}\'
       INTO TABLE ${tableName}
@@ -133,7 +160,7 @@ export class RecordService implements OnModuleInit {
     let queryResult: ResultSetHeader;
 
     try {
-      queryResult = await this.userDBManager.run(query) as ResultSetHeader;
+      queryResult = (await this.userDBManager.run(query)) as ResultSetHeader;
     } catch (err) {
       console.error('랜덤 데이터 DB 삽입중 에러:', err);
       throw new InternalServerErrorException({

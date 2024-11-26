@@ -1,24 +1,22 @@
-import {Inject, Injectable, Scope} from '@nestjs/common';
-import {Request} from 'express';
-import {createConnection, QueryResult} from 'mysql2/promise';
-import {ConfigService} from '@nestjs/config';
-import {REQUEST} from '@nestjs/core';
+import { Inject, Injectable, Scope } from '@nestjs/common';
+import { Request } from 'express';
+import { createConnection, QueryResult } from 'mysql2/promise';
+import { ConfigService } from '@nestjs/config';
+import { REQUEST } from '@nestjs/core';
 
 @Injectable({ scope: Scope.TRANSIENT })
-export class UserDBManager{
-
+export class UserDBManager {
   constructor(
-      private readonly configService: ConfigService,
-      @Inject(REQUEST) private readonly request: Request,
+    private readonly configService: ConfigService,
+    @Inject(REQUEST) private readonly request: Request,
   ) {}
 
-  async run(query: string) : Promise<QueryResult> {
+  async run(query: string): Promise<QueryResult> {
     const connection = await this.createConnection();
-    try{
+    try {
       const [result] = await connection.query(query);
       return result;
-    }
-    finally {
+    } finally {
       await connection.end();
     }
   }
@@ -33,5 +31,4 @@ export class UserDBManager{
       database: identify,
     });
   }
-
 }
