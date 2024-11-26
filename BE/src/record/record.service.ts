@@ -1,13 +1,5 @@
+import {Injectable, InternalServerErrorException, OnModuleInit,} from '@nestjs/common';
 import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  OnModuleInit,
-} from '@nestjs/common';
-import { QueryDBAdapter } from 'src/config/query-database/query-db.adapter';
-import { QUERY_DB_ADAPTER } from 'src/config/query-database/query-db.moudle';
-import {
-  RandomValueGenerator,
   BooleanGenerator,
   CityGenerator,
   CountryGenerator,
@@ -16,14 +8,16 @@ import {
   NameGenerator,
   NumberGenerator,
   PhoneGenerator,
+  RandomValueGenerator,
   SexGenerator,
 } from './domain';
-import { RandomColumnInfo, RandomRecordInsertDto } from './dto/record.dto';
-import { RandomColumnEntity } from './randomColumn.entity';
+import {RandomColumnInfo, RandomRecordInsertDto} from './dto/record.dto';
+import {RandomColumnEntity} from './random-column.entity';
 import fs from 'fs/promises';
 import crypto from 'crypto';
 import path from 'path';
-import { ResultSetHeader } from 'mysql2';
+import {ResultSetHeader} from 'mysql2';
+import {UserDBManager} from "../config/query-database/user-db-manager.service";
 
 const RANDOM_DATA_TEMP_DIR = 'csvTemp';
 const RECORD_PROCESS_BATCH_SIZE = 10000;
@@ -51,7 +45,7 @@ const TypeToConstructor = {
 @Injectable()
 export class RecordService implements OnModuleInit {
   constructor(
-    @Inject(QUERY_DB_ADAPTER) private readonly queryDBAdapter: QueryDBAdapter,
+      private readonly userDBManager: UserDBManager,
   ) {}
 
   async onModuleInit() {
@@ -153,7 +147,7 @@ export class RecordService implements OnModuleInit {
     let queryResult: ResultSetHeader;
 
     try {
-      queryResult = (await this.queryDBAdapter.run(
+      queryResult = (await this.userDBManager.run(
         sql,
       )) as unknown as ResultSetHeader;
     } catch (err) {

@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { RedisService } from './redis.service';
-import { QueryDBModule } from '../query-database/query-db.moudle';
+import { AdminQueryDBModule } from '../query-database/admin-query-db.moudle';
+import {AdminDBManager} from "../query-database/admin-db-manager.service";
 
 @Module({
-  imports: [QueryDBModule],
-  providers: [RedisService],
+  imports: [AdminQueryDBModule],
+  providers: [RedisService,AdminDBManager],
   exports: [RedisService],
 })
 export class RedisModule {}
