@@ -41,15 +41,32 @@ export class RedisService {
     if (!key) {
       return null;
     }
-    return this.defaultConnection.get(key);
+    return this.defaultConnection.hget(key, 'session');
   }
 
-  public async setNewSession(key: string) {
-    const session = await this.getSession(key);
+  public async existSession(key: string) {
+    return this.defaultConnection.exists(key);
+  }
+
+  public async setSession(key: string, sessionInfo: object) {
+    await this.defaultConnection.hset(key, 'session', JSON.stringify(sessionInfo));
+  }
+
+  public async setNewSession(key: string, sessionInfo: object) {
+    const session = await this.existSession(key);
     if (!session) {
+      await this.defaultConnection.hset(key, 'session', JSON.stringify(sessionInfo));
       await this.queryDBAdapter.initUserDatabase();
     }
     await this.queryDBAdapter.createConnection();
+  }
+
+  public async deleteSession(key: string) {
+    await this.defaultConnection.del(key);
+  }
+
+  public async setExpireTime(key: string, ttl: number) {
+    await this.defaultConnection.expire(key, ttl);
   }
 
   private subscribeToExpiredEvents() {
