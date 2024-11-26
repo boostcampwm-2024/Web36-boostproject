@@ -74,7 +74,7 @@ export interface ExampleQuery {
 
 export interface CapacityUsageProps {
   used: number
-  total: number
+  total?: number
   unit?: string
   lowThreshold?: number
   highThreshold?: number

@@ -21,7 +21,7 @@ export default function ShellList({ shells = [] }: { shells: ShellType[] }) {
         </div>
 
         {/* 점유율 컴포넌트 */}
-        <CapacityUsage used={800} total={1000} unit="GB" isLoading />
+        <CapacityUsage used={800} isLoading />
       </div>
       {shells.length > 0 && (
         <div className="flex flex-1 flex-col gap-3 p-4">

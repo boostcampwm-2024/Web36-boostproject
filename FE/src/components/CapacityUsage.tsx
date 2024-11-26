@@ -1,9 +1,10 @@
 import { CapacityUsageProps } from '@/types/interfaces'
+import { MAX_ROWS_PER_USER } from '@/constants/constants'
 
 function CapacityUsage({
   used,
-  total,
-  unit = 'GB',
+  total = MAX_ROWS_PER_USER,
+  unit = 'Rows',
   lowThreshold = 70,
   highThreshold = 70,
   isLoading = false, // 로딩 상태 추가
