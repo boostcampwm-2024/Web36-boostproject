@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MENU } from '@/constants'
+import { MENU } from '@/constants/constants'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import LeftSidebar from '@/components/LeftSidebar'
 import RightSidebar from '@/components/RightSidebar'

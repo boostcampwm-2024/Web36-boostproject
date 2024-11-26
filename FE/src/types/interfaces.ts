@@ -51,3 +51,9 @@ export type QueryType =
   | 'CREATE'
   | 'DROP'
   | null
+
+export interface ExampleQuery {
+  id: string
+  name: string
+  query: string
+}

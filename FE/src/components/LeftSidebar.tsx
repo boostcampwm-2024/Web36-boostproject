@@ -1,4 +1,4 @@
-import { MENU, MENU_TITLE } from '@/constants'
+import { MENU, MENU_TITLE } from '@/constants/constants'
 import { X } from 'lucide-react'
 
 import {

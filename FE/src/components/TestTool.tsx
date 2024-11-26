@@ -5,64 +5,22 @@ import AceEditor from 'react-ace'
 import 'ace-builds/src-noconflict/mode-sql'
 import 'ace-builds/src-noconflict/theme-monokai'
 import 'ace-builds/src-noconflict/ext-language_tools'
+import testQueries from '@/constants/exampleQuery'
+import { ExampleQuery } from '@/types/interfaces'
 
 export default function TestQueryTool() {
-  const createQueryExample = `CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,       -- 고유 ID, 기본 키
-  name VARCHAR(100) NOT NULL,              -- 이름
-  city VARCHAR(100) NOT NULL,              -- 도시
-  email VARCHAR(255) UNIQUE NOT NULL,      -- 이메일, 고유값
-  phone VARCHAR(20) NOT NULL,              -- 전화번호
-  age INT CHECK (age >= 0),                -- 나이 (0 이상만 허용)
-  gender ENUM('Male', 'Female', 'Other') NOT NULL,  -- 성별 (열거형)
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,   -- 생성 날짜
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  -- 수정 날짜
-);`
-
-  const insertQueryExample = `INSERT INTO users (name, city, email, phone, age, gender)
-VALUES
-('Alice Johnson', 'New York', 'alice.johnson@example.com', '123-456-7890', 30, 'Female'),
-('Bob Smith', 'Los Angeles', 'bob.smith@example.com', '987-654-3210', 45, 'Male'),
-('Charlie Brown', 'Chicago', 'charlie.brown@example.com', '555-555-5555', 25, 'Other');
-`
-
-  const selectQueryExample = `SELECT * FROM users;`
-
-  const testQueries = [
-    {
-      id: 'create',
-      name: 'Create Table Query',
-      query: createQueryExample,
-    },
-    {
-      id: 'insert',
-      name: 'Insert Row Query',
-      query: insertQueryExample,
-    },
-    {
-      id: 'select',
-      name: 'Select Row Query',
-      query: selectQueryExample,
-    },
-  ]
-
   const { addShell, updateShell } = useShellHandlers()
-  const [selectedQueryId, setSelectedQueryId] = useState<string | null>(null)
-  const [hoveredQuery, setHoveredQuery] = useState<string | null>(null)
-  const [queryInput, setQueryInput] = useState<string>('No query selected.')
-  const [customQuery, setCustomQuery] = useState<boolean>(false)
+  const [selectedQuery, setSelectedQuery] = useState<ExampleQuery | null>(null)
+  const [queryInput, setQueryInput] = useState<string>('')
 
-  const handleSelectQuery = (id: string) => {
-    setSelectedQueryId(id)
-    setHoveredQuery(null)
-    setCustomQuery(false)
-    const selectedQuery = testQueries.find((q) => q.id === id)?.query || ''
-    setQueryInput(selectedQuery)
+  const handleSelectQuery = (query: ExampleQuery) => {
+    setSelectedQuery(query)
+    setQueryInput(query.query)
   }
 
   const handleRunQuery = async () => {
-    if (!selectedQueryId && !customQuery) {
-      alert('Please select a query first.')
+    if (!queryInput) {
+      alert('Please write a query first.')
       return
     }
 
@@ -72,27 +30,10 @@ VALUES
 
   const onInputChange = (value: string) => {
     setQueryInput(value)
-    setCustomQuery(true)
-    if (testQueries.find((q) => q.id === selectedQueryId)?.query === value) {
-      setCustomQuery(false)
-    }
   }
 
   return (
     <div className="mt-5 shadow-sm">
-      <style>
-        {`
-    .editor-hovered .ace_line,
-    .editor-hovered .ace_string,
-    .editor-hovered .ace_keyword,
-    .editor-hovered .ace_numeric,
-    .editor-hovered .ace_comment,
-    .editor-hovered .ace_constant,
-    .editor-hovered .ace_type {
-      color: rgba(0, 0, 0, 0.5) !important; /* 반투명한 텍스트 */
-    }
-  `}
-      </style>
       {/* Query List */}
       <div className="mb-4">
         <p
@@ -111,20 +52,16 @@ VALUES
             <div
               key={query.id}
               className={`m-3 cursor-pointer rounded border p-2 ${
-                selectedQueryId === query.id
-                  ? 'bg-gray-200'
-                  : 'hover:bg-gray-100'
+                selectedQuery === query ? 'bg-gray-200' : 'hover:bg-gray-100'
               }`}
-              onClick={() => handleSelectQuery(query.id)}
-              onMouseEnter={() => setHoveredQuery(query.query)}
-              onMouseLeave={() => setHoveredQuery(null)}
+              onClick={() => handleSelectQuery(query)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
-                  handleSelectQuery(query.id)
+                  handleSelectQuery(query)
                 }
               }}
               role="option"
-              aria-selected={selectedQueryId === query.id}
+              aria-selected={selectedQuery === query}
               tabIndex={0}
             >
               {query.name}
@@ -137,16 +74,12 @@ VALUES
       <div className="mb-4">
         <div className="mb-3 block flex h-10 items-center justify-between border-b border-t bg-secondary pl-3 text-sm font-medium text-muted-foreground transition-colors">
           <p id="selected-query-label">Preview / Edit Query</p>
-          {customQuery && (
-            <div className="border-1 mr-2 rounded-xl p-1 font-semibold text-primary">
-              custom
-            </div>
-          )}
         </div>
 
         <AceEditor
           mode="sql"
-          value={hoveredQuery || queryInput}
+          placeholder="No query selected."
+          value={queryInput}
           onChange={onInputChange}
           fontSize={14}
           width="100%"
@@ -160,7 +93,7 @@ VALUES
             tabSize: 2,
             wrap: true,
           }}
-          className={`bg-gray-100 ${hoveredQuery ? 'editor-hovered' : ''}`}
+          className="bg-gray-100"
         />
       </div>
 

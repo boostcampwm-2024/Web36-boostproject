@@ -1,4 +1,4 @@
-import { MENU_TITLE } from '@/constants'
+import { MENU_TITLE } from '@/constants/constants'
 import { TableType } from '@/types/interfaces'
 import {
   Sidebar,
