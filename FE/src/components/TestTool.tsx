@@ -33,7 +33,7 @@ export default function TestQueryTool() {
   }
 
   return (
-    <div className="mt-5 shadow-sm">
+    <div className="shadow-sm">
       {/* Query List */}
       <div className="mb-4">
         <p

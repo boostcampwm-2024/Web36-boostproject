@@ -42,7 +42,7 @@ import {
 import { COLUMN_TYPES } from '@/constants/constants'
 import {
   generateKey,
-  convertTableData,
+  convertTableDataToTableToolData,
   generateCreateTableQuery,
   generateAlterTableQuery,
 } from '@/util'
@@ -60,7 +60,7 @@ export default function TableTool({
   const [newTableName, setNewTableName] = useState('')
 
   useEffect(() => {
-    const tableToolData = convertTableData(tableData)
+    const tableToolData = convertTableDataToTableToolData(tableData)
     initialTableData.current = tableToolData
     setTables(tableToolData)
     setSelectedTableName(tableToolData[0]?.tableName)
@@ -151,7 +151,7 @@ export default function TableTool({
 
   return (
     <>
-      <div className="sticky top-0 items-center gap-3 border-b p-2">
+      <div className="sticky top-0 min-h-10 items-center gap-3 border-b p-2">
         {tables.map((table) => (
           <Badge
             variant={
@@ -217,7 +217,7 @@ export default function TableTool({
                             handleOnChange(rowIdx, 'type', newValue)
                           }
                         >
-                          <SelectTrigger className="h-[32px] w-[120px] p-2">
+                          <SelectTrigger className="h-8 w-32 p-2">
                             <SelectValue placeholder={value} />
                           </SelectTrigger>
                           <SelectContent>

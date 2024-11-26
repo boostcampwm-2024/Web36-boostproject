@@ -40,14 +40,9 @@ export default function Shell({ shell }: ShellProps) {
   }, [shell.query])
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const renderer = editorRef.current?.editor.renderer as any
-    if (renderer) {
-      if (!focused) {
-        renderer.$cursorLayer.element.style.display = 'none'
-      } else {
-        renderer.$cursorLayer.element.style.display = ''
-      }
-    }
+    renderer.$cursorLayer.element.style.display = !focused ? 'none' : ''
   }, [focused])
 
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
@@ -74,6 +69,7 @@ export default function Shell({ shell }: ShellProps) {
     if (value === inputValue) return
     setInputValue(value)
   }
+
   return (
     <>
       <div className="flex overflow-hidden rounded-sm bg-secondary shadow-md">

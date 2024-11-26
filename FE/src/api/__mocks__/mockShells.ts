@@ -14,7 +14,7 @@ export default function mockShells(mock: MockAdapter) {
     const newShell: ShellType = JSON.parse(config.data)
     newShell.id = new Date().getTime()
     shellData.push(newShell)
-    return [200, { data: newShell.id }]
+    return [200, { data: { id: newShell.id } }]
   })
 
   // execute

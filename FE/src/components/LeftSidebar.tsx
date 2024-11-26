@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/sidebar'
 import logo from '@/assets/logo.svg'
 import TableTool from '@/components/TableTool'
+import RecordTool from '@/components/RecordTool'
 import { TableType } from '@/types/interfaces'
 import TestQueryTool from './TestTool'
 
@@ -101,7 +102,9 @@ export default function LeftSidebar({
               {activeItem.title === MENU_TITLE.TABLE && (
                 <TableTool tableData={tables} />
               )}
-              {activeItem.title === MENU_TITLE.RECORD && 'record'}
+              {activeItem.title === MENU_TITLE.RECORD && (
+                <RecordTool tableData={tables} />
+              )}
               {activeItem.title === MENU_TITLE.TESTQUERY && <TestQueryTool />}
             </SidebarGroupContent>
           </SidebarGroup>
