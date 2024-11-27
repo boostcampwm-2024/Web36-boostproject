@@ -22,6 +22,16 @@ function CapacityUsage({ usage }: { usage: UsageType }) {
 
   return (
     <div className="flex max-w-md items-center space-x-4 rounded-lg bg-white">
+      {/* 게이지 바 */}
+      <div className="w-24 flex-grow">
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
+          <div
+            className={`h-full ${color}`}
+            style={{ width: `${percentage}%` }}
+          ></div>
+        </div>
+      </div>
+
       {/* 텍스트 영역 */}
       <div className="flex-shrink-0 text-left text-xs font-semibold text-muted-foreground">
         <div className="flex items-center space-x-1">
@@ -37,16 +47,6 @@ function CapacityUsage({ usage }: { usage: UsageType }) {
           <span>
             / {total} {UNIT}
           </span>
-        </div>
-      </div>
-
-      {/* 게이지 바 */}
-      <div className="w-24 flex-grow">
-        <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
-          <div
-            className={`h-full ${color}`}
-            style={{ width: `${percentage}%` }}
-          ></div>
         </div>
       </div>
     </div>
