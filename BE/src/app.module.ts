@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
 import { UserModule } from './user/user.module';
 import { ShellModule } from './shell/shell.module';
 import { QueryModule } from './query/query.module';
@@ -13,6 +13,9 @@ import { ServiceDBModule } from './config/service-database/service-db.module';
 import { RecordModule } from './record/record.module';
 import { TableModule } from './table/table.module';
 import { UsageModule } from './usage/useage.module';
+import { LoggerModule } from './config/logger/logger.module';
+import { LoggingInterceptor } from './interceptors/logging.interceptor';
+import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 
 dotenv.config();
 
@@ -27,6 +30,17 @@ dotenv.config();
     RecordModule,
     TableModule,
     UsageModule,
+    LoggerModule,
+  ],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_PIPE,
+      useClass: ValidationPipe,
+    },
   ],
 })
 export class AppModule {
