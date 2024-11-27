@@ -7,8 +7,11 @@ import 'ace-builds/src-noconflict/theme-monokai'
 import 'ace-builds/src-noconflict/ext-language_tools'
 import testQueries from '@/constants/exampleQuery'
 import { ExampleQuery } from '@/types/interfaces'
+import { useToast } from '@/hooks/use-toast'
 
 export default function TestQueryTool() {
+  const { toast } = useToast()
+
   const { addShell, updateShell } = useShellHandlers()
   const [selectedQuery, setSelectedQuery] = useState<ExampleQuery | null>(null)
   const [queryInput, setQueryInput] = useState<string>('')
@@ -20,7 +23,11 @@ export default function TestQueryTool() {
 
   const handleRunQuery = async () => {
     if (!queryInput) {
-      alert('Please write a query first.')
+      toast({
+        variant: 'destructive',
+        title: 'No query selected',
+        description: 'Please write a query first.',
+      })
       return
     }
 
