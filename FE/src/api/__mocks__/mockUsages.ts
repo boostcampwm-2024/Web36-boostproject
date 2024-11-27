@@ -1,19 +1,19 @@
 import * as MockAdapter from 'axios-mock-adapter'
 import { UsageType } from '@/types/interfaces'
-import mocDataUsage from './mocDataUsage.json'
 
-const usageData: UsageType = mocDataUsage
+const usageData: UsageType = {
+  currentUsage: 500,
+  availUsage: 500000,
+}
 
-export default function mockTables(mock: MockAdapter) {
+export default function mockUsages(mock: MockAdapter) {
+  const delay = (ms: number) =>
+    // eslint-disable-next-line no-promise-executor-return
+    new Promise((resolve) => setTimeout(resolve, ms))
+
   // fetch
-  mock.onGet('/usage').reply(200, { data: usageData })
-
-  mock.onGet(/\/tables\/.+/).reply((config) => {
-    const name = config.url!.split('/').pop()!
-    const foundTable = tableData.find((table) => table.tableName === name)
-
-    if (!foundTable) return [404, { error: 'Table not found' }]
-
-    return [200, { data: foundTable }]
+  mock.onGet('/usage').reply(async () => {
+    await delay(1000)
+    return [200, { data: usageData }]
   })
 }

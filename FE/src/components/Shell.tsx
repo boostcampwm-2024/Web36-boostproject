@@ -17,6 +17,7 @@ import AceEditor from 'react-ace'
 import 'ace-builds/src-noconflict/mode-sql'
 import 'ace-builds/src-noconflict/theme-monokai'
 import 'ace-builds/src-noconflict/ext-language_tools'
+import useUsages from '@/hooks/useUsageQuery'
 
 type ShellProps = {
   shell: ShellType
@@ -24,13 +25,15 @@ type ShellProps = {
 
 export default function Shell({ shell }: ShellProps) {
   const { id, queryStatus, query, text, queryType, resultTable } = shell
-  const { refetch } = useTables()
+  const { refetch: tableRefetch } = useTables()
+  const { refetch: usageRefetch } = useUsages()
   const { executeShell, updateShell, deleteShell } = useShellHandlers()
 
-  const LINE_HEIGHT = 1.2
+  const LINE_HEIGHT = 1.38
 
   const prevQueryRef = useRef<string>(query ?? '')
   const [focused, setFocused] = useState(false)
+  const [showPlaceholder, setShowPlaceholder] = useState(true)
   const [inputValue, setInputValue] = useState(query ?? '')
   const [editorHeight, setEditorHeight] = useState(LINE_HEIGHT)
   const editorRef = useRef<AceEditor>(null)
@@ -40,9 +43,14 @@ export default function Shell({ shell }: ShellProps) {
   }, [shell.query])
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const renderer = editorRef.current?.editor.renderer as any
-    renderer.$cursorLayer.element.style.display = !focused ? 'none' : ''
+    if (renderer) {
+      if (!focused) {
+        renderer.$cursorLayer.element.style.display = 'none'
+      } else {
+        renderer.$cursorLayer.element.style.display = ''
+      }
+    }
   }, [focused])
 
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
@@ -54,10 +62,12 @@ export default function Shell({ shell }: ShellProps) {
   }
 
   const handleClick = async () => {
+    console.log('handleClick')
     if (!id) return
     await executeShell({ ...shell, query })
+    usageRefetch()
     if (!queryType || ['CREATE', 'ALTER', 'DROP'].includes(queryType || ''))
-      await refetch()
+      await tableRefetch()
   }
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -68,34 +78,42 @@ export default function Shell({ shell }: ShellProps) {
   const handleEditorChange = (value: string) => {
     if (value === inputValue) return
     setInputValue(value)
+    const lineCount = value.split('\n').length
+    const newHeight = Math.max(lineCount * LINE_HEIGHT)
+    setEditorHeight(newHeight)
+  }
+
+  const handleFocus = () => {
+    setShowPlaceholder(false)
+    setFocused(true)
   }
 
   return (
     <>
-      <div className="flex overflow-hidden rounded-sm bg-secondary shadow-md">
+      <div className="flex overflow-hidden rounded-sm bg-secondary">
         <button
           type="button"
-          className="h-full bg-primary p-3 shadow-lg"
+          className="h-full bg-primary p-3 disabled:cursor-not-allowed"
           onClick={handleClick}
           disabled={inputValue.length === 0}
         >
           <img
             src={PlayCircle}
             alt="play button"
-            className={`${inputValue.length === 0 ? 'opacity-50' : ''} `}
+            className={`${inputValue.length === 0 ? 'opacity-50' : ''}`}
           />
         </button>
         <div className="h-full w-full rounded-sm bg-secondary">
           <style>{`.ace_placeholder {margin: 0;}`}</style>
           <AceEditor
             ref={editorRef}
-            placeholder="쿼리를 입력하세요"
+            placeholder={showPlaceholder ? '쿼리를 입력하세요' : ''}
             mode="sql"
             value={inputValue}
             onChange={handleEditorChange}
-            onFocus={() => setFocused(true)}
+            onFocus={handleFocus}
             onBlur={handleBlur}
-            fontSize={14}
+            fontSize={16}
             width="100%"
             height={`${editorHeight}rem`}
             setOptions={{
@@ -106,17 +124,8 @@ export default function Shell({ shell }: ShellProps) {
               enableLiveAutocompletion: true,
               enableSnippets: true,
               tabSize: 2,
-              wrap: true,
-              behavioursEnabled: false,
             }}
-            onLoad={(editor) => {
-              editor.on('change', () => {
-                setEditorHeight(
-                  editor.getSession().getScreenLength() * LINE_HEIGHT
-                )
-              })
-            }}
-            className="my-3.5 ml-2 bg-secondary"
+            className="mx-2 my-3 bg-secondary"
           />
         </div>
         {focused && (

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MENU } from '@/constants/constants'
+import { MAX_ROWS_PER_USER, MENU } from '@/constants/constants'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import LeftSidebar from '@/components/LeftSidebar'
 import RightSidebar from '@/components/RightSidebar'
@@ -19,12 +19,8 @@ export default function Page() {
     isLoading: isTablesLoading,
     error: tablesError,
   } = useTables()
-  const {
-    data: usage = {},
-    isLoading: isUsagesLoading,
-    error: usagesError,
-  } = useUsages()
-
+  const { data: usage = { availUsage: MAX_ROWS_PER_USER, currentUsage: 0 } } =
+    useUsages()
   const [activeItem, setActiveItem] = useState(MENU[0])
 
   return (
@@ -46,7 +42,9 @@ export default function Page() {
             Q-Lab
           </h2>
         </header>
-        {!isShellsLoading && !shellsError && <ShellList shells={shells} />}
+        {!isShellsLoading && !shellsError && (
+          <ShellList shells={shells} usage={usage} />
+        )}
       </SidebarInset>
       {!isTablesLoading && !tablesError && <RightSidebar tables={tables} />}
     </SidebarProvider>

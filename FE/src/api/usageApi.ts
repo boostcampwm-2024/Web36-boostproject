@@ -7,5 +7,5 @@ const axiosInstance =
 
 export default async function fetchUsage(): Promise<UsageType> {
   const response = await axiosInstance.get('/usage')
-  return response.data
+  return response.data.data
 }

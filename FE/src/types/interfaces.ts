@@ -17,8 +17,8 @@ export interface TableType {
 }
 
 export interface UsageType {
-  currentUsage: number
-  availUsage: number
+  currentUsage: number | null
+  availUsage: number | null
 }
 
 export interface TableColumnType {
