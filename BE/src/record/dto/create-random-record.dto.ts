@@ -26,7 +26,7 @@ export enum Domains {
   ENUM = 'enum',
 }
 
-export class RandomRecordInsertDto {
+export class CreateRandomRecordDto {
   @IsString()
   @IsNotEmpty()
   tableName: string;

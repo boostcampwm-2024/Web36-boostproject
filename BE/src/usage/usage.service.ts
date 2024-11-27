@@ -1,14 +1,15 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { QueryDBAdapter } from 'src/config/query-database/query-db.adapter';
-import { QUERY_DB_ADAPTER } from 'src/config/query-database/query-db.moudle';
+import { Injectable } from '@nestjs/common';
 import { RedisService } from 'src/config/redis/redis.service';
+import { UserDBManager } from '../config/query-database/user-db-manager.service';
+import { TableService } from '../table/table.service';
 
 @Injectable()
 export class UsageService {
   MAX_ROW_COUNT = 10;
   constructor(
-    @Inject(QUERY_DB_ADAPTER) private readonly queryDBAdapter: QueryDBAdapter,
+    private readonly userDBManager: UserDBManager,
     private readonly redisService: RedisService,
+    private readonly tableService: TableService,
   ) {}
 
   public async getRowCount(identify: string) {
@@ -20,7 +21,9 @@ export class UsageService {
   }
 
   public async updateRowCount(identify: string) {
-    const tableList = await this.getTableList(identify);
+    const tableList: string[] = (
+      await this.tableService.getTables(identify)
+    ).map((table) => table.TABLE_NAME);
     if (tableList.length === 0) {
       return {
         currentUsage: 0,
@@ -28,26 +31,13 @@ export class UsageService {
       };
     }
     const query = this.createSumQuery(tableList);
-    const result = await this.queryDBAdapter.run(query);
+    const result = await this.userDBManager.run(query);
     const rowCount = parseInt(result[0].total_rows, 10);
 
-    this.redisService.updateRowCount(identify, rowCount);
+    this.redisService.setRowCount(identify, rowCount);
   }
 
-  private async getTableList(identify: string) {
-    const getTabelListQuery = `SELECT GROUP_CONCAT(TABLE_NAME) AS table_name
-      FROM information_schema.tables
-      WHERE table_schema = '${identify}'
-      AND TABLE_TYPE = 'BASE TABLE';`;
-
-    const [tableList] = await this.queryDBAdapter
-      .getAdminPool()
-      .query(getTabelListQuery);
-    const tableNameList = tableList[0].table_name.split(',');
-    return tableNameList;
-  }
-
-  private createSumQuery(tableNameList: any[]): string {
+  private createSumQuery(tableNameList: string[]): string {
     const unionQueries = tableNameList
       .map(
         (tableName) =>

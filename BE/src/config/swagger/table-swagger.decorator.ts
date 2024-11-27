@@ -29,7 +29,7 @@ export function GetTableSwagger() {
 export function GetTableListSwagger() {
   return applyDecorators(
     ApiOperation({
-      summary: '모든 테이블 정브를 가져온다.',
+      summary: '모든 테이블 정보를 가져온다.',
       description: '현재 session에 대한 모든 테이블 정보를 가져온다',
     }),
     ApiOkResponse({

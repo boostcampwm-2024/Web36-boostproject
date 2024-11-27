@@ -4,6 +4,7 @@ export const QUERY_KEYS = {
   SHELLS: 'shells',
   TABLES: 'tables',
   USAGES: 'usages',
+  RECORD: 'record',
 } as const
 
 export const MENU_TITLE = {

@@ -37,7 +37,7 @@ export default function TestQueryTool() {
       <div className="mb-4">
         <p
           id="query-list-label"
-          className="block flex h-10 items-center border-b border-t bg-secondary pl-3 text-sm font-medium text-muted-foreground transition-colors"
+          className="flex h-10 items-center border-b border-t bg-secondary pl-3 text-sm font-medium text-muted-foreground transition-colors"
         >
           Select Query
         </p>
@@ -70,7 +70,7 @@ export default function TestQueryTool() {
       </div>
 
       <div className="mb-4">
-        <div className="mb-3 block flex h-10 items-center justify-between border-b border-t bg-secondary pl-3 text-sm font-medium text-muted-foreground transition-colors">
+        <div className="mb-3 flex h-10 items-center justify-between border-b border-t bg-secondary pl-3 text-sm font-medium text-muted-foreground transition-colors">
           <p id="selected-query-label">Preview / Edit Query</p>
         </div>
 
