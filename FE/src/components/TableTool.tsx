@@ -49,8 +49,8 @@ import {
 import EditableInput from './EditableInput'
 
 export default function TableTool({
-                                    tableData = [],
-                                  }: {
+  tableData = [],
+}: {
   tableData: TableType[]
 }) {
   const { addShell, updateShell } = useShellHandlers()
@@ -67,21 +67,21 @@ export default function TableTool({
   }, [tableData])
 
   const selectedTable = tables.find(
-      (table) => table.tableName === selectedTableName
+    (table) => table.tableName === selectedTableName
   )
 
   const handleOnChange = (row: number, id: string, value: unknown) => {
     setTables((prevTables) =>
-        prevTables.map((table) =>
-            table.tableName === selectedTableName
-                ? {
-                  ...table,
-                  columns: table.columns.map((col, colIdx) =>
-                      colIdx === row ? { ...col, [id]: value } : col
-                  ),
-                }
-                : table
-        )
+      prevTables.map((table) =>
+        table.tableName === selectedTableName
+          ? {
+              ...table,
+              columns: table.columns.map((col, colIdx) =>
+                colIdx === row ? { ...col, [id]: value } : col
+              ),
+            }
+          : table
+      )
     )
   }
 
@@ -109,9 +109,9 @@ export default function TableTool({
     })
 
     setTables((prevTables) =>
-        prevTables.map((table) =>
-            table.tableName === selectedTable.tableName ? selectedTable : table
-        )
+      prevTables.map((table) =>
+        table.tableName === selectedTable.tableName ? selectedTable : table
+      )
     )
   }
 
@@ -119,7 +119,7 @@ export default function TableTool({
     if (!selectedTable) return
 
     const updatedColumns = selectedTable.columns.filter(
-        (column) => column.id !== id
+      (column) => column.id !== id
     )
 
     const updatedTable = {
@@ -128,9 +128,9 @@ export default function TableTool({
     }
 
     setTables((prevTables) =>
-        prevTables.map((table) =>
-            table.tableName === selectedTable.tableName ? updatedTable : table
-        )
+      prevTables.map((table) =>
+        table.tableName === selectedTable.tableName ? updatedTable : table
+      )
     )
   }
 
@@ -138,151 +138,151 @@ export default function TableTool({
     if (!selectedTable) return
 
     const previousTable = initialTableData.current.find(
-        (table) => table.tableName === selectedTableName
+      (table) => table.tableName === selectedTableName
     )
 
     const query = previousTable
-        ? generateAlterTableQuery(previousTable, selectedTable)
-        : generateCreateTableQuery(selectedTable)
+      ? generateAlterTableQuery(previousTable, selectedTable)
+      : generateCreateTableQuery(selectedTable)
 
     const { id } = await addShell()
     await updateShell({ id, query })
   }
 
   return (
-      <>
-        <div className="sticky top-0 min-h-10 items-center gap-3 border-b p-2">
-          {tables.map((table) => (
-              <Badge
-                  variant={
-                    selectedTableName === table.tableName ? 'default' : 'secondary'
-                  }
-                  className="mr-2 cursor-pointer"
-                  onClick={() => setSelectedTableName(table.tableName)}
-                  key={table.tableName}
-              >
-                {table.tableName}
-              </Badge>
-          ))}
-        </div>
-        <Table>
-          <TableHeader className="bg-secondary">
-            <TableRow>
-              <TableHead>Del</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>PK</TableHead>
-              <TableHead>UQ</TableHead>
-              <TableHead>AI</TableHead>
-              <TableHead>NN</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {selectedTable?.columns.map((row: TableToolColumnType, rowIdx) => (
-                <TableRow key={generateKey(row.id)}>
-                  <TableCell>
-                    <button
-                        type="button"
-                        className="mr-1 h-3"
-                        onClick={() => handleDeleteRow(row.id)}
-                    >
-                      <X className="h-4" />
-                    </button>
-                  </TableCell>
-                  {Object.entries(row).map(
-                      ([key, value]) =>
-                          key !== 'id' && (
-                              <TableCell key={generateKey(value)}>
-                                {key === 'name' && (
-                                    <EditableInput
-                                        value={String(value)}
-                                        rowIdx={rowIdx}
-                                        handleOnChange={handleOnChange}
-                                    />
-                                )}
-
-                                {typeof value === 'boolean' && (
-                                    <Checkbox
-                                        checked={value}
-                                        onCheckedChange={(checked) =>
-                                            handleOnChange(rowIdx, key, checked)
-                                        }
-                                    />
-                                )}
-
-                                {key === 'type' && (
-                                    <Select
-                                        value={value}
-                                        onValueChange={(newValue) =>
-                                            handleOnChange(rowIdx, 'type', newValue)
-                                        }
-                                    >
-                                      <SelectTrigger className="h-8 w-32 p-2">
-                                        <SelectValue placeholder={value} />
-                                      </SelectTrigger>
-                                      <SelectContent>
-                                        {COLUMN_TYPES.map((types) => (
-                                            <SelectItem value={types} key={types}>
-                                              {types}
-                                            </SelectItem>
-                                        ))}
-                                      </SelectContent>
-                                    </Select>
-                                )}
-                              </TableCell>
-                          )
-                  )}
-                </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <div className="flex justify-end p-2">
-          <Button
-              variant="outline"
-              size="icon"
-              className="mr-1 h-8"
-              onClick={handleAddRow}
+    <>
+      <div className="sticky top-0 min-h-10 items-center gap-3 border-b p-2">
+        {tables.map((table) => (
+          <Badge
+            variant={
+              selectedTableName === table.tableName ? 'default' : 'secondary'
+            }
+            className="mr-2 cursor-pointer"
+            onClick={() => setSelectedTableName(table.tableName)}
+            key={table.tableName}
           >
-            <Plus />
-          </Button>
-        </div>
-        <div className="mt-5 flex justify-center">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="secondary" className="h-8">
-                Add Table
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Add Table</DialogTitle>
-                <DialogDescription>write table name</DialogDescription>
-              </DialogHeader>
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="username" className="text-right">
-                  Tablename
-                </Label>
-                <Input
-                    id="username"
-                    value={newTableName}
-                    placeholder="table name"
-                    className="col-span-3"
-                    onChange={(e) => setNewTableName(e.target.value)}
-                />
-              </div>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button type="submit" onClick={handleAddTable}>
-                    Add
-                  </Button>
-                </DialogClose>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-          <Button variant="default" className="ml-3 h-8" onClick={handleSubmit}>
-            Generate Query
-          </Button>
-        </div>
-      </>
+            {table.tableName}
+          </Badge>
+        ))}
+      </div>
+      <Table>
+        <TableHeader className="bg-secondary">
+          <TableRow>
+            <TableHead>Del</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Type</TableHead>
+            <TableHead>PK</TableHead>
+            <TableHead>UQ</TableHead>
+            <TableHead>AI</TableHead>
+            <TableHead>NN</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {selectedTable?.columns.map((row: TableToolColumnType, rowIdx) => (
+            <TableRow key={generateKey(row.id)}>
+              <TableCell>
+                <button
+                  type="button"
+                  className="mr-1 h-3"
+                  onClick={() => handleDeleteRow(row.id)}
+                >
+                  <X className="h-4" />
+                </button>
+              </TableCell>
+              {Object.entries(row).map(
+                ([key, value]) =>
+                  key !== 'id' && (
+                    <TableCell key={generateKey(value)}>
+                      {key === 'name' && (
+                        <EditableInput
+                          value={String(value)}
+                          rowIdx={rowIdx}
+                          handleOnChange={handleOnChange}
+                        />
+                      )}
+
+                      {typeof value === 'boolean' && (
+                        <Checkbox
+                          checked={value}
+                          onCheckedChange={(checked) =>
+                            handleOnChange(rowIdx, key, checked)
+                          }
+                        />
+                      )}
+
+                      {key === 'type' && (
+                        <Select
+                          value={value}
+                          onValueChange={(newValue) =>
+                            handleOnChange(rowIdx, 'type', newValue)
+                          }
+                        >
+                          <SelectTrigger className="h-8 w-32 p-2">
+                            <SelectValue placeholder={value} />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {COLUMN_TYPES.map((types) => (
+                              <SelectItem value={types} key={types}>
+                                {types}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    </TableCell>
+                  )
+              )}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      <div className="flex justify-end p-2">
+        <Button
+          variant="outline"
+          size="icon"
+          className="mr-1 h-8"
+          onClick={handleAddRow}
+        >
+          <Plus />
+        </Button>
+      </div>
+      <div className="mt-5 flex justify-center">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="secondary" className="h-8">
+              Add Table
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Add Table</DialogTitle>
+              <DialogDescription>write table name</DialogDescription>
+            </DialogHeader>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="username" className="text-right">
+                Tablename
+              </Label>
+              <Input
+                id="username"
+                value={newTableName}
+                placeholder="table name"
+                className="col-span-3"
+                onChange={(e) => setNewTableName(e.target.value)}
+              />
+            </div>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button type="submit" onClick={handleAddTable}>
+                  Add
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        <Button variant="default" className="ml-3 h-8" onClick={handleSubmit}>
+          Generate Query
+        </Button>
+      </div>
+    </>
   )
 }

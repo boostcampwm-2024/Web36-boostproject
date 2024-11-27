@@ -8,7 +8,7 @@ export function generateKey(data: Record<string, unknown> | unknown) {
 }
 
 export function convertTableDataToTableToolData(
-    tableData: TableType[]
+  tableData: TableType[]
 ): TableToolType[] {
   return tableData.map((table) => ({
     tableName: table.tableName,
@@ -25,7 +25,7 @@ export function convertTableDataToTableToolData(
 }
 
 export function convertTableDataToRecordToolData(
-    tableData: TableType[]
+  tableData: TableType[]
 ): RecordToolType[] {
   return tableData.map((table) => ({
     tableName: table.tableName,
@@ -58,8 +58,8 @@ export function generateCreateTableQuery(table: TableToolType): string {
 }
 
 export function generateAlterTableQuery(
-    previousTable: TableToolType,
-    currentTable: TableToolType
+  previousTable: TableToolType,
+  currentTable: TableToolType
 ): string {
   const { tableName } = currentTable
   const previousColumns = previousTable.columns
@@ -88,15 +88,15 @@ export function generateAlterTableQuery(
 
       if (previousCol.name !== currCol.name) {
         modifications.push(
-            `CHANGE COLUMN \`${previousCol.name}\` \`${currCol.name}\` ${currCol.type}`
+          `CHANGE COLUMN \`${previousCol.name}\` \`${currCol.name}\` ${currCol.type}`
         )
       }
 
       if (
-          previousCol.type !== currCol.type ||
-          previousCol.NN !== currCol.NN ||
-          previousCol.AI !== currCol.AI ||
-          previousCol.UQ !== currCol.UQ
+        previousCol.type !== currCol.type ||
+        previousCol.NN !== currCol.NN ||
+        previousCol.AI !== currCol.AI ||
+        previousCol.UQ !== currCol.UQ
       ) {
         const parts = [`\`${currCol.name}\` ${currCol.type}`]
         if (currCol.NN) parts.push('NOT NULL')
@@ -112,6 +112,6 @@ export function generateAlterTableQuery(
   const query = `ALTER TABLE \`${tableName}\`\n  ${alterQueries.join(',\n  ')};`
 
   return alterQueries.length > 0
-      ? query.trim()
-      : `-- No changes detected for table \`${tableName}\`.`
+    ? query.trim()
+    : `-- No changes detected for table \`${tableName}\`.`
 }
