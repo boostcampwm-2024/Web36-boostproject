@@ -1,26 +1,27 @@
-import { CapacityUsageProps } from '@/types/interfaces'
+import { UsageType } from '@/types/interfaces'
 import { MAX_ROWS_PER_USER } from '@/constants/constants'
+import useUsages from '@/hooks/useUsageQuery'
 
-function CapacityUsage({
-  used,
-  total = MAX_ROWS_PER_USER,
-  unit = 'Rows',
-  lowThreshold = 70,
-  highThreshold = 70,
-  isLoading = false, // 로딩 상태 추가
-}: CapacityUsageProps) {
-  const percentage = !isLoading && total > 0 ? (used / total) * 100 : 0
+function CapacityUsage({ usage }: { usage: UsageType }) {
+  const { isLoading, isFetching } = useUsages()
+
+  const UNIT = 'Rows'
+  const HIGH_THRESHOLD = 70
+
+  const loading = isLoading || isFetching
+  const used = usage?.currentUsage || 0
+  const total = usage?.availUsage || MAX_ROWS_PER_USER
+  const percentage = total > 0 ? (used / total) * 100 : 0
 
   const getColor = (percent: number) => {
-    if (percent < lowThreshold) return 'bg-primary'
-    if (percent < highThreshold) return 'bg-yellow-500'
+    if (percent < HIGH_THRESHOLD) return 'bg-primary'
     return 'bg-red-500'
   }
 
   const color = getColor(percentage)
 
   return (
-    <div className="flex max-w-md items-center space-x-2 rounded-lg bg-white">
+    <div className="flex max-w-md items-center space-x-4 rounded-lg bg-white">
       {/* 게이지 바 */}
       <div className="w-24 flex-grow">
         <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
@@ -35,16 +36,16 @@ function CapacityUsage({
       <div className="flex-shrink-0 text-left text-xs font-semibold text-muted-foreground">
         <div className="flex items-center space-x-1">
           {/* 현재 사용량 */}
-          {isLoading ? (
+          {loading ? (
             <div className="mb-0.5 h-3 w-3 animate-spin rounded-full border-2 border-gray-300 border-t-blue-500"></div>
           ) : (
             <span>{used}</span>
           )}
           {/* 단위 */}
-          <span>{unit}</span>
+          <span>{UNIT}</span>
           {/* 총 사용량 */}
           <span>
-            / {total} {unit}
+            / {total} {UNIT}
           </span>
         </div>
       </div>

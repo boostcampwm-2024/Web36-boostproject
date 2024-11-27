@@ -1,10 +1,16 @@
 import { Badge } from '@/components/ui/badge'
 import Shell from '@/components/Shell'
-import { ShellType } from '@/types/interfaces'
+import { ShellType, UsageType } from '@/types/interfaces'
 import useShellHandlers from '@/hooks/useShellHandler'
 import CapacityUsage from './CapacityUsage'
 
-export default function ShellList({ shells = [] }: { shells: ShellType[] }) {
+export default function ShellList({
+  shells = [],
+  usage,
+}: {
+  shells: ShellType[]
+  usage: UsageType
+}) {
   const { addShell } = useShellHandlers()
   return (
     <>
@@ -21,7 +27,7 @@ export default function ShellList({ shells = [] }: { shells: ShellType[] }) {
         </div>
 
         {/* 점유율 컴포넌트 */}
-        <CapacityUsage used={800} isLoading />
+        <CapacityUsage usage={usage} />
       </div>
       {shells.length > 0 && (
         <div className="flex flex-1 flex-col gap-3 p-4">

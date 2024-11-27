@@ -17,6 +17,7 @@ import AceEditor from 'react-ace'
 import 'ace-builds/src-noconflict/mode-sql'
 import 'ace-builds/src-noconflict/theme-monokai'
 import 'ace-builds/src-noconflict/ext-language_tools'
+import useUsages from '@/hooks/useUsageQuery'
 
 type ShellProps = {
   shell: ShellType
@@ -24,7 +25,8 @@ type ShellProps = {
 
 export default function Shell({ shell }: ShellProps) {
   const { id, queryStatus, query, text, queryType, resultTable } = shell
-  const { refetch } = useTables()
+  const { refetch: tableRefetch } = useTables()
+  const { refetch: usageRefetch } = useUsages()
   const { executeShell, updateShell, deleteShell } = useShellHandlers()
 
   const LINE_HEIGHT = 1.2
@@ -40,9 +42,14 @@ export default function Shell({ shell }: ShellProps) {
   }, [shell.query])
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const renderer = editorRef.current?.editor.renderer as any
-    renderer.$cursorLayer.element.style.display = !focused ? 'none' : ''
+    if (renderer) {
+      if (!focused) {
+        renderer.$cursorLayer.element.style.display = 'none'
+      } else {
+        renderer.$cursorLayer.element.style.display = ''
+      }
+    }
   }, [focused])
 
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
@@ -56,8 +63,9 @@ export default function Shell({ shell }: ShellProps) {
   const handleClick = async () => {
     if (!id) return
     await executeShell({ ...shell, query })
+    usageRefetch()
     if (!queryType || ['CREATE', 'ALTER', 'DROP'].includes(queryType || ''))
-      await refetch()
+      await tableRefetch()
   }
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -69,7 +77,6 @@ export default function Shell({ shell }: ShellProps) {
     if (value === inputValue) return
     setInputValue(value)
   }
-
   return (
     <>
       <div className="flex overflow-hidden rounded-sm bg-secondary shadow-md">

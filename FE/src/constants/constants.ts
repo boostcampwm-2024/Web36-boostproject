@@ -3,6 +3,7 @@ import { Table2, FileText, Network, AlignLeft } from 'lucide-react'
 export const QUERY_KEYS = {
   SHELLS: 'shells',
   TABLES: 'tables',
+  USAGES: 'usages',
   RECORD: 'record',
 } as const
 
@@ -36,7 +37,7 @@ export const MENU = [
   },
 ]
 
-export const MAX_ROWS_PER_USER = 50000
+export const MAX_ROWS_PER_USER = 500000
 
 export const COLUMN_TYPES = [
   'TINYINT',
