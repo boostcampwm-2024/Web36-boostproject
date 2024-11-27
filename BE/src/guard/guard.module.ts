@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ShellGuard } from './shell.guard';
-import { ShellService } from '../shell/shell.service';
+import { ShellModule } from '../shell/shell.module';
 
 @Module({
-  imports: [ShellService],
+  imports: [ShellModule],
   providers: [ShellGuard],
 })
 export class GuardModule {}

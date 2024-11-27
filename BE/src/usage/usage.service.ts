@@ -20,9 +20,9 @@ export class UsageService {
     };
   }
 
-  public async updateRowCount(identify: string) {
+  public async updateRowCount(req: any) {
     const tableList: string[] = (
-      await this.tableService.getTables(identify)
+      await this.tableService.getTables(req.sessionID)
     ).map((table) => table.TABLE_NAME);
     if (tableList.length === 0) {
       return {
@@ -31,10 +31,10 @@ export class UsageService {
       };
     }
     const query = this.createSumQuery(tableList);
-    const result = await this.userDBManager.run(query);
+    const result = await this.userDBManager.run(req, query);
     const rowCount = parseInt(result[0].total_rows, 10);
 
-    this.redisService.setRowCount(identify, rowCount);
+    this.redisService.setRowCount(req.sessionID, rowCount);
   }
 
   private createSumQuery(tableNameList: string[]): string {

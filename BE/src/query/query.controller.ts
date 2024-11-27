@@ -37,6 +37,6 @@ export class QueryController {
     @Param('shellId') shellId: number,
     @Body() queryDto: QueryDto,
   ) {
-    return await this.queryService.execute(req.sessionID, shellId, queryDto);
+    return await this.queryService.execute(req, shellId, queryDto);
   }
 }

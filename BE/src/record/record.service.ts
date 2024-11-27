@@ -13,7 +13,6 @@ import fs from 'fs/promises';
 import crypto from 'crypto';
 import path from 'path';
 import { ResultSetHeader } from 'mysql2';
-import { UserDBManager } from '../config/query-database/user-db-manager.service';
 import { ResRecordDto } from './dto/res-record.dto';
 import {
   generalDomain,
@@ -21,6 +20,7 @@ import {
   RECORD_PROCESS_BATCH_SIZE,
   TypeToConstructor,
 } from './constant/random-record.constant';
+import { UserDBManager } from '../config/query-database/user-db-manager.service';
 
 @Injectable()
 export class RecordService implements OnModuleInit {
@@ -39,6 +39,7 @@ export class RecordService implements OnModuleInit {
   }
 
   async insertRandomRecord(
+    req: any,
     createRandomRecordDto: CreateRandomRecordDto,
   ): Promise<ResRecordDto> {
     const columnEntities: RandomColumnEntity[] =
@@ -51,6 +52,7 @@ export class RecordService implements OnModuleInit {
     );
 
     const result = await this.insertCsvIntoDB(
+      req,
       csvFilePath,
       createRandomRecordDto.tableName,
       columnNames,
@@ -134,6 +136,7 @@ export class RecordService implements OnModuleInit {
   }
 
   async insertCsvIntoDB(
+    req: any,
     csvFilePath: string,
     tableName: string,
     columnNames: string[],
@@ -149,7 +152,10 @@ export class RecordService implements OnModuleInit {
     let queryResult: ResultSetHeader;
 
     try {
-      queryResult = (await this.userDBManager.run(query)) as ResultSetHeader;
+      queryResult = (await this.userDBManager.run(
+        req,
+        query,
+      )) as ResultSetHeader;
     } catch (err) {
       console.error('랜덤 데이터 DB 삽입중 에러:', err);
       throw new InternalServerErrorException({
