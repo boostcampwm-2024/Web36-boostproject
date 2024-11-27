@@ -47,7 +47,7 @@ export class TableService {
 
   private async getColumns(schema: string, tableName?: string) {
     const query = `
-    SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE, COLUMN_KEY, EXTRA, IS_NULLABLE
+    SELECT TABLE_NAME, COLUMN_NAME, COLUMN_TYPE, COLUMN_KEY, EXTRA, IS_NULLABLE
     FROM INFORMATION_SCHEMA.COLUMNS
     WHERE TABLE_SCHEMA = ? ${tableName ? 'AND TABLE_NAME = ?' : ''}
     ORDER BY ORDINAL_POSITION
@@ -111,7 +111,7 @@ export class TableService {
 
         return new ColumnDto({
           name: col.COLUMN_NAME,
-          type: col.DATA_TYPE,
+          type: col.COLUMN_TYPE,
           PK: col.COLUMN_KEY === 'PRI',
           FK: fk
             ? `${fk.REFERENCED_TABLE_NAME}.${fk.REFERENCED_COLUMN_NAME}`

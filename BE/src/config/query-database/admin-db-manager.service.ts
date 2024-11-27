@@ -27,7 +27,7 @@ export class AdminDBManager implements OnModuleInit {
     });
   }
   async run(query: string, params?: string[]) {
-    return await this.pool.query(query, params);
+    return this.pool.query(query, params);
   }
 
   public async initUserDatabase(identify: string) {
