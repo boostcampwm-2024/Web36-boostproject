@@ -10,12 +10,17 @@ export function generateKey(data: Record<string, unknown> | unknown) {
 export function convertTableDataToTableToolData(
   tableData: TableType[]
 ): TableToolType[] {
+  const isVarchar = (type: string) => {
+    const upperCaseType = type.toUpperCase()
+    return /VARCHAR/i.test(upperCaseType) ? 'VARCHAR(255)' : upperCaseType
+  }
+
   return tableData.map((table) => ({
     tableName: table.tableName,
     columns: table.columns.map((column) => ({
       id: uuidv4(),
       name: column.name,
-      type: column.type,
+      type: isVarchar(column.type),
       PK: column.PK,
       UQ: column.UQ,
       AI: column.AI,
