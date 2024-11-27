@@ -35,6 +35,7 @@ import {
   TableType,
   RecordToolType,
   RecordToolColumnType,
+  RecordResultType,
 } from '@/types/interfaces'
 import { RECORD_TYPES } from '@/constants/constants'
 import { generateKey, convertTableDataToRecordToolData } from '@/util'
@@ -63,9 +64,8 @@ export default function RecordTool({
     setSelectedTable(recordToolData[0] || { tableName: '', columns: [] })
   }, [tableData])
 
-  const addRecord = async (record: RecordToolType) => {
-    await addRecordMutation.mutateAsync(record)
-  }
+  const addRecord = async (record: RecordToolType): Promise<RecordResultType> =>
+    addRecordMutation.mutateAsync(record)
 
   const handleColumnChange = (
     row: number,
@@ -107,10 +107,10 @@ export default function RecordTool({
 
   const handleSubmitRecord = async () => {
     try {
-      await addRecord(selectedTable)
+      const result: RecordResultType = await addRecord(selectedTable)
       toast({
         title: 'Data inserted successfully',
-        description: `${selectedTable.count} rows inserted successfully in ${selectedTable.tableName} table`,
+        description: result.text,
       })
     } catch (error) {
       toast({
