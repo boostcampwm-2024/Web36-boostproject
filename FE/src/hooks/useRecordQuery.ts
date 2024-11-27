@@ -1,11 +1,18 @@
-import useCustomMutation from '@/hooks/useCustomMutation'
+import { useMutation, useQueryClient } from 'react-query'
 import addRecord from '@/api/recordApi'
-import { RecordToolType } from '@/types/interfaces'
+import { RecordToolType, RecordResultType } from '@/types/interfaces'
 import { QUERY_KEYS } from '@/constants/constants'
 
 export default function useAddRecord() {
-  return useCustomMutation<RecordToolType, RecordToolType>(
-    addRecord,
-    QUERY_KEYS.RECORD
-  )
+  const queryClient = useQueryClient()
+
+  return useMutation<RecordResultType, Error, RecordToolType>({
+    mutationFn: addRecord,
+    onSuccess: () => {
+      queryClient.invalidateQueries(QUERY_KEYS.RECORD)
+    },
+    onError: (error) => {
+      console.error('Error inserting record:', error)
+    },
+  })
 }
