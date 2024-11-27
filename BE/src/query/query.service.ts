@@ -1,18 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { QueryDto } from './dto/query.dto';
-import { QUERY_DB_ADAPTER } from '../config/query-database/query-db.moudle';
-import { QueryDBAdapter } from '../config/query-database/query-db.adapter';
 import { QueryType } from '../common/enums/query-type.enum';
 import { ShellService } from '../shell/shell.service';
 import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import { Shell } from '../shell/shell.entity';
+import { UserDBManager } from '../config/query-database/user-db-manager.service';
 import { UsageService } from 'src/usage/usage.service';
 import { LoggerService } from 'src/config/logger/logger.service';
 
 @Injectable()
 export class QueryService {
   constructor(
-    @Inject(QUERY_DB_ADAPTER) private readonly queryDBAdapter: QueryDBAdapter,
+    private readonly userDBManager: UserDBManager,
     private shellService: ShellService,
     private readonly usageService: UsageService,
     private readonly loggerService: LoggerService,
@@ -36,10 +35,9 @@ export class QueryService {
       }
       const updateData = await this.processQuery(
         baseUpdateData,
-        sessionId,
         queryDto.query,
       );
-
+      this.usageService.updateRowCount(sessionId);
       return await this.shellService.replace(shellId, updateData);
     } catch (e) {
       const text = `ERROR ${e.errno || ''} (${e.sqlState || ''}): ${e.sqlMessage || ''}`;
@@ -57,16 +55,14 @@ export class QueryService {
 
   private async processQuery(
     baseUpdateData: any,
-    sessionId: string,
     query: string,
   ): Promise<Partial<Shell>> {
     const isResultTable = this.existResultTable(baseUpdateData.queryType);
 
-    const rows = await this.queryDBAdapter.run(query);
-    const runTime = await this.measureQueryRunTime(sessionId);
+    const rows = await this.userDBManager.run(query);
+    const runTime = await this.measureQueryRunTime();
 
     // Update usage
-    this.usageService.updateRowCount(sessionId);
 
     let text: string;
     let resultTable: RowDataPacket[];
@@ -105,9 +101,9 @@ export class QueryService {
     return validTypes.includes(type);
   }
 
-  async measureQueryRunTime(sessionId: string): Promise<string> {
+  async measureQueryRunTime(): Promise<string> {
     try {
-      const rows = (await this.queryDBAdapter.run(
+      const rows = (await this.userDBManager.run(
         'show profiles;',
       )) as RowDataPacket[];
       let lastQueryRunTime = rows[rows.length - 1]?.Duration;

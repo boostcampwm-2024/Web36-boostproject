@@ -1,17 +1,22 @@
 import { Module } from '@nestjs/common';
 import { QueryService } from './query.service';
 import { QueryController } from './query.controller';
-import { QueryDBModule } from '../config/query-database/query-db.moudle';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Shell } from '../shell/shell.entity';
 import { ShellService } from '../shell/shell.service';
-import { UsageService } from 'src/usage/usage.service';
-import { RedisModule } from 'src/config/redis/redis.module';
 import { LoggerModule } from 'src/config/logger/logger.module';
+import { UserDBManager } from '../config/query-database/user-db-manager.service';
+import { UsageModule } from '../usage/usage.module';
+import { RedisModule } from '../config/redis/redis.module';
 
 @Module({
-  imports: [QueryDBModule, TypeOrmModule.forFeature([Shell]), RedisModule, LoggerModule],
+  imports: [
+    TypeOrmModule.forFeature([Shell]),
+    UsageModule,
+    RedisModule,
+    LoggerModule,
+  ],
   controllers: [QueryController],
-  providers: [QueryService, ShellService, UsageService],
+  providers: [QueryService, ShellService, UserDBManager],
 })
 export class QueryModule {}

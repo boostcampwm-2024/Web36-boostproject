@@ -37,6 +37,8 @@ import {
 } from '@/types/interfaces'
 import { RECORD_TYPES } from '@/constants/constants'
 import { generateKey, convertTableDataToRecordToolData } from '@/util'
+import TagInputForm from '@/components/TagInputForm'
+import InputWithLocalState from '@/components/InputWithLocalState'
 
 export default function RecordTool({
   tableData = [],
@@ -44,28 +46,51 @@ export default function RecordTool({
   tableData: TableType[]
 }) {
   const [tables, setTables] = useState<RecordToolType[]>([])
-  const [selectedTableName, setSelectedTableName] = useState<string>('')
+  const [selectedTable, setSelectedTable] = useState<RecordToolType>({
+    tableName: '',
+    columns: [],
+    count: 0,
+  })
 
   useEffect(() => {
     const recordToolData = convertTableDataToRecordToolData(tableData)
     setTables(recordToolData)
-    setSelectedTableName(recordToolData[0]?.tableName)
+    setSelectedTable(recordToolData[0] || { tableName: '', columns: [] })
   }, [tableData])
 
-  const selectedTable = tables.find(
-    (table) => table.tableName === selectedTableName
-  )
+  const handleColumnChange = (
+    row: number,
+    id: keyof RecordToolColumnType,
+    value: unknown
+  ) => {
+    const updatedColumns = selectedTable.columns.map((col, colIdx) =>
+      colIdx !== row ? col : { ...col, [id]: value }
+    )
 
-  const handleOnChange = (row: number, id: string, value: unknown) => {
+    const updatedSelectedTable = {
+      ...selectedTable,
+      columns: updatedColumns,
+    }
+    setSelectedTable(updatedSelectedTable)
+
     setTables((prevTables) =>
       prevTables.map((table) =>
-        table.tableName === selectedTableName
-          ? {
-              ...table,
-              columns: table.columns.map((col, colIdx) =>
-                colIdx === row ? { ...col, [id]: value } : col
-              ),
-            }
+        table.tableName === updatedSelectedTable.tableName
+          ? updatedSelectedTable
+          : table
+      )
+    )
+  }
+
+  const handleCountChange = (count: number) => {
+    const updatedSelectedTable = { ...selectedTable, count }
+
+    setSelectedTable(updatedSelectedTable)
+
+    setTables((prevTables) =>
+      prevTables.map((table) =>
+        table.tableName === updatedSelectedTable.tableName
+          ? updatedSelectedTable
           : table
       )
     )
@@ -77,10 +102,12 @@ export default function RecordTool({
         {tables.map((table) => (
           <Badge
             variant={
-              selectedTableName === table.tableName ? 'default' : 'secondary'
+              selectedTable.tableName === table.tableName
+                ? 'default'
+                : 'secondary'
             }
             className="mr-2 cursor-pointer"
-            onClick={() => setSelectedTableName(table.tableName)}
+            onClick={() => setSelectedTable(table)}
             key={table.tableName}
           >
             {table.tableName}
@@ -104,7 +131,7 @@ export default function RecordTool({
                 <Select
                   value={row.type}
                   onValueChange={(newValue) =>
-                    handleOnChange(rowIdx, 'type', newValue)
+                    handleColumnChange(rowIdx, 'type', newValue)
                   }
                 >
                   <SelectTrigger className="h-8 w-20 p-2">
@@ -120,23 +147,40 @@ export default function RecordTool({
                 </Select>
               </TableCell>
               <TableCell className="flex items-center">
-                <Input type="number" id="row" className="mr-2 h-8 w-12 p-1" />
+                <InputWithLocalState<number>
+                  type="number"
+                  id="row"
+                  className="mr-2 h-8 w-12 p-1"
+                  placeholder="0"
+                  value={row.blank}
+                  onChange={(updatedValue) =>
+                    handleColumnChange(rowIdx, 'blank', Number(updatedValue))
+                  }
+                />
                 <span>%</span>
               </TableCell>
               <TableCell>
                 {row.type === 'number' && (
                   <div className="flex">
-                    <Input
+                    <InputWithLocalState<number>
                       type="number"
-                      id="row"
+                      id="row-min"
                       className="mr-2 h-8 w-16 p-2"
                       placeholder="min"
+                      value={row.min}
+                      onChange={(updatedValue) =>
+                        handleColumnChange(rowIdx, 'min', Number(updatedValue))
+                      }
                     />
-                    <Input
+                    <InputWithLocalState<number>
                       type="number"
-                      id="row"
+                      id="row-max"
                       className="h-8 w-16 p-2"
                       placeholder="max"
+                      value={row.max}
+                      onChange={(updatedValue) =>
+                        handleColumnChange(rowIdx, 'max', Number(updatedValue))
+                      }
                     />
                   </div>
                 )}
@@ -152,36 +196,19 @@ export default function RecordTool({
                         <DialogTitle>Add Enum</DialogTitle>
                         <DialogDescription>write Enum</DialogDescription>
                       </DialogHeader>
-                      <div className="grid grid-cols-5 items-center gap-4">
-                        <Label htmlFor="username" className="text-right">
-                          Enum
-                        </Label>
-                        <Input
-                          id="username"
-                          placeholder="write enum"
-                          className="col-span-3"
-                          onChange={(e) => e.target.value}
-                        />
-                        <Button type="submit" variant="secondary">
-                          Add
-                        </Button>
-                      </div>
-                      <div className="sticky top-0 min-h-10 items-center gap-3 border-b p-2">
-                        {row.enum.map((enumText) => (
-                          <Badge
-                            variant="default"
-                            className="mr-2 cursor-pointer"
-                            key={generateKey(enumText)}
-                          >
-                            {enumText}
-                          </Badge>
-                        ))}
-                      </div>
-                      <DialogFooter>
-                        <DialogClose asChild>
-                          <Button type="submit">Save</Button>
-                        </DialogClose>
-                      </DialogFooter>
+                      <TagInputForm
+                        type="enum"
+                        preTag={row.enum}
+                        onAdd={(newEnum) =>
+                          handleColumnChange(rowIdx, 'enum', newEnum)
+                        }
+                      >
+                        <DialogFooter className="pt-3">
+                          <DialogClose asChild>
+                            <Button type="submit">Save</Button>
+                          </DialogClose>
+                        </DialogFooter>
+                      </TagInputForm>
                     </DialogContent>
                   </Dialog>
                 )}
@@ -191,18 +218,25 @@ export default function RecordTool({
         </TableBody>
       </Table>
       <div className="mt-5 flex items-center px-3">
-        <Label htmlFor="row" className="pr-3">
+        <Label htmlFor="Rows" className="pr-3">
           Rows
         </Label>
         <Input
           type="number"
-          id="row"
+          id="Rows"
           placeholder="max 100,000"
           className="h-8 w-28 p-2"
+          onChange={(e) => handleCountChange(Number(e.target.value))}
         />
       </div>
       <div className="mt-5 flex justify-center">
-        <Button variant="default" className="ml-3 h-8">
+        <Button
+          variant="default"
+          className="ml-3 h-8"
+          onClick={() => {
+            console.log(selectedTable) // 확인을 위한 임시 console.log
+          }}
+        >
           Add Random Data
         </Button>
       </div>

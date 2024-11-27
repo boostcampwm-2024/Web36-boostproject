@@ -45,6 +45,7 @@ export interface TableToolColumnType {
 export interface RecordToolType {
   tableName: string
   columns: RecordToolColumnType[]
+  count: number
 }
 
 export interface RecordToolColumnType {
