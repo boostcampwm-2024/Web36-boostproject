@@ -3,6 +3,7 @@ import { Table2, FileText, Network, AlignLeft } from 'lucide-react'
 export const QUERY_KEYS = {
   SHELLS: 'shells',
   TABLES: 'tables',
+  RECORD: 'record',
 } as const
 
 export const MENU_TITLE = {

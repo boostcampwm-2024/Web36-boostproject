@@ -37,6 +37,7 @@ export function convertTableDataToRecordToolData(
       max: 0,
       enum: [],
     })),
+    count: 0,
   }))
 }
 
