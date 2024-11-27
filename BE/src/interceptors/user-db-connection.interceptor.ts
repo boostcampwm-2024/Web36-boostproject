@@ -7,6 +7,7 @@ import {
 import { createConnection } from 'mysql2/promise';
 import { ConfigService } from '@nestjs/config';
 import { Observable, tap } from 'rxjs';
+import { createReadStream } from 'fs';
 
 @Injectable()
 export class UserDBConnectionInterceptor implements NestInterceptor {
@@ -25,6 +26,9 @@ export class UserDBConnectionInterceptor implements NestInterceptor {
       password: identify,
       port: this.configService.get<number>('QUERY_DB_PORT', 3306),
       database: identify,
+      infileStreamFactory: (path) => {
+        return createReadStream(path);
+      },
     });
 
     await request.dbConnection.query('set profiling = 1');
