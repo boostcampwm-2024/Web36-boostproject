@@ -7,9 +7,10 @@ import { Shell } from '../shell/shell.entity';
 import { ShellService } from '../shell/shell.service';
 import { UsageService } from 'src/usage/usage.service';
 import { RedisModule } from 'src/config/redis/redis.module';
+import { LoggerModule } from 'src/config/logger/logger.module';
 
 @Module({
-  imports: [QueryDBModule, TypeOrmModule.forFeature([Shell]), RedisModule],
+  imports: [QueryDBModule, TypeOrmModule.forFeature([Shell]), RedisModule, LoggerModule],
   controllers: [QueryController],
   providers: [QueryService, ShellService, UsageService],
 })

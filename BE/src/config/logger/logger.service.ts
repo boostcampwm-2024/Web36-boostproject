@@ -1,5 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
-import { winstonLogger } from './winston.config';
+import { winstonConfig } from './winston.config';
+import { WinstonModule } from 'nest-winston';
 
 export interface RequestInfo {
   method: string;
@@ -16,8 +17,13 @@ export class LoggerService {
   private logger;
 
   constructor() {
-    this.logger = winstonLogger;
+    this.logger = WinstonModule.createLogger(winstonConfig);
   }
+
+  warn(message: string) {
+    this.logger.warn(message);
+  }
+
   logRequest(reqInfo: RequestInfo) {
     this.logger.log(
       `[Request] ${reqInfo.method} ${reqInfo.url} SID: ${reqInfo.sessionId}`,

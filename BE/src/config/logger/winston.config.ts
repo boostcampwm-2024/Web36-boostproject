@@ -1,4 +1,4 @@
-import { utilities, WinstonModule } from 'nest-winston';
+import { utilities } from 'nest-winston';
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
 
@@ -22,7 +22,7 @@ const errorFileOptions = {
   maxFiles: '30d',
 };
 
-export const winstonLogger = WinstonModule.createLogger({
+export const winstonConfig = {
   level: 'info', // 'error', 'warn', 'info', 'http', 'verbose', 'debug', 'silly'
   transports: [
     new winston.transports.Console({
@@ -40,4 +40,4 @@ export const winstonLogger = WinstonModule.createLogger({
     // info log file
     new winston.transports.DailyRotateFile(infoFileOptions),
   ],
-});
+};
