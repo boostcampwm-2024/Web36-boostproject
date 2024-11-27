@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid'
 import { TableType, TableToolType, RecordToolType } from '@/types/interfaces'
+import { COLUMN_TYPES } from '@/constants/constants'
 
 export function generateKey(data: Record<string, unknown> | unknown) {
   if (data !== null && typeof data === 'object' && 'id' in data)
@@ -10,9 +11,10 @@ export function generateKey(data: Record<string, unknown> | unknown) {
 export function convertTableDataToTableToolData(
   tableData: TableType[]
 ): TableToolType[] {
-  const isVarchar = (type: string) => {
-    const upperCaseType = type.toUpperCase()
-    return /VARCHAR/i.test(upperCaseType) ? 'VARCHAR(255)' : upperCaseType
+  const getNormalizedType = (value: string): string => {
+    const baseType = value.toUpperCase().split('(')[0]
+    const matchedType = COLUMN_TYPES.find((type) => type.startsWith(baseType))
+    return matchedType ?? value
   }
 
   return tableData.map((table) => ({
@@ -20,7 +22,7 @@ export function convertTableDataToTableToolData(
     columns: table.columns.map((column) => ({
       id: uuidv4(),
       name: column.name,
-      type: isVarchar(column.type),
+      type: getNormalizedType(column.type),
       PK: column.PK,
       UQ: column.UQ,
       AI: column.AI,
