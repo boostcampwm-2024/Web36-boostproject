@@ -1,21 +1,25 @@
 import Redis from 'ioredis';
 import { Injectable } from '@nestjs/common';
 import { AdminDBManager } from '../query-database/admin-db-manager.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RedisService {
   private defaultConnection: Redis;
   private eventConnection: Redis;
 
-  constructor(private readonly adminDBManager: AdminDBManager) {
+  constructor(
+    private readonly adminDBManager: AdminDBManager,
+    private readonly configService: ConfigService,
+  ) {
     this.setDefaultConnection();
     this.setEventConnection();
   }
 
   private setDefaultConnection() {
     this.defaultConnection = new Redis({
-      host: process.env.REDIS_HOST,
-      port: parseInt(process.env.REDIS_PORT),
+      host: this.configService.get<string>('REDIS_HOST'),
+      port: this.configService.get<number>('REDIS_PORT'),
     });
 
     this.defaultConnection.on('ready', () => {
