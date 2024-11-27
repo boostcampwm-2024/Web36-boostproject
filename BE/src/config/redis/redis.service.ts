@@ -9,8 +9,8 @@ export class RedisService {
   private eventConnection: Redis;
 
   constructor(
-    private readonly adminDBManager: AdminDBManager,
-    private readonly configService: ConfigService,
+      private readonly adminDBManager: AdminDBManager,
+      private readonly configService: ConfigService,
   ) {
     this.setDefaultConnection();
     this.setEventConnection();

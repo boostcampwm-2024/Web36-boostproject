@@ -14,7 +14,7 @@ export class TableService {
     const indexes = await this.getIndexes(sessionId);
 
     return new ResTablesDto(
-      this.mapTablesWithColumnsAndKeys(tables, columns, foreignKeys,indexes),
+        this.mapTablesWithColumnsAndKeys(tables, columns, foreignKeys,indexes),
     );
   }
 
@@ -25,7 +25,7 @@ export class TableService {
     const indexes = await this.getIndexes(sessionId);
 
     return (
-      this.mapTablesWithColumnsAndKeys(tables, columns, foreignKeys,indexes)[0] || []
+        this.mapTablesWithColumnsAndKeys(tables, columns, foreignKeys,indexes)[0] || []
     );
   }
 
@@ -81,27 +81,27 @@ export class TableService {
   }
 
   private mapTablesWithColumnsAndKeys(
-    tables: any[],
-    columns: any[],
-    foreignKeys: any[],
-    indexes: any[],
+      tables: any[],
+      columns: any[],
+      foreignKeys: any[],
+      indexes: any[],
   ): ResTableDto[] {
     return tables.map((table) => {
       const tableColumns = columns.filter(
-        (col) => col.TABLE_NAME === table.TABLE_NAME,
+          (col) => col.TABLE_NAME === table.TABLE_NAME,
       );
 
       const columnDtos = tableColumns.map((col) => {
         const fk = foreignKeys.find(
-          (key) =>
-            key.TABLE_NAME === col.TABLE_NAME &&
-            key.COLUMN_NAME === col.COLUMN_NAME,
+            (key) =>
+                key.TABLE_NAME === col.TABLE_NAME &&
+                key.COLUMN_NAME === col.COLUMN_NAME,
         );
 
         const hasIndex = indexes.some(
-          (idx) =>
-            idx.TABLE_NAME === col.TABLE_NAME &&
-            idx.COLUMN_NAME === col.COLUMN_NAME,
+            (idx) =>
+                idx.TABLE_NAME === col.TABLE_NAME &&
+                idx.COLUMN_NAME === col.COLUMN_NAME,
         );
 
         return new ColumnDto({
@@ -109,8 +109,8 @@ export class TableService {
           type: col.DATA_TYPE,
           PK: col.COLUMN_KEY === 'PRI',
           FK: fk
-            ? `${fk.REFERENCED_TABLE_NAME}.${fk.REFERENCED_COLUMN_NAME}`
-            : null,
+              ? `${fk.REFERENCED_TABLE_NAME}.${fk.REFERENCED_COLUMN_NAME}`
+              : null,
           UQ: col.COLUMN_KEY === 'UNI',
           AI: col.EXTRA.includes('auto_increment'),
           NN: col.IS_NULLABLE === 'NO',

@@ -39,21 +39,21 @@ export class RecordService implements OnModuleInit {
   }
 
   async insertRandomRecord(
-    createRandomRecordDto: CreateRandomRecordDto,
+      createRandomRecordDto: CreateRandomRecordDto,
   ): Promise<ResRecordDto> {
     const columnEntities: RandomColumnEntity[] =
-      createRandomRecordDto.columns.map((column) => this.toEntity(column));
+        createRandomRecordDto.columns.map((column) => this.toEntity(column));
     const columnNames = columnEntities.map((column) => column.name);
 
     const csvFilePath = await this.generateCsvFile(
-      columnEntities,
-      createRandomRecordDto.count,
+        columnEntities,
+        createRandomRecordDto.count,
     );
 
     const result = await this.insertCsvIntoDB(
-      csvFilePath,
-      createRandomRecordDto.tableName,
-      columnNames,
+        csvFilePath,
+        createRandomRecordDto.tableName,
+        columnNames,
     );
 
     await this.deleteFile(csvFilePath);
@@ -72,8 +72,8 @@ export class RecordService implements OnModuleInit {
       generator = new EnumGenerator(randomColumnInfo.enum);
     if (randomColumnInfo.type === 'number')
       generator = new NumberGenerator(
-        randomColumnInfo.min ?? 0,
-        randomColumnInfo.max ?? 100,
+          randomColumnInfo.min ?? 0,
+          randomColumnInfo.max ?? 100,
       );
     return {
       name: randomColumnInfo.name,
@@ -85,8 +85,8 @@ export class RecordService implements OnModuleInit {
   }
 
   private async generateCsvFile(
-    columnEntities: RandomColumnEntity[],
-    rows: number,
+      columnEntities: RandomColumnEntity[],
+      rows: number,
   ): Promise<string> {
     const randomString = crypto.randomBytes(10).toString('hex');
     const filePath = path.join(RANDOM_DATA_TEMP_DIR, `${randomString}.csv`);
@@ -113,8 +113,8 @@ export class RecordService implements OnModuleInit {
 
   private transpose(matrix) {
     return matrix.reduce(
-      (acc, row) => row.map((_, i) => [...(acc[i] || []), row[i]]),
-      [],
+        (acc, row) => row.map((_, i) => [...(acc[i] || []), row[i]]),
+        [],
     );
   }
 
@@ -123,20 +123,20 @@ export class RecordService implements OnModuleInit {
   }
 
   private generateCsvData(
-    columnEntities: RandomColumnEntity[],
-    rows: number,
+      columnEntities: RandomColumnEntity[],
+      rows: number,
   ): string {
     let data = columnEntities.map((column) =>
-      column.generator.getRandomValues(rows, column.blank),
+        column.generator.getRandomValues(rows, column.blank),
     );
     data = this.transpose(data);
     return data.map((row) => row.join(',')).join('\n') + '\n';
   }
 
   async insertCsvIntoDB(
-    csvFilePath: string,
-    tableName: string,
-    columnNames: string[],
+      csvFilePath: string,
+      tableName: string,
+      columnNames: string[],
   ): Promise<ResultSetHeader> {
     const query = `
       LOAD DATA LOCAL INFILE \'${csvFilePath.replace(/\\/g, '\\\\')}\'

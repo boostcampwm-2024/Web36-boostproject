@@ -10,9 +10,9 @@ import { UsageService } from 'src/usage/usage.service';
 @Injectable()
 export class QueryService {
   constructor(
-    private readonly userDBManager: UserDBManager,
-    private shellService: ShellService,
-    private readonly usageService: UsageService,
+      private readonly userDBManager: UserDBManager,
+      private shellService: ShellService,
+      private readonly usageService: UsageService,
   ) {}
 
   async execute(sessionId: string, shellId: number, queryDto: QueryDto) {
@@ -32,8 +32,8 @@ export class QueryService {
         });
       }
       const updateData = await this.processQuery(
-        baseUpdateData,
-        queryDto.query,
+          baseUpdateData,
+          queryDto.query,
       );
       this.usageService.updateRowCount(sessionId);
       return await this.shellService.replace(shellId, updateData);
@@ -51,8 +51,8 @@ export class QueryService {
   }
 
   private async processQuery(
-    baseUpdateData: any,
-    query: string,
+      baseUpdateData: any,
+      query: string,
   ): Promise<Partial<Shell>> {
     const isResultTable = this.existResultTable(baseUpdateData.queryType);
 
@@ -68,9 +68,9 @@ export class QueryService {
       const resultRows = rows as RowDataPacket[];
       const slicedRows = resultRows.slice(0, Math.min(resultRows.length, 100));
       text =
-        slicedRows.length === 0
-          ? `Empty set (${runTime} sec)`
-          : `${resultRows.length} in set, (${runTime} sec)`;
+          slicedRows.length === 0
+              ? `Empty set (${runTime} sec)`
+              : `${resultRows.length} in set, (${runTime} sec)`;
       resultTable = slicedRows;
     } else {
       const resultHeader = rows as ResultSetHeader;
@@ -101,7 +101,7 @@ export class QueryService {
   async measureQueryRunTime(): Promise<string> {
     try {
       const rows = (await this.userDBManager.run(
-        'show profiles;',
+          'show profiles;',
       )) as RowDataPacket[];
       let lastQueryRunTime = rows[rows.length - 1]?.Duration;
       lastQueryRunTime = Math.round(lastQueryRunTime * 1000) / 1000 || 0;
@@ -118,7 +118,7 @@ export class QueryService {
   private detectQueryType(query: string): QueryType | undefined {
     const trimmedQuery = query.trim().toUpperCase();
     const queryType = Object.keys(this.queryTypeMap).find((type) =>
-      trimmedQuery.startsWith(type),
+        trimmedQuery.startsWith(type),
     );
     return queryType ? this.queryTypeMap[queryType] : QueryType.UNKNOWN;
   }
