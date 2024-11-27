@@ -6,7 +6,6 @@ import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import { Shell } from '../shell/shell.entity';
 import { UserDBManager } from '../config/query-database/user-db-manager.service';
 import { UsageService } from 'src/usage/usage.service';
-import { LoggerService } from 'src/config/logger/logger.service';
 
 @Injectable()
 export class QueryService {
@@ -14,7 +13,6 @@ export class QueryService {
     private readonly userDBManager: UserDBManager,
     private shellService: ShellService,
     private readonly usageService: UsageService,
-    private readonly loggerService: LoggerService,
   ) {}
 
   async execute(sessionId: string, shellId: number, queryDto: QueryDto) {
@@ -42,7 +40,6 @@ export class QueryService {
     } catch (e) {
       const text = `ERROR ${e.errno || ''} (${e.sqlState || ''}): ${e.sqlMessage || ''}`;
 
-      this.loggerService.warn(e);
       const updateData = {
         ...baseUpdateData,
         queryStatus: false,

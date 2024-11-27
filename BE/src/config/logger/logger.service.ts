@@ -20,8 +20,8 @@ export class LoggerService {
     this.logger = WinstonModule.createLogger(winstonConfig);
   }
 
-  warn(message: string) {
-    this.logger.warn(message);
+  warn(message: string, error: any) {
+    this.logger.warn(`[${message}]\n${error}`);
   }
 
   logRequest(reqInfo: RequestInfo) {
