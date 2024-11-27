@@ -1,7 +1,7 @@
 import {
   Injectable,
   InternalServerErrorException,
-  OnModuleInit,
+  Scope,
 } from '@nestjs/common';
 import { EnumGenerator, NumberGenerator, RandomValueGenerator } from './domain';
 import {
@@ -22,21 +22,9 @@ import {
   TypeToConstructor,
 } from './constant/random-record.constant';
 
-@Injectable()
-export class RecordService implements OnModuleInit {
+@Injectable({ scope: Scope.DEFAULT })
+export class RecordService {
   constructor(private readonly userDBManager: UserDBManager) {}
-
-  async onModuleInit() {
-    try {
-      await fs.access(RANDOM_DATA_TEMP_DIR);
-    } catch (err) {
-      if (err.code === 'ENOENT') {
-        await fs.mkdir(RANDOM_DATA_TEMP_DIR, { recursive: true });
-      } else {
-        console.error('csv 폴더 접근 오류: ', err);
-      }
-    }
-  }
 
   async insertRandomRecord(
     createRandomRecordDto: CreateRandomRecordDto,
