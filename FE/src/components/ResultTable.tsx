@@ -26,7 +26,7 @@ function ResultTable({ data }: { data: any[] }) {
           <TableRow>
             {Object.keys(data[0]).map((header) => (
               <TableHead
-                className="border-b border-t text-muted-foreground"
+                className="border-b border-t border-gray-300 text-muted-foreground"
                 key={header}
               >
                 {header}
@@ -36,7 +36,10 @@ function ResultTable({ data }: { data: any[] }) {
         </TableHeader>
         <TableBody>
           {visibleData.map((row) => (
-            <TableRow key={generateKey(row)}>
+            <TableRow
+              className="border-b border-t border-gray-300"
+              key={generateKey(row)}
+            >
               {Object.values(row).map((cell) => (
                 <TableCell key={generateKey(cell)}>{String(cell)}</TableCell>
               ))}
