@@ -5,7 +5,7 @@ import 'winston-daily-rotate-file';
 const infoFileOptions = {
   level: 'info',
   dirname: 'logs',
-  filename: '%DATE%-info.log',
+  filename: 'info.log',
   datePattern: 'YYYY-MM-DD',
   zippedArchive: true,
   maxSize: '20m',
@@ -15,7 +15,7 @@ const infoFileOptions = {
 const errorFileOptions = {
   level: 'error',
   dirname: 'logs',
-  filename: '%DATE%-error.log',
+  filename: 'error.log',
   datePattern: 'YYYY-MM-DD',
   zippedArchive: true,
   maxSize: '20m',
@@ -34,6 +34,7 @@ export const winstonConfig = {
           appName: true,
         }),
       ),
+      silent: process.env.NODE_ENV !== 'debug',
     }),
     // error log file
     new winston.transports.DailyRotateFile(errorFileOptions),
