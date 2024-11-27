@@ -62,6 +62,11 @@ export interface RecordToolColumnType {
   enum: string[]
 }
 
+export interface RecordResultType {
+  status: boolean
+  text: string
+}
+
 export type QueryType =
   | 'SELECT'
   | 'INSERT'
