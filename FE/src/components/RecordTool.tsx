@@ -108,13 +108,11 @@ export default function RecordTool({
   const handleSubmitRecord = async () => {
     try {
       await addRecord(selectedTable)
-      // console.log('Data inserted successfully', result)
       toast({
         title: 'Data inserted successfully',
         description: `${selectedTable.count} rows inserted successfully in ${selectedTable.tableName} table`,
       })
     } catch (error) {
-      console.error('Failed to insert data:', error)
       toast({
         variant: 'destructive',
         title: 'Failed to insert data',
@@ -251,6 +249,7 @@ export default function RecordTool({
         <Input
           type="number"
           id="Rows"
+          value={selectedTable.count === 0 ? '' : selectedTable.count}
           placeholder="max 100,000"
           className="h-8 w-28 p-2"
           onChange={(e) => handleCountChange(Number(e.target.value))}
