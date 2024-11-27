@@ -30,8 +30,12 @@ services:
 
       REDIS_HOST: redis
       REDIS_PORT: 6379
+
+      LOGGER_DIR: /logs
     expose:
       - 3000
+    volumes:
+      - ./logs:/app/BE/logs
 
   server_db:
     image: mysql:8.0
@@ -42,7 +46,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ../db/server:/var/lib/mysql
+      - ../db/server:/var/lib/mysql 
     networks:
       - backend
 
