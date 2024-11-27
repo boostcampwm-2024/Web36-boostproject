@@ -41,17 +41,6 @@ export default function Shell({ shell }: ShellProps) {
     setInputValue(shell.query ?? '')
   }, [shell.query])
 
-  useEffect(() => {
-    const renderer = editorRef.current?.editor.renderer as any
-    if (renderer) {
-      if (!focused) {
-        renderer.$cursorLayer.element.style.display = 'none'
-      } else {
-        renderer.$cursorLayer.element.style.display = ''
-      }
-    }
-  }, [focused])
-
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     if (e.relatedTarget?.id === 'remove-shell-btn') return
     setFocused(false)
@@ -92,7 +81,11 @@ export default function Shell({ shell }: ShellProps) {
             className={`${inputValue.length === 0 ? 'opacity-50' : ''} `}
           />
         </button>
-        <div className="h-full w-full rounded-sm bg-secondary">
+        <div
+          className={`editor-container h-full w-full rounded-sm bg-secondary ${
+            focused ? '' : 'hide-cursor'
+          }`}
+        >
           <style>{`.ace_placeholder {margin: 0;}`}</style>
           <AceEditor
             ref={editorRef}
