@@ -38,12 +38,27 @@ export class RedisService {
     if (!key) {
       return null;
     }
-    return this.defaultConnection.get(key);
+    return this.defaultConnection.hgetall(key);
+  }
+
+  public async existSession(key: string) {
+    return this.defaultConnection.exists(key);
   }
 
   public async setNewSession(key: string) {
-    const session = await this.getSession(key);
-    if (!session) await this.adminDBManager.initUserDatabase(key);
+    const session = await this.existSession(key);
+    if (!session) {
+      await this.defaultConnection.hset(key, 'rowCount', 0);
+      await this.adminDBManager.initUserDatabase(key);
+    }
+  }
+
+  public async deleteSession(key: string) {
+    await this.defaultConnection.del(key);
+  }
+
+  public async setExpireTime(key: string, ttl: number) {
+    await this.defaultConnection.expire(key, ttl);
   }
 
   private subscribeToExpiredEvents() {
@@ -52,6 +67,14 @@ export class RedisService {
     this.eventConnection.on('message', (event, session) => {
       this.adminDBManager.removeDatabaseInfo(session);
     });
+  }
+
+  public async getRowCount(key: string) {
+    return this.defaultConnection.hget(key, 'rowCount');
+  }
+
+  public async setRowCount(key: string, rowCount: number) {
+    await this.defaultConnection.hset(key, 'rowCount', rowCount);
   }
 
   public getDefaultConnection() {

@@ -35,6 +35,8 @@ export const MENU = [
   },
 ]
 
+export const MAX_ROWS_PER_USER = 50000
+
 export const COLUMN_TYPES = [
   'TINYINT',
   'SMALLINT',

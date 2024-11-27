@@ -5,7 +5,8 @@ import {
   Post,
   Req,
   UseFilters,
-  UseGuards, UseInterceptors,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { QueryService } from './query.service';
 import { QueryDto } from './dto/query.dto';

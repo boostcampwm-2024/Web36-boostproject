@@ -1,14 +1,21 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import {
+  CallHandler,
+  ExecutionContext,
+  Injectable,
+  NestInterceptor,
+} from '@nestjs/common';
 import { createConnection } from 'mysql2/promise';
 import { ConfigService } from '@nestjs/config';
 import { Observable, tap } from 'rxjs';
 
 @Injectable()
 export class UserDBConnectionInterceptor implements NestInterceptor {
-
   constructor(private readonly configService: ConfigService) {}
 
-  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
+  async intercept(
+    context: ExecutionContext,
+    next: CallHandler,
+  ): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest();
     const identify = request.sessionID;
 

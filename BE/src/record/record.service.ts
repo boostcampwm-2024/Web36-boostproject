@@ -3,18 +3,7 @@ import {
   InternalServerErrorException,
   OnModuleInit,
 } from '@nestjs/common';
-import {
-  BooleanGenerator,
-  CityGenerator,
-  CountryGenerator,
-  EmailGenerator,
-  EnumGenerator,
-  NameGenerator,
-  NumberGenerator,
-  PhoneGenerator,
-  RandomValueGenerator,
-  SexGenerator,
-} from './domain';
+import { EnumGenerator, NumberGenerator, RandomValueGenerator } from './domain';
 import {
   CreateRandomRecordDto,
   RandomColumnInfo,

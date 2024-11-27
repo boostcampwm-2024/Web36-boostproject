@@ -4,9 +4,7 @@ import { REQUEST } from '@nestjs/core';
 
 @Injectable({ scope: Scope.TRANSIENT })
 export class UserDBManager {
-  constructor(
-    @Inject(REQUEST) private readonly request: any,
-  ) {}
+  constructor(@Inject(REQUEST) private readonly request: any) {}
 
   async run(query: string): Promise<QueryResult> {
     const connection = await this.request.dbConnection;

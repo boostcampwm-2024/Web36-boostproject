@@ -5,11 +5,11 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { createPool, Pool, QueryResult } from 'mysql2/promise';
+import { createPool, Pool } from 'mysql2/promise';
 
 @Injectable()
 export class AdminDBManager implements OnModuleInit {
-  private adminConnection: Pool;
+  private pool: Pool;
 
   constructor(private readonly configService: ConfigService) {}
 
@@ -18,7 +18,7 @@ export class AdminDBManager implements OnModuleInit {
   }
 
   private createAdminConnection() {
-    this.adminConnection = createPool({
+    this.pool = createPool({
       host: this.configService.get<string>('QUERY_DB_HOST'),
       user: this.configService.get<string>('QUERY_DB_USER'),
       password: this.configService.get<string>('QUERY_DB_PASSWORD'),
@@ -26,9 +26,8 @@ export class AdminDBManager implements OnModuleInit {
       connectionLimit: 10,
     });
   }
-  async run(query: string, params?: string[]): Promise<QueryResult> {
-    const [result] = await this.adminConnection.query(query, params);
-    return result;
+  async run(query: string, params?: string[]) {
+    return await this.pool.query(query, params);
   }
 
   public async initUserDatabase(identify: string) {

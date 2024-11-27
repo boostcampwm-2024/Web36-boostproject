@@ -71,3 +71,12 @@ export interface ExampleQuery {
   name: string
   query: string
 }
+
+export interface CapacityUsageProps {
+  used: number
+  total?: number
+  unit?: string
+  lowThreshold?: number
+  highThreshold?: number
+  isLoading?: boolean
+}

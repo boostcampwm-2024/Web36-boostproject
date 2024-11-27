@@ -1,4 +1,11 @@
-import { Body, Controller, Post, Req, UseFilters, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Req,
+  UseFilters,
+  UseInterceptors,
+} from '@nestjs/common';
 import { RecordService } from './record.service';
 import { CreateRandomRecordDto } from './dto/create-random-record.dto';
 import { ApiExtraModels, ApiTags } from '@nestjs/swagger';

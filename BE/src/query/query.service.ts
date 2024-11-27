@@ -5,12 +5,14 @@ import { ShellService } from '../shell/shell.service';
 import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import { Shell } from '../shell/shell.entity';
 import { UserDBManager } from '../config/query-database/user-db-manager.service';
+import { UsageService } from 'src/usage/usage.service';
 
 @Injectable()
 export class QueryService {
   constructor(
     private readonly userDBManager: UserDBManager,
     private shellService: ShellService,
+    private readonly usageService: UsageService,
   ) {}
 
   async execute(sessionId: string, shellId: number, queryDto: QueryDto) {
@@ -33,7 +35,7 @@ export class QueryService {
         baseUpdateData,
         queryDto.query,
       );
-
+      this.usageService.updateRowCount(sessionId);
       return await this.shellService.replace(shellId, updateData);
     } catch (e) {
       const text = `ERROR ${e.errno || ''} (${e.sqlState || ''}): ${e.sqlMessage || ''}`;
@@ -56,6 +58,8 @@ export class QueryService {
 
     const rows = await this.userDBManager.run(query);
     const runTime = await this.measureQueryRunTime();
+
+    // Update usage
 
     let text: string;
     let resultTable: RowDataPacket[];

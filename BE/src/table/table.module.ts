@@ -8,5 +8,6 @@ import { AdminDBManager } from '../config/query-database/admin-db-manager.servic
   imports: [AdminQueryDBModule],
   controllers: [TableController],
   providers: [TableService, AdminDBManager],
+  exports: [TableService],
 })
 export class TableModule {}

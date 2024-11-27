@@ -11,7 +11,7 @@ import { RedisModule } from './config/redis/redis.module';
 import { ServiceDBModule } from './config/service-database/service-db.module';
 import { RecordModule } from './record/record.module';
 import { TableModule } from './table/table.module';
-
+import { UsageModule } from './usage/usage.module';
 
 @Module({
   imports: [
@@ -23,6 +23,7 @@ import { TableModule } from './table/table.module';
     RedisModule,
     RecordModule,
     TableModule,
+    UsageModule,
   ],
 })
 export class AppModule {
