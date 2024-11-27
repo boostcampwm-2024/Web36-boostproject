@@ -25,6 +25,7 @@ import {
   DialogTrigger,
   DialogClose,
 } from '@/components/ui/dialog'
+import { useToast } from '@/hooks/use-toast'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -39,12 +40,16 @@ import { RECORD_TYPES } from '@/constants/constants'
 import { generateKey, convertTableDataToRecordToolData } from '@/util'
 import TagInputForm from '@/components/TagInputForm'
 import InputWithLocalState from '@/components/InputWithLocalState'
+import useAddRecord from '@/hooks/useRecordQuery'
 
 export default function RecordTool({
   tableData = [],
 }: {
   tableData: TableType[]
 }) {
+  const { toast } = useToast()
+  const addRecordMutation = useAddRecord()
+
   const [tables, setTables] = useState<RecordToolType[]>([])
   const [selectedTable, setSelectedTable] = useState<RecordToolType>({
     tableName: '',
@@ -57,6 +62,10 @@ export default function RecordTool({
     setTables(recordToolData)
     setSelectedTable(recordToolData[0] || { tableName: '', columns: [] })
   }, [tableData])
+
+  const addRecord = async (record: RecordToolType) => {
+    await addRecordMutation.mutateAsync(record)
+  }
 
   const handleColumnChange = (
     row: number,
@@ -94,6 +103,24 @@ export default function RecordTool({
           : table
       )
     )
+  }
+
+  const handleSubmitRecord = async () => {
+    try {
+      await addRecord(selectedTable)
+      // console.log('Data inserted successfully', result)
+      toast({
+        title: 'Data inserted successfully',
+        description: `${selectedTable.count} rows inserted successfully in ${selectedTable.tableName} table`,
+      })
+    } catch (error) {
+      console.error('Failed to insert data:', error)
+      toast({
+        variant: 'destructive',
+        title: 'Failed to insert data',
+        description: `${selectedTable.count} rows failed to insert in ${selectedTable.tableName} table`,
+      })
+    }
   }
 
   return (
@@ -149,7 +176,7 @@ export default function RecordTool({
               <TableCell className="flex items-center">
                 <InputWithLocalState<number>
                   type="number"
-                  id="row"
+                  id={`row-blank-${rowIdx}`}
                   className="mr-2 h-8 w-12 p-1"
                   placeholder="0"
                   value={row.blank}
@@ -164,7 +191,7 @@ export default function RecordTool({
                   <div className="flex">
                     <InputWithLocalState<number>
                       type="number"
-                      id="row-min"
+                      id={`row-min-${rowIdx}`}
                       className="mr-2 h-8 w-16 p-2"
                       placeholder="min"
                       value={row.min}
@@ -174,7 +201,7 @@ export default function RecordTool({
                     />
                     <InputWithLocalState<number>
                       type="number"
-                      id="row-max"
+                      id={`row-max-${rowIdx}`}
                       className="h-8 w-16 p-2"
                       placeholder="max"
                       value={row.max}
@@ -233,9 +260,7 @@ export default function RecordTool({
         <Button
           variant="default"
           className="ml-3 h-8"
-          onClick={() => {
-            console.log(selectedTable) // 확인을 위한 임시 console.log
-          }}
+          onClick={handleSubmitRecord}
         >
           Add Random Data
         </Button>

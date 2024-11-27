@@ -7,6 +7,7 @@ import ShellList from '@/components/ShellList'
 import { useShells } from '@/hooks/useShellQuery'
 import { useTables } from '@/hooks/useTableQuery'
 import useUsages from '@/hooks/useUsageQuery'
+import { Toaster } from '@/components/ui/toaster'
 
 export default function Page() {
   const {
@@ -19,14 +20,14 @@ export default function Page() {
     isLoading: isTablesLoading,
     error: tablesError,
   } = useTables()
-  const { data: usage } = useUsages()
+  const { data: usage = { availUsage: 0, currentUsage: 0 } } = useUsages()
   const [activeItem, setActiveItem] = useState(MENU[0])
 
   return (
     <SidebarProvider
       style={
         {
-          '--sidebar-width': '350px',
+          '--sidebar-width': '400px',
         } as React.CSSProperties
       }
     >
@@ -46,6 +47,7 @@ export default function Page() {
         )}
       </SidebarInset>
       {!isTablesLoading && !tablesError && <RightSidebar tables={tables} />}
+      <Toaster />
     </SidebarProvider>
   )
 }
