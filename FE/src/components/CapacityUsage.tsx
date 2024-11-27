@@ -5,15 +5,16 @@ import useUsages from '@/hooks/useUsageQuery'
 function CapacityUsage({ usage }: { usage: UsageType }) {
   const { isLoading, isFetching } = useUsages()
 
+  const UNIT = 'Rows'
+  const HIGH_THRESHOLD = 70
+
   const loading = isLoading || isFetching
   const used = usage?.currentUsage || 0
   const total = usage?.availUsage || MAX_ROWS_PER_USER
-  const unit = 'Rows'
-  const highThreshold = 70
   const percentage = total > 0 ? (used / total) * 100 : 0
 
   const getColor = (percent: number) => {
-    if (percent < highThreshold) return 'bg-primary'
+    if (percent < HIGH_THRESHOLD) return 'bg-primary'
     return 'bg-red-500'
   }
 
@@ -31,10 +32,10 @@ function CapacityUsage({ usage }: { usage: UsageType }) {
             <span>{used}</span>
           )}
           {/* 단위 */}
-          <span>{unit}</span>
+          <span>{UNIT}</span>
           {/* 총 사용량 */}
           <span>
-            / {total} {unit}
+            / {total} {UNIT}
           </span>
         </div>
       </div>

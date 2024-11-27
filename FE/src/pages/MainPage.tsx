@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { MAX_ROWS_PER_USER, MENU } from '@/constants/constants'
+import { MENU } from '@/constants/constants'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import LeftSidebar from '@/components/LeftSidebar'
 import RightSidebar from '@/components/RightSidebar'
@@ -19,8 +19,7 @@ export default function Page() {
     isLoading: isTablesLoading,
     error: tablesError,
   } = useTables()
-  const { data: usage = { availUsage: MAX_ROWS_PER_USER, currentUsage: 0 } } =
-    useUsages()
+  const { data: usage } = useUsages()
   const [activeItem, setActiveItem] = useState(MENU[0])
 
   return (
