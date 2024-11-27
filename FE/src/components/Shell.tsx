@@ -2,22 +2,14 @@ import { useState, useRef, useEffect } from 'react'
 import PlayCircle from '@/assets/play_circle.svg'
 import { ShellType } from '@/types/interfaces'
 import useShellHandlers from '@/hooks/useShellHandler'
-import { generateKey } from '@/util'
 import { X } from 'lucide-react'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { useTables } from '@/hooks/useTableQuery'
 import AceEditor from 'react-ace'
 import 'ace-builds/src-noconflict/mode-sql'
 import 'ace-builds/src-noconflict/theme-monokai'
 import 'ace-builds/src-noconflict/ext-language_tools'
 import useUsages from '@/hooks/useUsageQuery'
+import ResultTable from './ResultTable'
 
 type ShellProps = {
   shell: ShellType
@@ -144,39 +136,9 @@ export default function Shell({ shell }: ShellProps) {
           >
             {text}
           </p>
-          {resultTable &&
-            resultTable?.length > 0 && ( // 결과 테이블이 있는지
-              <>
-                <Table className="m-3">
-                  <TableHeader>
-                    <TableRow>
-                      {Object.keys(resultTable[0])?.map((header) => (
-                        <TableHead key={generateKey(header)}>
-                          {header}
-                        </TableHead>
-                      ))}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {resultTable.map((row) => (
-                      <TableRow key={generateKey(row)}>
-                        {Object.values(row).map((cell) => (
-                          <TableCell key={generateKey(cell)}>
-                            {String(cell)}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-                <button
-                  type="button"
-                  className="flex w-full justify-center bg-primary"
-                >
-                  <div className="text-bold w-3 text-background">+</div>
-                </button>
-              </>
-            )}
+          {resultTable && resultTable?.length > 0 && (
+            <ResultTable data={resultTable} />
+          )}
         </div>
       )}
     </>
