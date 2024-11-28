@@ -21,10 +21,14 @@ import {
   TypeToConstructor,
 } from './constant/random-record.constant';
 import { UserDBManager } from '../config/query-database/user-db-manager.service';
+import { UsageService } from '../usage/usage.service';
 
 @Injectable()
 export class RecordService implements OnModuleInit {
-  constructor(private readonly userDBManager: UserDBManager) {}
+  constructor(
+    private readonly userDBManager: UserDBManager,
+    private readonly usageService: UsageService,
+  ) {}
 
   async onModuleInit() {
     try {
@@ -59,6 +63,8 @@ export class RecordService implements OnModuleInit {
     );
 
     await this.deleteFile(csvFilePath);
+
+    await this.usageService.updateRowCount(req);
 
     return new ResRecordDto({
       status: result.affectedRows === createRandomRecordDto.count,
