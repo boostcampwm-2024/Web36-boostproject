@@ -17,7 +17,7 @@ export default function useToastErrorHandler() {
             error.response?.data?.error?.message ||
             'The server is currently handling too many requests. Please try again later.'
           break
-        case 430:
+        case 422:
           title = 'Usage Limit Exceeded'
           description =
             error.response?.data?.error?.message ||
