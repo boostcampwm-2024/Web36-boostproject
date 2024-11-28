@@ -42,6 +42,7 @@ import { generateKey, convertTableDataToRecordToolData } from '@/util'
 import TagInputForm from '@/components/TagInputForm'
 import InputWithLocalState from '@/components/InputWithLocalState'
 import useAddRecord from '@/hooks/useRecordQuery'
+import useUsages from '@/hooks/useUsageQuery'
 
 export default function RecordTool({
   tableData = [],
@@ -50,6 +51,7 @@ export default function RecordTool({
 }) {
   const { toast } = useToast()
   const addRecordMutation = useAddRecord()
+  const { refetch: usageRefetch } = useUsages()
 
   const [tables, setTables] = useState<RecordToolType[]>([])
   const [selectedTable, setSelectedTable] = useState<RecordToolType>({
@@ -107,6 +109,7 @@ export default function RecordTool({
 
   const handleSubmitRecord = async () => {
     const result: RecordResultType = await addRecord(selectedTable)
+    usageRefetch()
     toast({
       title: 'Data inserted successfully',
       description: result.text,

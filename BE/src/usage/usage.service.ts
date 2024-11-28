@@ -6,7 +6,7 @@ import { UserDBManager } from '../config/query-database/user-db-manager.service'
 
 @Injectable()
 export class UsageService {
-  MAX_ROW_COUNT = 10;
+  MAX_ROW_COUNT = 10000;
   constructor(
     private readonly userDBManager: UserDBManager,
     private readonly redisService: RedisService,
