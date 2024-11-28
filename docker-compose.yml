@@ -1,0 +1,54 @@
+version: "3"
+services:
+  frontend:
+    build:
+      context: ./FE
+    container_name: QLab-Front-Server
+    environment:
+      VITE_BASE_URL: https://www.q-lab.site/api
+      VITE_NODE_ENV: production
+    expose:
+      - 80
+
+  backend:
+    build:
+      context: ./BE
+    container_name: QLab-Service-Server
+    expose:
+      - 3000
+    environment:
+      DB_TYPE: mysql
+      DB_HOST: 10.0.1.7
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_DATABASE: qlab
+
+      QUERY_DB_TYPE: mysql
+      QUERY_DB_HOST: 10.0.1.7
+      QUERY_DB_PORT: 3307
+      QUERY_DB_USER: root
+      QUERY_DB_DATABASE: qlab
+
+      REDIS_HOST: 10.0.1.7
+      REDIS_PORT: 6379
+
+      DB_PASSWORD: ${DB_PASSWORD}
+      QUERY_DB_PASSWORD: ${QUERY_DB_PASSWORD}
+      SESSION_SECRET: ${SESSION_SECRET}
+
+      LOGGER_DIR: /logs
+    volumes:
+      - /logs:/app/BE/logs
+
+  nginx:
+    build:
+      context: ./nginx
+    container_name: QLab-nginx-webServer
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - frontend
+      - backend
+    volumes:
+      - /etc/letsencrypt:/ssl:ro
