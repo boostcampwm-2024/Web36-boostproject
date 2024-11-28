@@ -46,7 +46,7 @@ import {
   generateCreateTableQuery,
   generateAlterTableQuery,
 } from '@/util'
-import EditableInput from './EditableInput'
+import InputWithLocalState from '@/components/InputWithLocalState'
 
 export default function TableTool({
   tableData = [],
@@ -194,10 +194,15 @@ export default function TableTool({
                   key !== 'id' && (
                     <TableCell key={generateKey(value)}>
                       {key === 'name' && (
-                        <EditableInput
-                          value={String(value)}
-                          rowIdx={rowIdx}
-                          handleOnChange={handleOnChange}
+                        <InputWithLocalState<string>
+                          type="text"
+                          id={`row-name-${rowIdx}`}
+                          className="mr-2 h-8 w-12 p-1"
+                          placeholder={value}
+                          value={value}
+                          onChange={(updatedValue) =>
+                            handleOnChange(rowIdx, 'name', updatedValue)
+                          }
                         />
                       )}
 
