@@ -1,11 +1,11 @@
 import {
   CallHandler,
   ExecutionContext,
-  HttpStatus,
+  HttpException,
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { Observable, tap } from 'rxjs';
+import { catchError, Observable, tap } from 'rxjs';
 import {
   LoggerService,
   RequestInfo,
@@ -35,11 +35,28 @@ export class LoggingInterceptor implements NestInterceptor {
         const responseInfo: ResponseInfo = {
           id: logId,
           status: context.switchToHttp().getResponse().statusCode,
+          body: context.switchToHttp().getResponse().body,
         };
         this.loggerService.logResponse(responseInfo);
-        if (responseInfo.status == HttpStatus.INTERNAL_SERVER_ERROR) {
+      }),
+      catchError((err) => {
+        let responseInfo: ResponseInfo;
+        if (err instanceof HttpException) {
+          responseInfo = {
+            id: logId,
+            status: err.getStatus(),
+            errMessage: err.message,
+          };
+          this.loggerService.logResponse(responseInfo);
+        } else {
+          responseInfo = {
+            id: logId,
+            status: 500,
+            errMessage: `${err}`,
+          };
           this.loggerService.error(responseInfo);
         }
+        throw err;
       }),
     );
   }
