@@ -8,5 +8,6 @@ import { Shell } from './shell.entity';
   imports: [TypeOrmModule.forFeature([Shell])],
   controllers: [ShellController],
   providers: [ShellService],
+  exports: [ShellService],
 })
 export class ShellModule {}

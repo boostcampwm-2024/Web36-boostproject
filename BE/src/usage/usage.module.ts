@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { UsageController } from './usage.controller';
 import { UsageService } from './usage.service';
-import { UserDBManager } from '../config/query-database/user-db-manager.service';
 import { TableModule } from '../table/table.module';
 import { RedisModule } from '../config/redis/redis.module';
+import { QueryDBModule } from '../config/query-database/admin-query-db.moudle';
 
 @Module({
-  imports: [TableModule, RedisModule],
+  imports: [TableModule, RedisModule, QueryDBModule],
   controllers: [UsageController],
-  providers: [UsageService, UserDBManager],
+  providers: [UsageService],
   exports: [UsageService],
 })
 export class UsageModule {}

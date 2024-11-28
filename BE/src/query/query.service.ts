@@ -15,11 +15,11 @@ export class QueryService {
     private readonly usageService: UsageService,
   ) {}
 
-  async execute(sessionId: string, shellId: number, queryDto: QueryDto) {
+  async execute(req: any, shellId: number, queryDto: QueryDto) {
     await this.shellService.findShellOrThrow(shellId);
 
     const baseUpdateData = {
-      sessionId: sessionId,
+      sessionId: req.sessionID,
       query: queryDto.query,
       queryType: this.detectQueryType(queryDto.query),
     };
@@ -32,10 +32,11 @@ export class QueryService {
         });
       }
       const updateData = await this.processQuery(
+        req,
         baseUpdateData,
         queryDto.query,
       );
-      this.usageService.updateRowCount(sessionId);
+      this.usageService.updateRowCount(req);
       return await this.shellService.replace(shellId, updateData);
     } catch (e) {
       const text = `ERROR ${e.errno || ''} (${e.sqlState || ''}): ${e.sqlMessage || ''}`;
@@ -51,13 +52,14 @@ export class QueryService {
   }
 
   private async processQuery(
+    req: any,
     baseUpdateData: any,
     query: string,
   ): Promise<Partial<Shell>> {
     const isResultTable = this.existResultTable(baseUpdateData.queryType);
 
-    const rows = await this.userDBManager.run(query);
-    const runTime = await this.measureQueryRunTime();
+    const rows = await this.userDBManager.run(req, query);
+    const runTime = await this.measureQueryRunTime(req);
 
     // Update usage
 
@@ -98,9 +100,10 @@ export class QueryService {
     return validTypes.includes(type);
   }
 
-  async measureQueryRunTime(): Promise<string> {
+  async measureQueryRunTime(req: any): Promise<string> {
     try {
       const rows = (await this.userDBManager.run(
+        req,
         'show profiles;',
       )) as RowDataPacket[];
       let lastQueryRunTime = rows[rows.length - 1]?.Duration;
