@@ -7,9 +7,7 @@ const createQueryExample = `CREATE TABLE users (
     email VARCHAR(255) UNIQUE NOT NULL,      -- 이메일, 고유값
     phone VARCHAR(20) NOT NULL,              -- 전화번호
     age INT CHECK (age >= 0),                -- 나이 (0 이상만 허용)
-    gender ENUM('Male', 'Female', 'Other') NOT NULL,  -- 성별 (열거형)
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,   -- 생성 날짜
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP  -- 수정 날짜
+    gender ENUM('Male', 'Female', 'Other') NOT NULL  -- 성별 (열거형)
   );`
 
 const insertQueryExample = `INSERT INTO users (name, city, email, phone, age, gender)

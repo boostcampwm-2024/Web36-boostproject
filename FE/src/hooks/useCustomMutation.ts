@@ -1,4 +1,5 @@
 import { useMutation, UseMutationOptions, useQueryClient } from 'react-query'
+import useToastErrorHandler from '@/error/toastErrorHandler'
 
 type MutationContext<TData> = {
   previousData: TData[] | undefined
@@ -10,6 +11,7 @@ export default function useCustomMutation<TData, TVariables extends TData>(
   options?: UseMutationOptions<TData, Error, TVariables, MutationContext<TData>>
 ) {
   const queryClient = useQueryClient()
+  const handleErrorHandler = useToastErrorHandler()
 
   return useMutation<TData, Error, TVariables, MutationContext<TData>>(
     mutationFn,
@@ -25,7 +27,7 @@ export default function useCustomMutation<TData, TVariables extends TData>(
         if (context?.previousData) {
           queryClient.setQueryData(queryKey, context.previousData)
         }
-        console.error(error)
+        handleErrorHandler(error)
       },
       ...options,
     }

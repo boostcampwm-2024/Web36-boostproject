@@ -27,6 +27,15 @@ export default function mockShells(mock: MockAdapter) {
     const result = getMocResult(executeddShell)
 
     shellData.splice(index, 1, { ...executeddShell, ...result })
+
+    if (Math.random() < 0.2) {
+      return [429, { error: { message: 'connection too many Error.' } }]
+    }
+
+    if (Math.random() < 0.2) {
+      return [430, { error: { message: 'usage limit exceed error.' } }]
+    }
+
     return [200, { data: result }]
   })
 

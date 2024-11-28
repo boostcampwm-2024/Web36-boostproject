@@ -23,6 +23,7 @@ export class QueryService {
       query: queryDto.query,
       queryType: this.detectQueryType(queryDto.query),
     };
+    let updateData;
     try {
       if (baseUpdateData.queryType === QueryType.UNKNOWN) {
         return await this.shellService.replace(shellId, {
@@ -31,17 +32,11 @@ export class QueryService {
           text: '지원하지 않는 쿼리입니다.',
         });
       }
-      const updateData = await this.processQuery(
-        req,
-        baseUpdateData,
-        queryDto.query,
-      );
-      this.usageService.updateRowCount(req);
-      return await this.shellService.replace(shellId, updateData);
+      updateData = await this.processQuery(req, baseUpdateData, queryDto.query);
     } catch (e) {
       const text = `ERROR ${e.errno || ''} (${e.sqlState || ''}): ${e.sqlMessage || ''}`;
 
-      const updateData = {
+      updateData = {
         ...baseUpdateData,
         queryStatus: false,
         failMessage: e.sqlMessage,
@@ -49,6 +44,8 @@ export class QueryService {
       };
       return await this.shellService.replace(shellId, updateData);
     }
+    await this.usageService.updateRowCount(req);
+    return await this.shellService.replace(shellId, updateData);
   }
 
   private async processQuery(

@@ -1,17 +1,5 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  Req,
-  UseFilters,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { ShellService } from './shell.service';
-import { ExceptionHandler } from '../common/exception/exception.handler';
 import { UpdateShellDto } from './dto/update-shell.dto';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { ResShellDto } from './dto/res-shell.dto';
@@ -29,7 +17,6 @@ import { ResShellResultDto } from './dto/res-shell-result.dto';
 
 @ApiExtraModels(ResponseDto, ResShellDto, ResShellResultDto)
 @Controller('api/shells')
-@UseFilters(new ExceptionHandler())
 export class ShellController {
   constructor(private shellService: ShellService) {}
 
