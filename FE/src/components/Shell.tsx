@@ -33,6 +33,18 @@ export default function Shell({ shell }: ShellProps) {
     setInputValue(shell.query ?? '')
   }, [shell.query])
 
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const renderer = editorRef.current?.editor.renderer as any
+    if (renderer) {
+      if (!focused) {
+        renderer.$cursorLayer.element.style.display = 'none'
+      } else {
+        renderer.$cursorLayer.element.style.display = ''
+      }
+    }
+  }, [focused])
+
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     if (e.relatedTarget?.id === 'remove-shell-btn') return
     setFocused(false)
@@ -60,7 +72,7 @@ export default function Shell({ shell }: ShellProps) {
   }
   return (
     <>
-      <div className="flex overflow-hidden rounded-sm bg-secondary shadow-md">
+      <div className="flex h-auto overflow-hidden rounded-sm bg-secondary shadow-md">
         <button
           type="button"
           className="h-full bg-primary p-3 shadow-lg"
@@ -73,11 +85,7 @@ export default function Shell({ shell }: ShellProps) {
             className={`${inputValue.length === 0 ? 'opacity-50' : ''} `}
           />
         </button>
-        <div
-          className={`editor-container h-full w-full rounded-sm bg-secondary ${
-            focused ? '' : 'hide-cursor'
-          }`}
-        >
+        <div className="editor-container h-full w-full rounded-sm bg-secondary">
           <style>{`.ace_placeholder {margin: 0;}`}</style>
           <AceEditor
             ref={editorRef}
@@ -91,7 +99,6 @@ export default function Shell({ shell }: ShellProps) {
             width="100%"
             height={`${editorHeight}rem`}
             setOptions={{
-              highlightActiveLine: false,
               showGutter: false,
               useWorker: false,
               enableBasicAutocompletion: true,
@@ -100,8 +107,14 @@ export default function Shell({ shell }: ShellProps) {
               tabSize: 2,
               wrap: true,
               behavioursEnabled: false,
+              showCursor: focused,
+              highlightActiveLine: false,
+              cursorStyle: 'slim',
             }}
             onLoad={(editor) => {
+              setEditorHeight(
+                editor.getSession().getScreenLength() * LINE_HEIGHT
+              )
               editor.on('change', () => {
                 setEditorHeight(
                   editor.getSession().getScreenLength() * LINE_HEIGHT
