@@ -3,6 +3,7 @@ import { winstonConfig } from './winston.config';
 import { WinstonModule } from 'nest-winston';
 
 export interface RequestInfo {
+  id: string;
   method: string;
   url: string;
   body: any;
@@ -10,7 +11,9 @@ export interface RequestInfo {
 }
 
 export interface ResponseInfo {
+  id: string;
   status: number;
+  body?: any;
 }
 
 export class LoggerService {
@@ -25,15 +28,29 @@ export class LoggerService {
   }
 
   logRequest(reqInfo: RequestInfo) {
-    this.logger.log(
-      `[Request] ${reqInfo.method} ${reqInfo.url} SID: ${reqInfo.sessionId}`,
-    );
+    this.logger.log({
+      message: `[Request] ${reqInfo.method} ${reqInfo.url}}`,
+      id: reqInfo.id,
+      method: reqInfo.method,
+      url: reqInfo.url,
+      sid: reqInfo.sessionId,
+      body: reqInfo.body ? ` ${JSON.stringify(reqInfo.body)}` : '',
+    });
   }
-  logResponse(res: ResponseInfo) {
-    if (res.status == HttpStatus.INTERNAL_SERVER_ERROR) {
-      this.logger.error(`[Response] ${res.status} ${HttpStatus[res.status]}`);
-      return;
-    }
-    this.logger.log(`[Response] ${res.status} ${HttpStatus[res.status]}`);
+  logResponse(resInfo: ResponseInfo) {
+    this.logger.log({
+      message: `[Response] ${resInfo.status} ${HttpStatus[resInfo.status]}`,
+      id: resInfo.id,
+      status: resInfo.status,
+      body: resInfo.body ? ` ${JSON.stringify(resInfo.body)}` : '',
+    });
+  }
+  error(resInfo: ResponseInfo) {
+    this.logger.error({
+      message: `[Error] ${resInfo.status} ${HttpStatus[resInfo.status]}`,
+      id: resInfo.id,
+      status: resInfo.status,
+      body: resInfo.body ? ` ${JSON.stringify(resInfo.body)}` : '',
+    });
   }
 }
