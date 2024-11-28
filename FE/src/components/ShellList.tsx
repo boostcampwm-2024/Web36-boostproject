@@ -20,7 +20,9 @@ export default function ShellList({
           <Badge
             variant="outline"
             className="cursor-pointer"
-            onClick={addShell}
+            onClick={async () => {
+              await addShell()
+            }}
           >
             + query
           </Badge>
