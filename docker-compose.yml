@@ -38,7 +38,7 @@ services:
 
       LOGGER_DIR: /logs
     volumes:
-      - /logs:/app/BE/logs
+      - /logs:/app/logs
 
   nginx:
     build:
