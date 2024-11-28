@@ -36,13 +36,15 @@ export class UserDBConnectionInterceptor implements NestInterceptor {
       });
     } catch (error) {
       console.error('커넥션 제한으로 인한 에러', error);
-      throw new HttpException(
-        {
-          status: HttpStatus.TOO_MANY_REQUESTS,
-          error: 'Too many users right now! Please try again soon.',
-        },
-        HttpStatus.TOO_MANY_REQUESTS,
-      );
+      if (error.errno == 1040) {
+        throw new HttpException(
+          {
+            status: HttpStatus.TOO_MANY_REQUESTS,
+            message: 'Too many users right now! Please try again soon.',
+          },
+          HttpStatus.TOO_MANY_REQUESTS,
+        );
+      }
     }
 
     await request.dbConnection.query('set profiling = 1');

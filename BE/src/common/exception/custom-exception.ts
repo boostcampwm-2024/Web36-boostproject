@@ -5,7 +5,7 @@ export class DataLimitExceedException extends HttpException {
     super(
       {
         status: HttpStatus.UNPROCESSABLE_ENTITY,
-        error: 'Too much data! Please reduce it and try again.',
+        message: 'Too much data! Please reduce it and try again.',
       },
       HttpStatus.UNPROCESSABLE_ENTITY,
     );
