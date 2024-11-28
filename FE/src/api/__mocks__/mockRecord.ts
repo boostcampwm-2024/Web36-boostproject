@@ -3,9 +3,19 @@ import { RecordResultType } from '@/types/interfaces'
 
 const recordResult: RecordResultType = {
   status: true,
-  text: 'randomDataTestTable 에 랜덤 레코드 10개 삽입되었습니다.',
+  text: '10 records successfully insterted into randomDataTestTable Table.',
 }
 
 export default function mockRecord(mock: MockAdapter) {
-  mock.onPost('/record').reply(200, { data: recordResult })
+  mock.onPost('/record').reply((config) => {
+    if (Math.random() < 0.2) {
+      return [429, { error: { message: 'connection too many Error.' } }]
+    }
+
+    if (Math.random() < 0.2) {
+      return [430, { error: { message: 'usage limit exceed error.' } }]
+    }
+
+    return [200, { data: recordResult }]
+  })
 }

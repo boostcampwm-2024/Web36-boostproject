@@ -106,19 +106,11 @@ export default function RecordTool({
   }
 
   const handleSubmitRecord = async () => {
-    try {
-      const result: RecordResultType = await addRecord(selectedTable)
-      toast({
-        title: 'Data inserted successfully',
-        description: result.text,
-      })
-    } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Failed to insert data',
-        description: `${selectedTable.count} rows failed to insert in ${selectedTable.tableName} table`,
-      })
-    }
+    const result: RecordResultType = await addRecord(selectedTable)
+    toast({
+      title: 'Data inserted successfully',
+      description: result.text,
+    })
   }
 
   return (
