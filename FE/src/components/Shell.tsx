@@ -42,7 +42,7 @@ export default function Shell({ shell }: ShellProps) {
   }
 
   const handleClick = async () => {
-    if (!id) return
+    if (!id || !shell) return
     await executeShell({ ...shell, query })
     usageRefetch()
     if (!queryType || ['CREATE', 'ALTER', 'DROP'].includes(queryType || ''))
