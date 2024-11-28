@@ -49,7 +49,7 @@ export const COLUMN_TYPES = [
   'FLOAT',
   'DOUBLE',
   'DECIMAL(10,0)',
-  'CHAR(1)',
+  'CHAR(255)',
   'VARCHAR(255)',
   'TINYTEXT',
   'TEXT',
