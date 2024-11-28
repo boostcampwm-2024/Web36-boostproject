@@ -1,6 +1,6 @@
 import {
   CallHandler,
-  ExecutionContext,
+  ExecutionContext, HttpException, HttpStatus,
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
@@ -20,16 +20,29 @@ export class UserDBConnectionInterceptor implements NestInterceptor {
     const request = context.switchToHttp().getRequest();
     const identify = request.sessionID;
 
-    request.dbConnection = await createConnection({
-      host: this.configService.get<string>('QUERY_DB_HOST'),
-      user: identify.substring(0, 10),
-      password: identify,
-      port: this.configService.get<number>('QUERY_DB_PORT', 3306),
-      database: identify,
-      infileStreamFactory: (path) => {
-        return createReadStream(path);
-      },
-    });
+    try {
+      request.dbConnection = await createConnection({
+        host: this.configService.get<string>('QUERY_DB_HOST'),
+        user: identify.substring(0, 10),
+        password: identify,
+        port: this.configService.get<number>('QUERY_DB_PORT', 3306),
+        database: identify,
+        infileStreamFactory: (path) => {
+          return createReadStream(path);
+        },
+      });
+
+      await request.dbConnection.query('set profiling = 1');
+    } catch (error) {
+      console.error('커넥션 제한으로 인한 에러', error);
+      throw new HttpException(
+        {
+          status: HttpStatus.TOO_MANY_REQUESTS,
+          error: 'Too many users right now! Please try again soon.',
+        },
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
+    }
 
     await request.dbConnection.query('set profiling = 1');
 
