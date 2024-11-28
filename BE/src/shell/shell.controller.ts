@@ -19,6 +19,8 @@ import { ApiExtraModels } from '@nestjs/swagger';
 import { ResponseDto } from '../common/response/response.dto';
 import {
   CreateShellSwagger,
+  GetAllShellSwagger,
+  GetShellSwagger,
   UpdateShellSwagger,
 } from '../config/swagger/shell-swagger.decorator';
 import { Request } from 'express';
@@ -32,6 +34,7 @@ export class ShellController {
   constructor(private shellService: ShellService) {}
 
   @Get()
+  @GetAllShellSwagger()
   @Serialize(ResShellResultDto)
   async findAll(@Req() req: Request) {
     const sessionId = req.sessionID;
@@ -39,6 +42,7 @@ export class ShellController {
   }
 
   @Get(':shellId')
+  @GetShellSwagger()
   @Serialize(ResShellResultDto)
   async findOne(@Param('shellId') shellId: number) {
     return await this.shellService.findShellOrThrow(shellId);

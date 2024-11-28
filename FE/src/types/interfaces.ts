@@ -16,6 +16,11 @@ export interface TableType {
   columns: TableColumnType[]
 }
 
+export interface UsageType {
+  currentUsage: number | null
+  availUsage: number | null
+}
+
 export interface TableColumnType {
   name: string
   type: string
@@ -42,6 +47,26 @@ export interface TableToolColumnType {
   NN: boolean
 }
 
+export interface RecordToolType {
+  tableName: string
+  columns: RecordToolColumnType[]
+  count: number
+}
+
+export interface RecordToolColumnType {
+  name: string
+  type: string
+  blank: number
+  min: number
+  max: number
+  enum: string[]
+}
+
+export interface RecordResultType {
+  status: boolean
+  text: string
+}
+
 export type QueryType =
   | 'SELECT'
   | 'INSERT'
@@ -51,3 +76,18 @@ export type QueryType =
   | 'CREATE'
   | 'DROP'
   | null
+
+export interface ExampleQuery {
+  id: string
+  name: string
+  query: string
+}
+
+export interface CapacityUsageProps {
+  used: number
+  total?: number
+  unit?: string
+  lowThreshold?: number
+  highThreshold?: number
+  isLoading?: boolean
+}

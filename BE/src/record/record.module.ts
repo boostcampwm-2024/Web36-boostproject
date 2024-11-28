@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { RecordController } from './record.controller';
 import { RecordService } from './record.service';
-import { QueryDBModule } from 'src/config/query-database/query-db.moudle';
+import { RedisModule } from '../config/redis/redis.module';
+import { QueryDBModule } from '../config/query-database/admin-query-db.moudle';
 
 @Module({
-  imports: [QueryDBModule],
+  imports: [RedisModule, QueryDBModule],
   controllers: [RecordController],
   providers: [RecordService],
 })

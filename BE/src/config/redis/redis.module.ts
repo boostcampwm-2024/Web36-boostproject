@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { RedisService } from './redis.service';
-import { QueryDBModule } from '../query-database/query-db.moudle';
+import { QueryDBModule } from '../query-database/admin-query-db.moudle';
 
 @Module({
   imports: [QueryDBModule],

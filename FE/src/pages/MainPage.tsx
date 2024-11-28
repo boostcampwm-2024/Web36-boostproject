@@ -1,11 +1,17 @@
 import { useState } from 'react'
-import { MENU } from '@/constants'
+import { MENU } from '@/constants/constants'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
+import { Badge } from '@/components/ui/badge'
 import LeftSidebar from '@/components/LeftSidebar'
 import RightSidebar from '@/components/RightSidebar'
-import ShellList from '@/components/ShellList'
+import Shell from '@/components/Shell'
+import CapacityUsage from '@/components/CapacityUsage'
+
+import useShellHandlers from '@/hooks/useShellHandler'
 import { useShells } from '@/hooks/useShellQuery'
 import { useTables } from '@/hooks/useTableQuery'
+import useUsages from '@/hooks/useUsageQuery'
+import { Toaster } from '@/components/ui/toaster'
 
 export default function Page() {
   const {
@@ -13,19 +19,22 @@ export default function Page() {
     isLoading: isShellsLoading,
     error: shellsError,
   } = useShells()
+
   const {
     data: tables = [],
     isLoading: isTablesLoading,
     error: tablesError,
   } = useTables()
 
+  const { data: usage = { availUsage: 0, currentUsage: 0 } } = useUsages()
   const [activeItem, setActiveItem] = useState(MENU[0])
+  const { addShell } = useShellHandlers()
 
   return (
     <SidebarProvider
       style={
         {
-          '--sidebar-width': '350px',
+          '--sidebar-width': '400px',
         } as React.CSSProperties
       }
     >
@@ -35,14 +44,31 @@ export default function Page() {
         tables={tables}
       />
       <SidebarInset>
-        <header className="sticky top-0 flex shrink-0 items-center gap-2 border-b bg-background p-2.5">
-          <h2 className="h-full pt-1 text-2xl font-bold text-foreground">
-            Q-Lab
-          </h2>
-        </header>
-        {!isShellsLoading && !shellsError && <ShellList shells={shells} />}
+        <div className="sticky top-0 z-50 flex flex-col border-b bg-white">
+          <header className="flex items-center gap-2 p-2.5">
+            <h2 className="text-2xl font-bold text-foreground">Q-Lab</h2>
+          </header>
+          <div className="flex items-center justify-between border-t p-2 px-4">
+            <Badge
+              variant="outline"
+              className="cursor-pointer"
+              onClick={async () => {
+                await addShell()
+              }}
+            >
+              + query
+            </Badge>
+            <CapacityUsage usage={usage} />
+          </div>
+        </div>
+        {!isShellsLoading && !shellsError && shells.length > 0 && (
+          <div className="flex flex-1 flex-col gap-3 p-4">
+            {shells?.map((shell) => <Shell key={shell.id} shell={shell} />)}
+          </div>
+        )}
       </SidebarInset>
       {!isTablesLoading && !tablesError && <RightSidebar tables={tables} />}
+      <Toaster />
     </SidebarProvider>
   )
 }

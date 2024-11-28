@@ -6,5 +6,9 @@
     "start:container": "docker-compose -f ./BE/docker-compose.backend.local.yml up --build"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "ace-builds": "^1.36.5",
+    "react-ace": "^13.0.0"
+  }
 }

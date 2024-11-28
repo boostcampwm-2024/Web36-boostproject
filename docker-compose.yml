@@ -36,6 +36,10 @@ services:
       QUERY_DB_PASSWORD: ${QUERY_DB_PASSWORD}
       SESSION_SECRET: ${SESSION_SECRET}
 
+      LOGGER_DIR: /logs
+    volumes:
+      - /logs:/app/BE/logs
+
   nginx:
     build:
       context: ./nginx
