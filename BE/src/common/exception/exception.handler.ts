@@ -25,9 +25,6 @@ export class ExceptionHandler implements ExceptionFilter {
         ? exceptionResponse['message'].join(', ')
         : error.message;
 
-    if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
-      console.error(error);
-    }
     response.status(status).json({
       status: false,
       error: {

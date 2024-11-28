@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { RedisService } from 'src/config/redis/redis.service';
-import { UserDBManager } from '../config/query-database/user-db-manager.service';
 import { TableService } from '../table/table.service';
+import { DataLimitExceedException } from '../common/exception/custom-exception';
+import { UserDBManager } from '../config/query-database/user-db-manager.service';
 
 @Injectable()
 export class UsageService {
@@ -30,14 +31,16 @@ export class UsageService {
         availUsage: this.MAX_ROW_COUNT,
       };
     }
-    const query = this.createSumQuery(tableList);
+    const query = this.createSumQuery(req, tableList);
     const result = await this.userDBManager.run(req, query);
     const rowCount = parseInt(result[0].total_rows, 10);
 
-    this.redisService.setRowCount(req.sessionID, rowCount);
+    if (rowCount > this.MAX_ROW_COUNT) throw new DataLimitExceedException();
+
+    await this.redisService.setRowCount(req.sessionID, rowCount);
   }
 
-  private createSumQuery(tableNameList: string[]): string {
+  private createSumQuery(req: any, tableNameList: string[]): string {
     const unionQueries = tableNameList
       .map(
         (tableName) =>
