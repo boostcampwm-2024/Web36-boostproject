@@ -18,7 +18,7 @@ export interface ResponseInfo {
 
 export interface ErrorInfo {
   id: string;
-  message?: string;
+  message: string;
   stack?: string;
 }
 
@@ -57,7 +57,6 @@ export class LoggerService {
     this.logger.error({
       message: `[Error] ${errorInfo.message}`,
       id: errorInfo.id,
-      errMessage: errorInfo.message || '',
       stack: errorInfo.stack || '',
     });
   }
