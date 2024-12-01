@@ -1,4 +1,4 @@
-![쿼리 실행 : 테이블 보기](https://github.com/user-attachments/assets/86ad0497-1639-4a4e-8fef-1c99c4954dc7)# Web36-QLab
+# Web36-QLab
 
 <p align="center">
   <img alt="메인 베너" src="https://github.com/user-attachments/assets/d5035970-1271-4989-8894-676bc9c40971">
