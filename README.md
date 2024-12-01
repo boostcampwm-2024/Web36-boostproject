@@ -1,4 +1,4 @@
-# Web36-QLab
+![쿼리 실행 : 테이블 보기](https://github.com/user-attachments/assets/86ad0497-1639-4a4e-8fef-1c99c4954dc7)# Web36-QLab
 
 <p align="center">
   <img alt="메인 베너" src="https://github.com/user-attachments/assets/d5035970-1271-4989-8894-676bc9c40971">
@@ -43,9 +43,9 @@ Query를 연습하고 싶은데, DB 환경세팅이 너무 어렵고 많은 시�
 - 쉘 단위로 쿼리를 작성하고 실행해서 결과를 볼 수 있어요.
 - 생성된 테이블은 우측 창에서 정보를 실시간으로 확인할 수 있어요.
 
-<div align="center">
-  <img alt="main page" src="https://github.com/user-attachments/assets/d7c1ed41-8c97-4ff8-836b-e2e82f3398d0">
-</div>
+![쿼리 실행 : 테이블 보기](https://github.com/user-attachments/assets/1c87bdfb-ecf9-43c6-84b5-28cd6365393b)
+
+
 
 <br>
 <br>
@@ -53,10 +53,8 @@ Query를 연습하고 싶은데, DB 환경세팅이 너무 어렵고 많은 시�
 ### 테이블 생성/수정 쿼리를 간편하게 만들어보세요.
 > 테이블을 GUI를 통해 조작해 손쉽게 테이블 생성/수정 쿼리를 만들 수 있어요.
 
-<div align="center">
-  <img alt="erd page" src="https://github.com/user-attachments/assets/a56afc1b-7b10-4ac0-b3d0-22d777608b8b">
-  <img alt="erd page" src="https://github.com/user-attachments/assets/11343f5f-5aad-4e44-9168-f04d2f9b9314">
-</div>
+![테이블 생성 수정 쿼리 만들기](https://github.com/user-attachments/assets/c18e9631-90a1-4295-b32c-c0a74eadcfff)
+
 
 <br>
 <br>
@@ -64,9 +62,8 @@ Query를 연습하고 싶은데, DB 환경세팅이 너무 어렵고 많은 시�
 ### 랜덤 레코드를 쉽게 추가해보세요.
 > 레코드 조건을 설정하면, 해당 설정에 맞는 대량의 레코드를 간편하게 추가할 수 있어요.
 
-<div align="center">
-   <img alt="erd page" src="https://github.com/user-attachments/assets/30f5a243-816a-40a9-9921-0645488f7f26">
-</div>
+![랜덤 데이터 추가](https://github.com/user-attachments/assets/219b7fe9-6daa-45e1-b493-2fa53be9411a)
+
 
 <br>
 <br>
@@ -74,9 +71,8 @@ Query를 연습하고 싶은데, DB 환경세팅이 너무 어렵고 많은 시�
 ### 예시 쿼리를 추가할 수 있어요.
 > 쿼리를 잘 몰라도, 간편하게 예시 쿼리를 추가할 수 있어요.
 
-<div align="center">
-   <img alt="erd page" src="https://github.com/user-attachments/assets/667376f1-867b-4bae-bdc1-9e7df8654695">
-</div>
+![예시 쿼리 넣기](https://github.com/user-attachments/assets/2c1a2eae-fec5-4e17-ac07-3ada90800044)
+
 
 <br>
 <br>
