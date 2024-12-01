@@ -24,7 +24,7 @@ export default function Shell({ shell }: ShellProps) {
   const LINE_HEIGHT = 1.2
 
   const prevQueryRef = useRef<string>(query ?? '')
-  const [focused, setFocused] = useState(false)
+  const [focused, setFocused] = useState(true)
   const [inputValue, setInputValue] = useState(query ?? '')
   const [editorHeight, setEditorHeight] = useState(LINE_HEIGHT)
   const editorRef = useRef<AceEditor>(null)
@@ -40,6 +40,7 @@ export default function Shell({ shell }: ShellProps) {
       if (!focused) {
         renderer.$cursorLayer.element.style.display = 'none'
       } else {
+        editorRef.current?.editor.focus()
         renderer.$cursorLayer.element.style.display = ''
       }
     }
