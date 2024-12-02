@@ -46,6 +46,13 @@ export default function Shell({ shell }: ShellProps) {
     }
   }, [focused])
 
+  const handleFocus = () => {
+    editorRef.current?.editor.container.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    })
+  }
+
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     if (e.relatedTarget?.id === 'remove-shell-btn') return
     setFocused(false)
@@ -94,7 +101,7 @@ export default function Shell({ shell }: ShellProps) {
             mode="sql"
             value={inputValue}
             onChange={handleEditorChange}
-            onFocus={() => setFocused(true)}
+            onFocus={handleFocus}
             onBlur={handleBlur}
             fontSize={14}
             width="100%"
