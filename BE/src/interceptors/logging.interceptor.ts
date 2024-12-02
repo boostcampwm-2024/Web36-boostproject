@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { catchError, Observable, tap } from 'rxjs';
 import {
+  ErrorInfo,
   LoggerService,
   RequestInfo,
   ResponseInfo,
@@ -40,21 +41,20 @@ export class LoggingInterceptor implements NestInterceptor {
         this.loggerService.logResponse(responseInfo);
       }),
       catchError((err) => {
-        let responseInfo: ResponseInfo;
         if (err instanceof HttpException) {
-          responseInfo = {
+          const responseInfo: ResponseInfo = {
             id: logId,
             status: err.getStatus(),
-            errMessage: err.message,
+            body: err.getResponse(),
           };
           this.loggerService.logResponse(responseInfo);
         } else {
-          responseInfo = {
+          const errorInfo: ErrorInfo = {
             id: logId,
-            status: 500,
-            errMessage: `${err}`,
+            message: err['message'],
+            stack: err['stack'],
           };
-          this.loggerService.error(responseInfo);
+          this.loggerService.error(errorInfo);
         }
         throw err;
       }),
