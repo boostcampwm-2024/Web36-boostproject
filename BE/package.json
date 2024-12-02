@@ -26,6 +26,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/swagger": "^8.0.2",
     "@nestjs/typeorm": "^10.0.2",
+    "@testcontainers/redis": "^10.15.0",
     "@types/express-session": "^1.18.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",

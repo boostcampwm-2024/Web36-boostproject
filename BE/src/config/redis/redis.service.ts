@@ -29,8 +29,8 @@ export class RedisService {
 
   private setEventConnection() {
     this.eventConnection = new Redis({
-      host: process.env.REDIS_HOST,
-      port: parseInt(process.env.REDIS_PORT),
+      host: this.configService.get<string>('REDIS_HOST'),
+      port: this.configService.get<number>('REDIS_PORT'),
     });
 
     this.defaultConnection.on('ready', () => {
@@ -79,9 +79,5 @@ export class RedisService {
 
   public async setRowCount(key: string, rowCount: number) {
     await this.defaultConnection.hset(key, 'rowCount', rowCount);
-  }
-
-  public getDefaultConnection() {
-    return this.defaultConnection;
   }
 }
