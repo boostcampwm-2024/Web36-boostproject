@@ -47,6 +47,7 @@ export default function Shell({ shell }: ShellProps) {
   }, [focused])
 
   const handleFocus = () => {
+    setFocused(true)
     editorRef.current?.editor.container.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
@@ -109,11 +110,12 @@ export default function Shell({ shell }: ShellProps) {
             setOptions={{
               showGutter: false,
               useWorker: false,
-              enableBasicAutocompletion: true,
-              enableLiveAutocompletion: true,
+              enableBasicAutocompletion: false,
+              enableLiveAutocompletion: false,
               enableSnippets: true,
               tabSize: 2,
               wrap: true,
+              showCursor: true,
               behavioursEnabled: false,
               highlightActiveLine: false,
               cursorStyle: 'slim',
