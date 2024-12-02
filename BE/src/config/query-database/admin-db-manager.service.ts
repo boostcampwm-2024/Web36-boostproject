@@ -48,9 +48,7 @@ export class AdminDBManager implements OnModuleInit {
       );
     } catch (error) {
       if (error.code === 'ER_DB_CREATE_EXISTS') {
-        throw new ConflictException(
-          `Database already exists for user: ${identify}`,
-        );
+        return;
       }
       throw new InternalServerErrorException(
         `Database initialization failed for user: ${identify}`,

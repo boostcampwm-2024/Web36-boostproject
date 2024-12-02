@@ -5,12 +5,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { CustomRedisStore } from 'src/config/redis/custom-redis-store';
 import { RedisService } from 'src/config/redis/redis.service';
 import { ConfigService } from '@nestjs/config';
+import { LoggerService } from 'src/config/logger/logger.service';
 
 @Injectable()
 export class SessionMiddleware implements NestMiddleware {
   constructor(
     private readonly redisService: RedisService,
     private readonly configService: ConfigService,
+    private readonly loggerService: LoggerService,
   ) {}
 
   use(req: Request, res: Response, next: NextFunction) {
@@ -28,8 +30,22 @@ export class SessionMiddleware implements NestMiddleware {
       },
       name: 'sid',
     })(req, res, async () => {
-      await this.redisService.setNewSession(req.sessionID);
-      next();
+      try {
+        await this.redisService.setNewSession(req.sessionID);
+        next();
+      } catch (error) {
+        res.status(500).json({
+          status: false,
+          error: {
+            code: 500,
+            message: error.message,
+          },
+        });
+        this.loggerService.error({
+          message: error.message,
+          stack: error.stack,
+        });
+      }
     });
   }
 }
