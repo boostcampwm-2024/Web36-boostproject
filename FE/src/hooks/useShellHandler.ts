@@ -3,7 +3,7 @@ import {
   useDeleteShell,
   useExecuteShell,
   useUpdateShell,
-} from '@/hooks/useShellQuery'
+} from '@/hooks/query/useShellQuery'
 import { ShellType } from '@/types/interfaces'
 
 export default function useShellHandlers() {

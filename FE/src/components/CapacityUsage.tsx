@@ -1,6 +1,6 @@
 import { UsageType } from '@/types/interfaces'
 import { MAX_ROWS_PER_USER } from '@/constants/constants'
-import useUsages from '@/hooks/useUsageQuery'
+import useUsages from '@/hooks/query/useUsageQuery'
 
 function CapacityUsage({ usage }: { usage: UsageType }) {
   const { isLoading, isFetching } = useUsages()

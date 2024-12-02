@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { TableType, TableColumnType } from '@/types/interfaces'
 import { generateKey } from '@/util'
 import { Check } from 'lucide-react'
-import { useTableByName } from '@/hooks/useTableQuery'
+import { useTableByName } from '@/hooks/query/useTableQuery'
 
 export default function ViewTable({ tableData }: { tableData: TableType[] }) {
   const [selectedTableName, setSelectedTableName] = useState(

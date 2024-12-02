@@ -42,8 +42,8 @@ import { RECORD_TYPES } from '@/constants/constants'
 import { generateKey, convertTableDataToRecordToolData } from '@/util'
 import TagInputForm from '@/components/TagInputForm'
 import InputWithLocalState from '@/components/InputWithLocalState'
-import useAddRecord from '@/hooks/useRecordQuery'
-import useUsages from '@/hooks/useUsageQuery'
+import useAddRecord from '@/hooks/query/useRecordQuery'
+import useUsages from '@/hooks/query/useUsageQuery'
 
 export default function RecordTool({
   tableData = [],

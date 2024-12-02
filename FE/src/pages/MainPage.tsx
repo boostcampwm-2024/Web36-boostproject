@@ -8,9 +8,9 @@ import Shell from '@/components/Shell'
 import CapacityUsage from '@/components/CapacityUsage'
 
 import useShellHandlers from '@/hooks/useShellHandler'
-import { useShells } from '@/hooks/useShellQuery'
-import { useTables } from '@/hooks/useTableQuery'
-import useUsages from '@/hooks/useUsageQuery'
+import { useShells } from '@/hooks/query/useShellQuery'
+import { useTables } from '@/hooks/query/useTableQuery'
+import useUsages from '@/hooks/query/useUsageQuery'
 import { Toaster } from '@/components/ui/toaster'
 
 export default function Page() {

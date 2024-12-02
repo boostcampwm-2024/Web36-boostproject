@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query'
-import useCustomMutation from '@/hooks/useCustomMutation'
+import useCustomMutation from '@/hooks/query/useCustomMutation'
 import {
   fetchShells,
   addShell,
