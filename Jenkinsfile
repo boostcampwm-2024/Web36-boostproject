@@ -117,7 +117,7 @@ pipeline {
                 }
                 stage('Run test & build') {
                     steps {
-                        sh 'docker run --rm be-test-image'
+                        sh 'docker run --rm -v /var/run/docker.sock:/var/run/docker.sock be-test-image'
                         sh 'docker run --rm fe-test-image'
                     }
                 }
