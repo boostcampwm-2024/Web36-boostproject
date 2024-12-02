@@ -21,8 +21,8 @@ export default function useShellHandlers() {
       text: null,
       resultTable: null,
     }
-    const addedShellID = await addShellMutation.mutateAsync(newShell)
-    return addedShellID
+    const addedShell = await addShellMutation.mutateAsync(newShell)
+    return addedShell
   }
 
   const deleteShell = (id: number) => {
