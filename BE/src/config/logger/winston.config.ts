@@ -7,8 +7,6 @@ const infoFileOptions = {
   dirname: 'logs',
   filename: 'info.log',
   datePattern: 'YYYY-MM-DD',
-  zippedArchive: true,
-  maxSize: '20m',
   maxFiles: '30d',
 };
 
@@ -17,8 +15,6 @@ const errorFileOptions = {
   dirname: 'logs',
   filename: 'error.log',
   datePattern: 'YYYY-MM-DD',
-  zippedArchive: true,
-  maxSize: '20m',
   maxFiles: '30d',
 };
 

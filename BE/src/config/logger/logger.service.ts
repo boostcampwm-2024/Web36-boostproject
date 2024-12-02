@@ -14,7 +14,12 @@ export interface ResponseInfo {
   id: string;
   status: number;
   body?: any;
-  errMessage?: string;
+}
+
+export interface ErrorInfo {
+  id: string;
+  message: string;
+  stack?: string;
 }
 
 export class LoggerService {
@@ -35,7 +40,7 @@ export class LoggerService {
       method: reqInfo.method,
       url: reqInfo.url,
       sid: reqInfo.sessionId,
-      body: reqInfo.body ? ` ${JSON.stringify(reqInfo.body)}` : '',
+      body: reqInfo.body || '',
     });
   }
 
@@ -44,16 +49,15 @@ export class LoggerService {
       message: `[Response] ${resInfo.status} ${HttpStatus[resInfo.status]}`,
       id: resInfo.id,
       status: resInfo.status,
-      body: resInfo.body ? ` ${JSON.stringify(resInfo.body)}` : '',
+      body: resInfo.body || '',
     });
   }
 
-  error(resInfo: ResponseInfo) {
+  error(errorInfo: ErrorInfo) {
     this.logger.error({
-      message: `[Error] ${resInfo.status} ${HttpStatus[resInfo.status]}`,
-      id: resInfo.id,
-      status: resInfo.status,
-      errMessage: resInfo.errMessage ? ` ${JSON.stringify(resInfo.errMessage)}` : '',
+      message: `[Error] ${errorInfo.message}`,
+      id: errorInfo.id,
+      stack: errorInfo.stack || '',
     });
   }
 }
