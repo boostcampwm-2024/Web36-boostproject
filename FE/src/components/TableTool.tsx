@@ -145,7 +145,7 @@ export default function TableTool({
       ? generateAlterTableQuery(previousTable, selectedTable)
       : generateCreateTableQuery(selectedTable)
 
-    const { id } = await addShell()
+    const id = await addShell()
     await updateShell({ id, query })
   }
 

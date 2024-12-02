@@ -31,7 +31,7 @@ export default function TestQueryTool() {
       return
     }
 
-    const { id } = await addShell()
+    const id = await addShell()
     await updateShell({ id, query: queryInput })
   }
 

@@ -7,7 +7,7 @@ const recordResult: RecordResultType = {
 }
 
 export default function mockRecord(mock: MockAdapter) {
-  mock.onPost('/record').reply((config) => {
+  mock.onPost('/record').reply(() => {
     if (Math.random() < 0.2) {
       return [429, { error: { message: 'connection too many Error.' } }]
     }

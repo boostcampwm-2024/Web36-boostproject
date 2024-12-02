@@ -24,7 +24,7 @@ export default function Shell({ shell }: ShellProps) {
   const LINE_HEIGHT = 1.2
 
   const prevQueryRef = useRef<string>(query ?? '')
-  const [focused, setFocused] = useState(false)
+  const [focused, setFocused] = useState(true)
   const [inputValue, setInputValue] = useState(query ?? '')
   const [editorHeight, setEditorHeight] = useState(LINE_HEIGHT)
   const editorRef = useRef<AceEditor>(null)
@@ -40,10 +40,19 @@ export default function Shell({ shell }: ShellProps) {
       if (!focused) {
         renderer.$cursorLayer.element.style.display = 'none'
       } else {
+        editorRef.current?.editor.focus()
         renderer.$cursorLayer.element.style.display = ''
       }
     }
   }, [focused])
+
+  const handleFocus = () => {
+    setFocused(true)
+    editorRef.current?.editor.container.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    })
+  }
 
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     if (e.relatedTarget?.id === 'remove-shell-btn') return
@@ -56,9 +65,12 @@ export default function Shell({ shell }: ShellProps) {
   const handleClick = async () => {
     if (!id || !shell) return
     await executeShell({ ...shell, query })
-    usageRefetch()
+
     if (!queryType || ['CREATE', 'ALTER', 'DROP'].includes(queryType || ''))
       await tableRefetch()
+
+    if (!queryType || !['CREATE', 'ALTER', 'SELECT'].includes(queryType || ''))
+      usageRefetch()
   }
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -93,7 +105,7 @@ export default function Shell({ shell }: ShellProps) {
             mode="sql"
             value={inputValue}
             onChange={handleEditorChange}
-            onFocus={() => setFocused(true)}
+            onFocus={handleFocus}
             onBlur={handleBlur}
             fontSize={14}
             width="100%"
@@ -107,7 +119,6 @@ export default function Shell({ shell }: ShellProps) {
               tabSize: 2,
               wrap: true,
               behavioursEnabled: false,
-              showCursor: focused,
               highlightActiveLine: false,
               cursorStyle: 'slim',
             }}

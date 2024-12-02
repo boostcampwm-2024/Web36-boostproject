@@ -17,4 +17,10 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  optimizeDeps: {
+    include: [
+      'ace-builds/src-noconflict/mode-sql',
+      'ace-builds/src-noconflict/theme-monokai',
+    ],
+  },
 })

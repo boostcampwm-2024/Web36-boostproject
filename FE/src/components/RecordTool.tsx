@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 import { useState, useEffect } from 'react'
 
 import {
@@ -182,6 +183,12 @@ export default function RecordTool({
               <TableCell>
                 {row.type === 'number' && (
                   <div className="flex">
+                    <label
+                      htmlFor={`row-min-${rowIdx}`}
+                      className="mr-2 flex items-center"
+                    >
+                      min
+                    </label>
                     <InputWithLocalState<number>
                       type="number"
                       id={`row-min-${rowIdx}`}
@@ -192,6 +199,12 @@ export default function RecordTool({
                         handleColumnChange(rowIdx, 'min', Number(updatedValue))
                       }
                     />
+                    <label
+                      htmlFor={`row-max-${rowIdx}`}
+                      className="mr-2 flex items-center"
+                    >
+                      max
+                    </label>
                     <InputWithLocalState<number>
                       type="number"
                       id={`row-max-${rowIdx}`}

@@ -10,9 +10,9 @@ export async function fetchShells() {
   return response.data.data
 }
 
-export async function addShell(shell: ShellType) {
-  const response = await axiosInstance.post('/shells', shell)
-  return { ...response.data.data, shell }
+export async function addShell() {
+  const response = await axiosInstance.post('/shells')
+  return response.data.data.id
 }
 
 export async function deleteShell(id: number) {

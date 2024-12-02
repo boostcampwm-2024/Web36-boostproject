@@ -10,9 +10,15 @@ export default function mockShells(mock: MockAdapter) {
   mock.onGet('/shells').reply(200, { data: shellData })
 
   // add
-  mock.onPost('/shells').reply((config) => {
-    const newShell: ShellType = JSON.parse(config.data)
-    newShell.id = new Date().getTime()
+  mock.onPost('/shells').reply(() => {
+    const newShell: ShellType = {
+      id: Date.now(), // 임시키
+      queryStatus: null,
+      query: null,
+      queryType: null,
+      text: null,
+      resultTable: null,
+    }
     shellData.push(newShell)
     return [200, { data: { id: newShell.id } }]
   })
