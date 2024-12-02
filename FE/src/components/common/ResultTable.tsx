@@ -7,7 +7,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from './ui/table'
+} from '../ui/table'
 
 function ResultTable<T extends Record<string, unknown>>({
   data,

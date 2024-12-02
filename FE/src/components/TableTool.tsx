@@ -46,7 +46,7 @@ import {
   generateCreateTableQuery,
   generateAlterTableQuery,
 } from '@/util'
-import InputWithLocalState from '@/components/InputWithLocalState'
+import InputWithLocalState from '@/components/common/InputWithLocalState'
 
 export default function TableTool({
   tableData = [],
