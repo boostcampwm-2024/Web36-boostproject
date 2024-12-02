@@ -115,7 +115,6 @@ export default function Shell({ shell }: ShellProps) {
               tabSize: 2,
               wrap: true,
               behavioursEnabled: false,
-              showCursor: focused,
               highlightActiveLine: false,
               cursorStyle: 'slim',
             }}
