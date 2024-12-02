@@ -11,8 +11,8 @@ export async function fetchShells() {
 }
 
 export async function addShell(shell: ShellType) {
-  const response = await axiosInstance.post('/shells', shell)
-  return { ...response.data.data, shell }
+  const response = await axiosInstance.post('/shells')
+  return { ...shell, id: response.data.data }
 }
 
 export async function deleteShell(id: number) {
