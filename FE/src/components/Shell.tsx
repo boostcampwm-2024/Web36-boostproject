@@ -65,9 +65,12 @@ export default function Shell({ shell }: ShellProps) {
   const handleClick = async () => {
     if (!id || !shell) return
     await executeShell({ ...shell, query })
-    usageRefetch()
+
     if (!queryType || ['CREATE', 'ALTER', 'DROP'].includes(queryType || ''))
       await tableRefetch()
+
+    if (!queryType || !['CREATE', 'ALTER', 'SELECT'].includes(queryType || ''))
+      usageRefetch()
   }
 
   const handleMouseDown = (e: React.MouseEvent) => {
