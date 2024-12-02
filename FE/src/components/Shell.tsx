@@ -113,8 +113,8 @@ export default function Shell({ shell }: ShellProps) {
             setOptions={{
               showGutter: false,
               useWorker: false,
-              enableBasicAutocompletion: false,
-              enableLiveAutocompletion: false,
+              enableBasicAutocompletion: true,
+              enableLiveAutocompletion: true,
               enableSnippets: true,
               tabSize: 2,
               wrap: true,
