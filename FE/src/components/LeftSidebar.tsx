@@ -45,7 +45,7 @@ export default function LeftSidebar({
   return (
     <Sidebar
       collapsible="icon"
-      className="overflow-hidden [&>[data-sidebar=sidebar]]:flex-row"
+      className="max-w-[35vw] overflow-hidden [&>[data-sidebar=sidebar]]:flex-row"
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
     >

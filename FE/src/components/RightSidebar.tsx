@@ -18,7 +18,7 @@ export default function RightSidebar({
   return (
     <Sidebar
       collapsible="none"
-      className="sticky top-0 hidden h-svh border-l lg:flex"
+      className="sticky top-0 hidden h-svh max-w-[35vw] border-l lg:flex"
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...props}
       side="right"
