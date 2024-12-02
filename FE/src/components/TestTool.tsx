@@ -17,6 +17,8 @@ export default function TestQueryTool() {
   const [queryInput, setQueryInput] = useState<string>('')
 
   const handleSelectQuery = (query: ExampleQuery) => {
+    if (!query || !query.query)
+      throw new Error('TestTool(20): Invalid query selected.')
     setSelectedQuery(query)
     setQueryInput(query.query)
   }
@@ -28,11 +30,17 @@ export default function TestQueryTool() {
         title: 'No query selected',
         description: 'Please write a query first.',
       })
-      return
+      throw new Error('TestTool(33): Query input is empty.')
     }
 
     const id = await addShell()
-    await updateShell({ id, query: queryInput })
+    if (!id) throw new Error('TestTool(37):Failed to create a new shell.')
+
+    try {
+      await updateShell({ id, query: queryInput })
+    } catch (error) {
+      throw new Error('TestTool(41):Failed to update shell.')
+    }
   }
 
   const onInputChange = (value: string) => {
