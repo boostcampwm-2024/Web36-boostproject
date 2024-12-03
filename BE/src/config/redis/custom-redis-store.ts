@@ -14,8 +14,6 @@ export class CustomRedisStore extends Store {
     cb: (err?: any) => void,
   ): Promise<void> {
     try {
-      const ttl = (session.cookie.maxAge / 1000) | (60 * 60); // 기본값: 1시간 (sec)
-      await this.redisService.setExpireTime(sid, ttl);
       return cb();
     } catch (err) {
       cb(err);

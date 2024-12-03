@@ -55,6 +55,7 @@ export class RedisService {
       await this.defaultConnection.hset(key, 'rowCount', 0);
       await this.adminDBManager.initUserDatabase(key);
     }
+    await this.setExpireTime(key, 60 * 60);
   }
 
   public async deleteSession(key: string) {
