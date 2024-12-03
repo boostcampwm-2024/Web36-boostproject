@@ -54,7 +54,7 @@ export class RecordService implements OnModuleInit {
     createRandomRecordDto: CreateRandomRecordDto,
     identify: string,
   ) {
-    const tableInfo = (await this.tableService.find(
+    const tableInfo: ResTableDto = (await this.tableService.find(
       identify,
       createRandomRecordDto.tableName,
     )) as ResTableDto;
@@ -65,7 +65,7 @@ export class RecordService implements OnModuleInit {
       );
 
     const baseColumns = tableInfo.columns;
-    const columnInfos = createRandomRecordDto.columns;
+    const columnInfos: RandomColumnInfo[] = createRandomRecordDto.columns;
 
     columnInfos.forEach((columnInfo) => {
       const targetName = columnInfo.name;
