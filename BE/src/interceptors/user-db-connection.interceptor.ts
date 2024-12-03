@@ -1,8 +1,6 @@
 import {
   CallHandler,
   ExecutionContext,
-  HttpException,
-  HttpStatus,
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
@@ -10,7 +8,10 @@ import { createConnection } from 'mysql2/promise';
 import { ConfigService } from '@nestjs/config';
 import { catchError, finalize, Observable, tap } from 'rxjs';
 import { createReadStream } from 'fs';
-import { DataLimitExceedException } from '../common/exception/custom-exception';
+import {
+  ConnectionLimitExceedException,
+  DataLimitExceedException,
+} from '../common/exception/custom-exception';
 
 @Injectable()
 export class UserDBConnectionInterceptor implements NestInterceptor {
@@ -34,17 +35,11 @@ export class UserDBConnectionInterceptor implements NestInterceptor {
           return createReadStream(path);
         },
       });
-    } catch (error) {
-      console.error('커넥션 제한으로 인한 에러', error);
-      if (error.errno == 1040) {
-        throw new HttpException(
-          {
-            status: HttpStatus.TOO_MANY_REQUESTS,
-            message: 'Too many users right now! Please try again soon.',
-          },
-          HttpStatus.TOO_MANY_REQUESTS,
-        );
+    } catch (err) {
+      if (err.errno == 1040) {
+        throw new ConnectionLimitExceedException();
       }
+      throw err;
     }
 
     await request.dbConnection.query('set profiling = 1');
@@ -57,8 +52,8 @@ export class UserDBConnectionInterceptor implements NestInterceptor {
       catchError(async (err) => {
         if (err instanceof DataLimitExceedException) {
           await request.dbConnection.rollback();
-          throw err;
         }
+        throw err;
       }),
       finalize(async () => await request.dbConnection.end()),
     );
