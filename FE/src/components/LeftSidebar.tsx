@@ -13,10 +13,14 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import logo from '@/assets/logo.svg'
+
+import { TableType } from '@/types/interfaces'
 import TableTool from '@/components/TableTool'
 import RecordTool from '@/components/RecordTool'
-import { TableType } from '@/types/interfaces'
-import TestQueryTool from './TestTool'
+import TestQueryTool from '@/components/TestTool'
+import { ErrorBoundary } from 'react-error-boundary'
+import SidebarErrorPage from '@/pages/SideBarErrorPage'
+import useToastErrorHandler from '@/hooks/error/toastErrorHandler'
 
 type LeftSidebarProps = React.ComponentProps<typeof Sidebar> & {
   activeItem: (typeof MENU)[0]
@@ -32,6 +36,7 @@ export default function LeftSidebar({
 }: LeftSidebarProps) {
   const menu = MENU.slice(0, -1)
   const { setOpen, toggleSidebar } = useSidebar()
+  const handleError = useToastErrorHandler()
 
   const handleClick = (item: (typeof MENU)[0]) => {
     setActiveItem(item)
@@ -96,16 +101,36 @@ export default function LeftSidebar({
             </button>
           </div>
         </SidebarHeader>
-        <SidebarContent>
-          <SidebarGroup className="p-0">
-            <SidebarGroupContent>
+        <SidebarContent className="h-full">
+          <SidebarGroup className="h-full p-0">
+            <SidebarGroupContent className="h-full">
               {activeItem.title === MENU_TITLE.TABLE && (
-                <TableTool tableData={tables} />
+                <ErrorBoundary
+                  FallbackComponent={SidebarErrorPage}
+                  onReset={() => window.location.reload()}
+                  onError={handleError}
+                >
+                  <TableTool tableData={tables} />
+                </ErrorBoundary>
               )}
               {activeItem.title === MENU_TITLE.RECORD && (
-                <RecordTool tableData={tables} />
+                <ErrorBoundary
+                  FallbackComponent={SidebarErrorPage}
+                  onReset={() => window.location.reload()}
+                  onError={handleError}
+                >
+                  <RecordTool tableData={tables} />
+                </ErrorBoundary>
               )}
-              {activeItem.title === MENU_TITLE.TESTQUERY && <TestQueryTool />}
+              {activeItem.title === MENU_TITLE.TESTQUERY && (
+                <ErrorBoundary
+                  FallbackComponent={SidebarErrorPage}
+                  onReset={() => window.location.reload()}
+                  onError={handleError}
+                >
+                  <TestQueryTool />
+                </ErrorBoundary>
+              )}
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
