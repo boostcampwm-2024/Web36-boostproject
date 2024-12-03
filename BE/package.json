@@ -95,6 +95,7 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "setupFiles": ["<rootDir>/jest.setup.js"]
   }
 }
