@@ -7,7 +7,7 @@ import {
 import { MySqlContainer } from '@testcontainers/mysql';
 import { ConfigService } from '@nestjs/config';
 import { lastValueFrom, of, throwError } from 'rxjs';
-import { mock, MockProxy } from 'jest-mock-extended';
+import { mock } from 'jest-mock-extended';
 import {
   ConnectionLimitExceedException,
   DataLimitExceedException,
@@ -20,19 +20,19 @@ let interceptor: UserDBConnectionInterceptor;
 let dbContainer: StartedTestContainer;
 const mockContext = mock<ExecutionContext>();
 const mockConfigService = mock<ConfigService>();
-let mockCallHandler: MockProxy<CallHandler>;
+const mockCallHandler = mock<CallHandler>();
 
-const MOCK_SESSION_ID = 'db12345678';
-const MOCK_REQUEST = {
-  sessionID: MOCK_SESSION_ID,
+const TEST_SESSION_ID = 'db12345678';
+const TEST_REQUEST = {
+  sessionID: TEST_SESSION_ID,
   dbConnection: null,
 };
 
 beforeAll(async () => {
   dbContainer = await new MySqlContainer()
-    .withUsername(MOCK_SESSION_ID.substring(0, 10))
-    .withUserPassword(MOCK_SESSION_ID)
-    .withDatabase(MOCK_SESSION_ID)
+    .withUsername(TEST_SESSION_ID.substring(0, 10))
+    .withUserPassword(TEST_SESSION_ID)
+    .withDatabase(TEST_SESSION_ID)
     .withExposedPorts(3306)
     .withCommand(['--max_connections=1'])
     .start();
@@ -54,10 +54,6 @@ beforeEach(async () => {
 
   //Mock Context
   setupMockContext();
-
-  //mock callHandler
-  mockCallHandler = mock<CallHandler>();
-
   const module: TestingModule = await Test.createTestingModule({
     providers: [
       UserDBConnectionInterceptor,
@@ -71,15 +67,15 @@ beforeEach(async () => {
 });
 
 afterEach(async () => {
-  if (MOCK_REQUEST.dbConnection) {
-    await MOCK_REQUEST.dbConnection.close();
-    MOCK_REQUEST.dbConnection = null;
+  if (TEST_REQUEST.dbConnection) {
+    await TEST_REQUEST.dbConnection.close();
+    TEST_REQUEST.dbConnection = null;
   }
 });
 
 const setupMockContext = () => {
   const mockHttpArgumentsHost = mock<HttpArgumentsHost>();
-  mockHttpArgumentsHost.getRequest.mockReturnValue(MOCK_REQUEST);
+  mockHttpArgumentsHost.getRequest.mockReturnValue(TEST_REQUEST);
   mockContext.switchToHttp.mockReturnValue(mockHttpArgumentsHost);
 };
 
@@ -88,12 +84,12 @@ describe('UserDBConnectionInterceptor - 요청 처리', () => {
     mockCallHandler.handle.mockReturnValue(of('test response'));
   });
 
-  it('DB Connection을 성공적으로 생성한다.', async () => {
+  it('요청이 오면 DB Connection을 생성한다.', async () => {
     //given&when
     await interceptor.intercept(mockContext, mockCallHandler);
 
     //then
-    expect(MOCK_REQUEST.dbConnection).toBeDefined();
+    expect(TEST_REQUEST.dbConnection).toBeDefined();
     expect(mockCallHandler.handle).toHaveBeenCalled();
   });
 
@@ -109,7 +105,7 @@ describe('UserDBConnectionInterceptor - 요청 처리', () => {
 });
 
 describe('UserDBConnectionInterceptor - 응답 처리', () => {
-  it('성공적인 요청에 대해 commit이 호출된다.', async () => {
+  it('성공적인 응답에 대해 commit이 호출된다.', async () => {
     //given
     mockCallHandler.handle.mockReturnValue(of('test response'));
 
@@ -118,14 +114,14 @@ describe('UserDBConnectionInterceptor - 응답 처리', () => {
       mockContext,
       mockCallHandler,
     );
-    const commitSpy = jest.spyOn(MOCK_REQUEST.dbConnection, 'commit');
+    const commitSpy = jest.spyOn(TEST_REQUEST.dbConnection, 'commit');
 
     //then
     await expect(lastValueFrom(observable)).resolves.toBe('test response');
     expect(commitSpy).toHaveBeenCalled();
   });
 
-  it('성공적인 요청에 대해 end가 호출된다.', async () => {
+  it('성공적인 응답에 대해 커넥션이 종료된다.', async () => {
     //given
     mockCallHandler.handle.mockReturnValue(of('test response'));
 
@@ -134,7 +130,7 @@ describe('UserDBConnectionInterceptor - 응답 처리', () => {
       mockContext,
       mockCallHandler,
     );
-    const endSpy = jest.spyOn(MOCK_REQUEST.dbConnection, 'end');
+    const endSpy = jest.spyOn(TEST_REQUEST.dbConnection, 'end');
 
     //then
     await expect(lastValueFrom(observable)).resolves.toBe('test response');
@@ -152,7 +148,7 @@ describe('UserDBConnectionInterceptor - 응답 처리', () => {
       mockContext,
       mockCallHandler,
     );
-    const rollbackSpy = jest.spyOn(MOCK_REQUEST.dbConnection, 'rollback');
+    const rollbackSpy = jest.spyOn(TEST_REQUEST.dbConnection, 'rollback');
 
     //then
     await expect(lastValueFrom(observable)).rejects.toThrow(
@@ -161,7 +157,7 @@ describe('UserDBConnectionInterceptor - 응답 처리', () => {
     expect(rollbackSpy).toHaveBeenCalled();
   });
 
-  it('용량 초과 에러에 대해 end가 호출된다.', async () => {
+  it('용량 초과 에러에 대해 커넥션이 종료된다.', async () => {
     //given
     mockCallHandler.handle.mockImplementation(() =>
       throwError(() => new DataLimitExceedException()),
@@ -172,7 +168,7 @@ describe('UserDBConnectionInterceptor - 응답 처리', () => {
       mockContext,
       mockCallHandler,
     );
-    const endSpy = jest.spyOn(MOCK_REQUEST.dbConnection, 'end');
+    const endSpy = jest.spyOn(TEST_REQUEST.dbConnection, 'end');
 
     //then
     await expect(lastValueFrom(observable)).rejects.toThrow(
@@ -192,7 +188,7 @@ describe('UserDBConnectionInterceptor - 응답 처리', () => {
       mockContext,
       mockCallHandler,
     );
-    const rollbackSpy = jest.spyOn(MOCK_REQUEST.dbConnection, 'rollback');
+    const rollbackSpy = jest.spyOn(TEST_REQUEST.dbConnection, 'rollback');
 
     //then
     await expect(lastValueFrom(observable)).rejects.toThrow(
@@ -201,7 +197,7 @@ describe('UserDBConnectionInterceptor - 응답 처리', () => {
     expect(rollbackSpy).not.toHaveBeenCalled();
   });
 
-  it('일반 에러에 대해 end가 호출된다.', async () => {
+  it('일반 에러에 대해 커넥션이 종료된다.', async () => {
     //given
     mockCallHandler.handle.mockImplementation(() =>
       throwError(() => new BadGatewayException()),
@@ -212,7 +208,7 @@ describe('UserDBConnectionInterceptor - 응답 처리', () => {
       mockContext,
       mockCallHandler,
     );
-    const endSpy = jest.spyOn(MOCK_REQUEST.dbConnection, 'end');
+    const endSpy = jest.spyOn(TEST_REQUEST.dbConnection, 'end');
 
     //then
     await expect(lastValueFrom(observable)).rejects.toThrow(
