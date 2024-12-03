@@ -66,8 +66,7 @@ export class RecordService implements OnModuleInit {
 
     const cols = tableInfo.columns;
     const columnInfos = createRandomRecordDto.columns;
-    console.log(cols);
-    //column 이름 확인
+
     columnInfos.forEach((columnInfo) => {
       const targetName = columnInfo.name;
       const targetDomain = columnInfo.type;
@@ -78,8 +77,6 @@ export class RecordService implements OnModuleInit {
           `${targetName} 컬럼이 ${createRandomRecordDto.tableName} 에 존재하지 않습니다.`,
         );
 
-      console.log(mysqlToJsType(baseColumn.type));
-      console.log(DomainToTypes[targetDomain]);
       if (!this.checkDomainAvailability(baseColumn.type, targetDomain))
         throw new BadRequestException(
           `${targetName}(${baseColumn.type}) 컬럼에 ${targetDomain} 랜덤 값을 넣을 수 없습니다.`,
