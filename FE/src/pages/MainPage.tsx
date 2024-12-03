@@ -9,7 +9,6 @@ import MainContent from '@/components/MainContent'
 import { useTables } from '@/hooks/query/useTableQuery'
 import { ErrorBoundary } from 'react-error-boundary'
 import MainErrorPage from './MainErrorPage'
-import SidebarErrorPage from './SideBarErrorPage'
 
 export default function Page() {
   const [activeItem, setActiveItem] = useState(MENU[0])
@@ -24,7 +23,7 @@ export default function Page() {
       }
     >
       <ErrorBoundary
-        FallbackComponent={SidebarErrorPage}
+        FallbackComponent={MainErrorPage}
         onReset={() => window.location.reload()}
       >
         <LeftSidebar
@@ -32,24 +31,12 @@ export default function Page() {
           setActiveItem={setActiveItem}
           tables={tables.data || []}
         />
-      </ErrorBoundary>
-
-      <ErrorBoundary
-        FallbackComponent={MainErrorPage}
-        onReset={() => window.location.reload()}
-      >
         <SidebarInset>
           <MainContent />
         </SidebarInset>
-      </ErrorBoundary>
-
-      <ErrorBoundary
-        FallbackComponent={SidebarErrorPage}
-        onReset={() => window.location.reload()}
-      >
         <RightSidebar tables={tables.data || []} />
+        <Toaster />
       </ErrorBoundary>
-      <Toaster />
     </SidebarProvider>
   )
 }
