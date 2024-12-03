@@ -18,7 +18,7 @@ export class TableService {
     );
   }
 
-  async find(sessionId: string, tableName: string) {
+  async find(sessionId: string, tableName: string): Promise<ResTableDto | []> {
     const tables = await this.getTables(sessionId, tableName);
     const columns = await this.getColumns(sessionId, tableName);
     const foreignKeys = await this.getForeignKeys(sessionId, tableName);
@@ -45,7 +45,7 @@ export class TableService {
     return tables as any[];
   }
 
-  private async getColumns(schema: string, tableName?: string) {
+  async getColumns(schema: string, tableName?: string) {
     const query = `
     SELECT TABLE_NAME, COLUMN_NAME, COLUMN_TYPE, COLUMN_KEY, EXTRA, IS_NULLABLE
     FROM INFORMATION_SCHEMA.COLUMNS

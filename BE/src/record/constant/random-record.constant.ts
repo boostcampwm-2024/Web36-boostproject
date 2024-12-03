@@ -30,3 +30,34 @@ export const TypeToConstructor = {
   sex: SexGenerator,
   boolean: BooleanGenerator,
 };
+
+export const DomainToTypes = {
+  name: 'string',
+  country: 'string',
+  city: 'string',
+  email: 'string',
+  phone: 'string',
+  sex: 'string',
+  boolean: 'number',
+  number: 'number',
+  enum: 'string',
+};
+
+export const mysqlToJsType = (mysqlType: string): string => {
+  const baseType = mysqlType.split('(')[0];
+  const typeMap: Record<string, string> = {
+    VARCHAR: 'string',
+    CHAR: 'string',
+    TEXT: 'string',
+    INT: 'number',
+    TINYINT: 'number',
+    BIGINT: 'number',
+    FLOAT: 'number',
+    DOUBLE: 'number',
+    DECIMAL: 'number',
+    DATETIME: 'string',
+    DATE: 'string',
+    TIMESTAMP: 'string',
+  };
+  return typeMap[baseType.toUpperCase()] || 'unknown';
+};

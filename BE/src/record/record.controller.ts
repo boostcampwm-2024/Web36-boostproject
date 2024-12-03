@@ -19,10 +19,11 @@ export class RecordController {
   @ExecuteRecordSwagger()
   @Serialize(ResRecordDto)
   @Post()
-  insertRandomRecord(
+  async insertRandomRecord(
     @Req() req: Request,
     @Body() randomRecordInsertDto: CreateRandomRecordDto,
   ) {
+    await this.recordService.validateDto(randomRecordInsertDto, req.sessionID);
     return this.recordService.insertRandomRecord(req, randomRecordInsertDto);
   }
 }
