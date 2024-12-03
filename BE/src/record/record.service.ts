@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   OnModuleInit,
@@ -8,7 +9,7 @@ import {
   CreateRandomRecordDto,
   RandomColumnInfo,
 } from './dto/create-random-record.dto';
-import { RandomColumnEntity } from './random-column.entity';
+import { RandomColumnModel } from './random-column.entity';
 import fs from 'fs/promises';
 import crypto from 'crypto';
 import path from 'path';
@@ -22,12 +23,19 @@ import {
 } from './constant/random-record.constant';
 import { UserDBManager } from '../config/query-database/user-db-manager.service';
 import { UsageService } from '../usage/usage.service';
+import { TableService } from 'src/table/table.service';
+import { ResTableDto } from 'src/table/dto/res-table.dto';
+import {
+  DomainToTypes,
+  mysqlToJsType,
+} from './constant/random-record.constant';
 
 @Injectable()
 export class RecordService implements OnModuleInit {
   constructor(
     private readonly userDBManager: UserDBManager,
     private readonly usageService: UsageService,
+    private readonly tableService: TableService,
   ) {}
 
   async onModuleInit() {
@@ -42,11 +50,53 @@ export class RecordService implements OnModuleInit {
     }
   }
 
+  async validateDto(
+    createRandomRecordDto: CreateRandomRecordDto,
+    identify: string,
+  ) {
+    const tableInfo: ResTableDto = (await this.tableService.find(
+      identify,
+      createRandomRecordDto.tableName,
+    )) as ResTableDto;
+
+    if (!tableInfo?.tableName)
+      throw new BadRequestException(
+        `${createRandomRecordDto.tableName} 테이블이 존재하지 않습니다.`,
+      );
+
+    const baseColumns = tableInfo.columns;
+    const columnInfos: RandomColumnInfo[] = createRandomRecordDto.columns;
+
+    columnInfos.forEach((columnInfo) => {
+      const targetName = columnInfo.name;
+      const targetDomain = columnInfo.type;
+      const baseColumn = baseColumns.find(
+        (column) => column.name === columnInfo.name,
+      );
+
+      if (!baseColumn)
+        throw new BadRequestException(
+          `${targetName} 컬럼이 ${createRandomRecordDto.tableName} 에 존재하지 않습니다.`,
+        );
+
+      if (!this.checkDomainAvailability(baseColumn.type, targetDomain))
+        throw new BadRequestException(
+          `${targetName}(${baseColumn.type}) 컬럼에 ${targetDomain} 랜덤 값을 넣을 수 없습니다.`,
+        );
+    });
+  }
+
+  checkDomainAvailability(mysqlType: string, targetDomain: string) {
+    const baseType = mysqlToJsType(mysqlType);
+    const targetType = DomainToTypes[targetDomain];
+    if (baseType === 'number' && targetType === 'string') return false;
+    return true;
+  }
   async insertRandomRecord(
     req: any,
     createRandomRecordDto: CreateRandomRecordDto,
   ): Promise<ResRecordDto> {
-    const columnEntities: RandomColumnEntity[] =
+    const columnEntities: RandomColumnModel[] =
       createRandomRecordDto.columns.map((column) => this.toEntity(column));
     const columnNames = columnEntities.map((column) => column.name);
 
@@ -72,7 +122,7 @@ export class RecordService implements OnModuleInit {
     });
   }
 
-  private toEntity(randomColumnInfo: RandomColumnInfo): RandomColumnEntity {
+  private toEntity(randomColumnInfo: RandomColumnInfo): RandomColumnModel {
     let generator: RandomValueGenerator<any>;
     if (generalDomain.includes(randomColumnInfo.type))
       generator = new TypeToConstructor[randomColumnInfo.type]();
@@ -93,7 +143,7 @@ export class RecordService implements OnModuleInit {
   }
 
   private async generateCsvFile(
-    columnEntities: RandomColumnEntity[],
+    columnEntities: RandomColumnModel[],
     rows: number,
   ): Promise<string> {
     const randomString = crypto.randomBytes(10).toString('hex');
@@ -126,12 +176,12 @@ export class RecordService implements OnModuleInit {
     );
   }
 
-  private generateCsvHeader(columnEntities: RandomColumnEntity[]): string {
+  private generateCsvHeader(columnEntities: RandomColumnModel[]): string {
     return columnEntities.map((column) => column.name).join(', ') + '\n';
   }
 
   private generateCsvData(
-    columnEntities: RandomColumnEntity[],
+    columnEntities: RandomColumnModel[],
     rows: number,
   ): string {
     let data = columnEntities.map((column) =>

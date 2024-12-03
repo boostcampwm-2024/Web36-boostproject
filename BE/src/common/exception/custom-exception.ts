@@ -11,3 +11,15 @@ export class DataLimitExceedException extends HttpException {
     );
   }
 }
+
+export class ConnectionLimitExceedException extends HttpException {
+  constructor() {
+    super(
+      {
+        status: HttpStatus.TOO_MANY_REQUESTS,
+        message: 'Too many users right now! Please try again soon.',
+      },
+      HttpStatus.TOO_MANY_REQUESTS,
+    );
+  }
+}
