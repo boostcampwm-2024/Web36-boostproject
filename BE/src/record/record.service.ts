@@ -9,7 +9,7 @@ import {
   CreateRandomRecordDto,
   RandomColumnInfo,
 } from './dto/create-random-record.dto';
-import { RandomColumnEntity } from './random-column.entity';
+import { RandomColumnModel } from './random-column.entity';
 import fs from 'fs/promises';
 import crypto from 'crypto';
 import path from 'path';
@@ -64,13 +64,15 @@ export class RecordService implements OnModuleInit {
         `${createRandomRecordDto.tableName} 테이블이 존재하지 않습니다.`,
       );
 
-    const cols = tableInfo.columns;
+    const baseColumns = tableInfo.columns;
     const columnInfos = createRandomRecordDto.columns;
 
     columnInfos.forEach((columnInfo) => {
       const targetName = columnInfo.name;
       const targetDomain = columnInfo.type;
-      const baseColumn = cols.find((column) => column.name === columnInfo.name);
+      const baseColumn = baseColumns.find(
+        (column) => column.name === columnInfo.name,
+      );
 
       if (!baseColumn)
         throw new BadRequestException(
@@ -84,8 +86,8 @@ export class RecordService implements OnModuleInit {
     });
   }
 
-  checkDomainAvailability(baseSchema: string, targetDomain: string) {
-    const baseType = mysqlToJsType(baseSchema);
+  checkDomainAvailability(mysqlType: string, targetDomain: string) {
+    const baseType = mysqlToJsType(mysqlType);
     const targetType = DomainToTypes[targetDomain];
     if (baseType === 'number' && targetType === 'string') return false;
     return true;
@@ -94,9 +96,9 @@ export class RecordService implements OnModuleInit {
     req: any,
     createRandomRecordDto: CreateRandomRecordDto,
   ): Promise<ResRecordDto> {
-    const columnEntities: RandomColumnEntity[] =
+    const columnEntities: RandomColumnModel[] =
       createRandomRecordDto.columns.map((column) => this.toEntity(column));
-    const cols = columnEntities.map((column) => column.name);
+    const columnNames = columnEntities.map((column) => column.name);
 
     const csvFilePath = await this.generateCsvFile(
       columnEntities,
@@ -107,7 +109,7 @@ export class RecordService implements OnModuleInit {
       req,
       csvFilePath,
       createRandomRecordDto.tableName,
-      cols,
+      columnNames,
     );
 
     await this.deleteFile(csvFilePath);
@@ -120,7 +122,7 @@ export class RecordService implements OnModuleInit {
     });
   }
 
-  private toEntity(randomColumnInfo: RandomColumnInfo): RandomColumnEntity {
+  private toEntity(randomColumnInfo: RandomColumnInfo): RandomColumnModel {
     let generator: RandomValueGenerator<any>;
     if (generalDomain.includes(randomColumnInfo.type))
       generator = new TypeToConstructor[randomColumnInfo.type]();
@@ -141,7 +143,7 @@ export class RecordService implements OnModuleInit {
   }
 
   private async generateCsvFile(
-    columnEntities: RandomColumnEntity[],
+    columnEntities: RandomColumnModel[],
     rows: number,
   ): Promise<string> {
     const randomString = crypto.randomBytes(10).toString('hex');
@@ -174,12 +176,12 @@ export class RecordService implements OnModuleInit {
     );
   }
 
-  private generateCsvHeader(columnEntities: RandomColumnEntity[]): string {
+  private generateCsvHeader(columnEntities: RandomColumnModel[]): string {
     return columnEntities.map((column) => column.name).join(', ') + '\n';
   }
 
   private generateCsvData(
-    columnEntities: RandomColumnEntity[],
+    columnEntities: RandomColumnModel[],
     rows: number,
   ): string {
     let data = columnEntities.map((column) =>
@@ -193,7 +195,7 @@ export class RecordService implements OnModuleInit {
     req: any,
     csvFilePath: string,
     tableName: string,
-    cols: string[],
+    columnNames: string[],
   ): Promise<ResultSetHeader> {
     const query = `
       LOAD DATA LOCAL INFILE \'${csvFilePath.replace(/\\/g, '\\\\')}\'
@@ -201,7 +203,7 @@ export class RecordService implements OnModuleInit {
       FIELDS TERMINATED BY ',' 
       LINES TERMINATED BY '\\n'
       IGNORE 1 ROWS
-      \(${cols.map((col) => `\`${col}\``).join(',')}\);
+      \(${columnNames.map((col) => `\`${col}\``).join(',')}\);
     `;
     let queryResult: ResultSetHeader;
 
