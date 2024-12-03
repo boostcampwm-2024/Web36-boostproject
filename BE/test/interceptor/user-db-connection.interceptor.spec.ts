@@ -180,7 +180,7 @@ describe('UserDBConnectionInterceptor - 응답 처리', () => {
   it('일반 에러에 대해 rollback이 호출되지 않는다.', async () => {
     //given
     mockCallHandler.handle.mockImplementation(() =>
-      throwError(() => new BadGatewayException()),
+      throwError(() => new Error()),
     );
 
     //when
@@ -191,16 +191,14 @@ describe('UserDBConnectionInterceptor - 응답 처리', () => {
     const rollbackSpy = jest.spyOn(TEST_REQUEST.dbConnection, 'rollback');
 
     //then
-    await expect(lastValueFrom(observable)).rejects.toThrow(
-      BadGatewayException,
-    );
+    await expect(lastValueFrom(observable)).rejects.toThrow(Error());
     expect(rollbackSpy).not.toHaveBeenCalled();
   });
 
   it('일반 에러에 대해 커넥션이 종료된다.', async () => {
     //given
     mockCallHandler.handle.mockImplementation(() =>
-      throwError(() => new BadGatewayException()),
+      throwError(() => new Error()),
     );
 
     //when
@@ -211,9 +209,7 @@ describe('UserDBConnectionInterceptor - 응답 처리', () => {
     const endSpy = jest.spyOn(TEST_REQUEST.dbConnection, 'end');
 
     //then
-    await expect(lastValueFrom(observable)).rejects.toThrow(
-      BadGatewayException,
-    );
+    await expect(lastValueFrom(observable)).rejects.toThrow(Error());
     expect(endSpy).toHaveBeenCalled();
   });
 });
