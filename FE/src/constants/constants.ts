@@ -67,7 +67,7 @@ export const COLUMN_TYPES = [
   'TIMESTAMP',
   'TIME',
   'YEAR',
-]
+] as const
 
 export const RECORD_TYPES = [
   'name',
@@ -79,4 +79,4 @@ export const RECORD_TYPES = [
   'boolean',
   'number',
   'enum',
-]
+] as const
