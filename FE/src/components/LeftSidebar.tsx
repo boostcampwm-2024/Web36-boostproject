@@ -14,27 +14,28 @@ import {
 } from '@/components/ui/sidebar'
 import logo from '@/assets/logo.svg'
 
-import { TableType } from '@/types/interfaces'
 import TableTool from '@/components/TableTool'
 import RecordTool from '@/components/RecordTool'
 import ExampleQueryTool from '@/components/ExampleQueryTool'
 import { ErrorBoundary } from 'react-error-boundary'
 import SidebarErrorPage from '@/pages/SideBarErrorPage'
 import useToastErrorHandler from '@/hooks/error/toastErrorHandler'
+import LoadingPage from '@/pages/LoadingPage'
+import { useTables } from '@/hooks/query/useTableQuery'
 
 type LeftSidebarProps = React.ComponentProps<typeof Sidebar> & {
   activeItem: (typeof MENU)[0]
   setActiveItem: React.Dispatch<React.SetStateAction<(typeof MENU)[0]>>
-  tables: TableType[]
 }
 
 export default function LeftSidebar({
   activeItem,
   setActiveItem,
-  tables,
   ...props
 }: LeftSidebarProps) {
   const menu = MENU.slice(0, -1)
+
+  const tables = useTables()
   const { setOpen, toggleSidebar } = useSidebar()
   const handleError = useToastErrorHandler()
 
@@ -101,39 +102,43 @@ export default function LeftSidebar({
             </button>
           </div>
         </SidebarHeader>
-        <SidebarContent className="h-full">
-          <SidebarGroup className="h-full p-0">
-            <SidebarGroupContent className="h-full">
-              {activeItem.title === MENU_TITLE.TABLE && (
-                <ErrorBoundary
-                  FallbackComponent={SidebarErrorPage}
-                  onReset={() => window.location.reload()}
-                  onError={handleError}
-                >
-                  <TableTool tableData={tables} />
-                </ErrorBoundary>
-              )}
-              {activeItem.title === MENU_TITLE.RECORD && (
-                <ErrorBoundary
-                  FallbackComponent={SidebarErrorPage}
-                  onReset={() => window.location.reload()}
-                  onError={handleError}
-                >
-                  <RecordTool tableData={tables} />
-                </ErrorBoundary>
-              )}
-              {activeItem.title === MENU_TITLE.TESTQUERY && (
-                <ErrorBoundary
-                  FallbackComponent={SidebarErrorPage}
-                  onReset={() => window.location.reload()}
-                  onError={handleError}
-                >
-                  <ExampleQueryTool />
-                </ErrorBoundary>
-              )}
-            </SidebarGroupContent>
-          </SidebarGroup>
-        </SidebarContent>
+        {tables.isLoading ? (
+          <LoadingPage />
+        ) : (
+          <SidebarContent className="h-full">
+            <SidebarGroup className="h-full p-0">
+              <SidebarGroupContent className="h-full">
+                {activeItem.title === MENU_TITLE.TABLE && (
+                  <ErrorBoundary
+                    FallbackComponent={SidebarErrorPage}
+                    onReset={() => window.location.reload()}
+                    onError={handleError}
+                  >
+                    <TableTool tableData={tables.data || []} />
+                  </ErrorBoundary>
+                )}
+                {activeItem.title === MENU_TITLE.RECORD && (
+                  <ErrorBoundary
+                    FallbackComponent={SidebarErrorPage}
+                    onReset={() => window.location.reload()}
+                    onError={handleError}
+                  >
+                    <RecordTool tableData={tables.data || []} />
+                  </ErrorBoundary>
+                )}
+                {activeItem.title === MENU_TITLE.TESTQUERY && (
+                  <ErrorBoundary
+                    FallbackComponent={SidebarErrorPage}
+                    onReset={() => window.location.reload()}
+                    onError={handleError}
+                  >
+                    <ExampleQueryTool />
+                  </ErrorBoundary>
+                )}
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+        )}
       </Sidebar>
     </Sidebar>
   )
