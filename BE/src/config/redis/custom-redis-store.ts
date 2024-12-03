@@ -13,11 +13,7 @@ export class CustomRedisStore extends Store {
     session: SessionData,
     cb: (err?: any) => void,
   ): Promise<void> {
-    try {
-      return cb();
-    } catch (err) {
-      cb(err);
-    }
+    return cb();
   }
 
   async get(
