@@ -1,9 +1,12 @@
 import { Badge } from '@/components/ui/badge'
 import CapacityUsage from '@/components/CapacityUsage'
-import Shell from '@/components/common/Shell'
+import Shell from '@/components/common/shell/Shell'
 import { useShells } from '@/hooks/query/useShellQuery'
 import useUsages from '@/hooks/query/useUsageQuery'
 import useShellHandlers from '@/hooks/useShellHandler'
+
+import { ErrorBoundary } from 'react-error-boundary'
+import ShellErrorFallback from './common/shell/ShellErrorFallback'
 
 export default function MainContent() {
   const shells = useShells()
@@ -32,7 +35,15 @@ export default function MainContent() {
         </div>
       </div>
       <div className="flex flex-1 flex-col gap-3 p-4">
-        {shells.data?.map((shell) => <Shell key={shell.id} shell={shell} />)}
+        {shells.data?.map((shell) => (
+          <ErrorBoundary
+            key={shell.id}
+            FallbackComponent={ShellErrorFallback}
+            onReset={() => window.location.reload()}
+          >
+            <Shell key={shell.id} shell={shell} />
+          </ErrorBoundary>
+        ))}
       </div>
     </>
   )
