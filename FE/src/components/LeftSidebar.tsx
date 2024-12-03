@@ -17,7 +17,7 @@ import logo from '@/assets/logo.svg'
 import { TableType } from '@/types/interfaces'
 import TableTool from '@/components/TableTool'
 import RecordTool from '@/components/RecordTool'
-import TestQueryTool from '@/components/TestTool'
+import ExampleQueryTool from '@/components/ExampleQueryTool'
 import { ErrorBoundary } from 'react-error-boundary'
 import SidebarErrorPage from '@/pages/SideBarErrorPage'
 import useToastErrorHandler from '@/hooks/error/toastErrorHandler'
@@ -128,7 +128,7 @@ export default function LeftSidebar({
                   onReset={() => window.location.reload()}
                   onError={handleError}
                 >
-                  <TestQueryTool />
+                  <ExampleQueryTool />
                 </ErrorBoundary>
               )}
             </SidebarGroupContent>

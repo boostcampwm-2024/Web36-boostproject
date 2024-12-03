@@ -9,7 +9,7 @@ import testQueries from '@/constants/exampleQuery'
 import { ExampleQuery } from '@/types/interfaces'
 import { useToast } from '@/hooks/use-toast'
 
-export default function TestQueryTool() {
+export default function ExampleQueryTool() {
   const { toast } = useToast()
 
   const { addShell, updateShell } = useShellHandlers()
