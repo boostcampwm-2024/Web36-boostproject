@@ -69,6 +69,9 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
+        animation: {
+          'spin-slow': 'spin 3s linear infinite',
+        },
       },
     },
   },

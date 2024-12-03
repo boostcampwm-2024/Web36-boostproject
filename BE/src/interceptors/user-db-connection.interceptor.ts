@@ -50,9 +50,8 @@ export class UserDBConnectionInterceptor implements NestInterceptor {
         await request.dbConnection.commit();
       }),
       catchError(async (err) => {
-        if (err instanceof DataLimitExceedException) {
+        if (err instanceof DataLimitExceedException)
           await request.dbConnection.rollback();
-        }
         throw err;
       }),
       finalize(async () => await request.dbConnection.end()),

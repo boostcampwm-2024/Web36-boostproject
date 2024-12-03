@@ -6,13 +6,11 @@ import RightSidebar from '@/components/RightSidebar'
 import { Toaster } from '@/components/ui/toaster'
 import MainContent from '@/components/MainContent'
 
-import { useTables } from '@/hooks/query/useTableQuery'
 import { ErrorBoundary } from 'react-error-boundary'
 import MainErrorPage from './MainErrorPage'
 
 export default function MainPage() {
   const [activeItem, setActiveItem] = useState(MENU[0])
-  const tables = useTables()
 
   return (
     <SidebarProvider
@@ -26,15 +24,11 @@ export default function MainPage() {
         FallbackComponent={MainErrorPage}
         onReset={() => window.location.reload()}
       >
-        <LeftSidebar
-          activeItem={activeItem}
-          setActiveItem={setActiveItem}
-          tables={tables.data || []}
-        />
+        <LeftSidebar activeItem={activeItem} setActiveItem={setActiveItem} />
         <SidebarInset>
           <MainContent />
         </SidebarInset>
-        <RightSidebar tables={tables.data || []} />
+        <RightSidebar />
         <Toaster />
       </ErrorBoundary>
     </SidebarProvider>
