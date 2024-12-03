@@ -78,7 +78,7 @@ Query를 연습하고 싶은데, DB 환경세팅이 너무 어렵고 많은 시�
 <br>
 
 ## 핵심경험 (FE)
-> [FE 프로젝트 핵심 경험](https://github.com/boostcampwm-2024/web36-QLab/wiki/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%95%B5%EC%8B%AC-%EA%B2%BD%ED%97%98-%E2%80%90-%EA%B9%80%EB%8B%A4%EC%98%81(FE)) : 상세한 프로젝트 핵심 경험은 해당 링크에서 확인하실 수 있습니다.
+[FE 프로젝트 핵심 경험(김다영)](https://github.com/boostcampwm-2024/web36-QLab/wiki/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%95%B5%EC%8B%AC-%EA%B2%BD%ED%97%98-%E2%80%90-%EA%B9%80%EB%8B%A4%EC%98%81(FE))
 
 ### **핵심 경험 요약**
 - `1주차`: 서비스 설계, 작업 관리(플래닝 포커), GitHub 협업 전략.
@@ -87,55 +87,72 @@ Query를 연습하고 싶은데, DB 환경세팅이 너무 어렵고 많은 시�
 - `6주차`: 코드 리팩토링 및 최적화.
 
 ### 주요 트러블슈팅
-> [성급한 추상화 (feat. useCustomMutation)](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%84%B1%EA%B8%89%ED%95%9C-%EC%B6%94%EC%83%81%ED%99%94-(feat.-useCustomMutation))
+[성급한 추상화 (feat. useCustomMutation)](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%84%B1%EA%B8%89%ED%95%9C-%EC%B6%94%EC%83%81%ED%99%94-(feat.-useCustomMutation))
 
-- 커스텀 훅(useCustomMutation) 작성 후 범용성과 유연성 부족으로 불편함 발생
-- 추상화는 반복된 코드 속 공통점을 충분히 파악한 뒤 이점이 있는 경우 진행해야한다는 교훈을 얻음
+> 커스텀 훅(useCustomMutation) 작성 후 범용성과 유연성 부족으로 불편함 발생  
+> 추상화는 반복된 코드 속 공통점을 충분히 파악한 뒤 이점이 있는 경우 진행해야한다는 교훈을 얻음
+
+
+[상태는 대체 어디에…](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%83%81%ED%83%9C%EB%8A%94-%EB%8C%80%EC%B2%B4-%EC%96%B4%EB%94%94%EC%97%90%E2%80%A6)
+
+> 부모에서 포커스 상태를 관리하자 자식 컴포넌트 전체가 리렌더링되어 깜빡이는 현상 발생  
+> 상태는 최대한 사용하는 컴포넌트에 두어 불필요한 리렌더링을 방지해야한다는 교훈을 얻음
 
   
-> [상태는 대체 어디에…](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%83%81%ED%83%9C%EB%8A%94-%EB%8C%80%EC%B2%B4-%EC%96%B4%EB%94%94%EC%97%90%E2%80%A6)
+[React의 고유한 key](https://github.com/boostcampwm-2024/web36-QLab/wiki/React%EC%9D%98-%EA%B3%A0%EC%9C%A0%ED%95%9C-key)
 
-- 부모에서 포커스 상태를 관리하자 자식 컴포넌트 전체가 리렌더링되어 깜빡이는 현상 발생
-- 상태는 최대한 사용하는 컴포넌트에 두어 불필요한 리렌더링을 방지해야한다는 교훈을 얻음
-
-  
-> [React의 고유한 key](https://github.com/boostcampwm-2024/web36-QLab/wiki/React%EC%9D%98-%EA%B3%A0%EC%9C%A0%ED%95%9C-key)
-
-- new Date().getTime()으로 생성한 키를 사용해 React의 key 경고 발생.
-- 서버에서 생성된 ID 사용. 서버 ID가 없을 경우, UUID와 객체 문자열 변환을 조합해 고유 키 생성.
+> new Date().getTime()으로 생성한 키를 사용해 React의 key 경고 발생.  
+> 서버에서 생성된 ID 사용. 서버 ID가 없을 경우, UUID와 객체 문자열 변환을 조합해 고유 키 생성.
 <br>
 <br>
 
 ## 핵심경험 (BE)
-> [BE 프로젝트 핵심 경험(성유진)](https://github.com/boostcampwm-2024/web36-QLab/wiki/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%95%B5%EC%8B%AC-%EA%B2%BD%ED%97%98-%E2%80%90-%EC%84%B1%EC%9C%A0%EC%A7%84(BE))
+[BE 프로젝트 핵심 경험(성유진)](https://github.com/boostcampwm-2024/web36-QLab/wiki/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%95%B5%EC%8B%AC-%EA%B2%BD%ED%97%98-%E2%80%90-%EC%84%B1%EC%9C%A0%EC%A7%84(BE))
 
-> [BE 프로젝트 핵심 경험(오민택)](https://github.com/boostcampwm-2024/web36-QLab/wiki/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%95%B5%EC%8B%AC-%EA%B2%BD%ED%97%98%E2%80%90%EC%98%A4%EB%AF%BC%ED%83%9D(BE))
+[BE 프로젝트 핵심 경험(오민택)](https://github.com/boostcampwm-2024/web36-QLab/wiki/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%95%B5%EC%8B%AC-%EA%B2%BD%ED%97%98%E2%80%90%EC%98%A4%EB%AF%BC%ED%83%9D(BE))
 
-> [BE 프로젝트 핵심 경험(장승훈)](https://github.com/boostcampwm-2024/web36-QLab/wiki/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%95%B5%EC%8B%AC-%EA%B2%BD%ED%97%98%E2%80%90%EC%9E%A5%EC%8A%B9%ED%9B%88(BE))
+[BE 프로젝트 핵심 경험(장승훈)](https://github.com/boostcampwm-2024/web36-QLab/wiki/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%95%B5%EC%8B%AC-%EA%B2%BD%ED%97%98%E2%80%90%EC%9E%A5%EC%8A%B9%ED%9B%88(BE))
 
-### 주요 기능 구현 방법 및 트러블 슈팅
-> [사용자의 쿼리 실행 환경은 어떻게 관리되나요?](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%82%AC%EC%9A%A9%EC%9E%90%EC%9D%98-%EC%BF%BC%EB%A6%AC-%EC%8B%A4%ED%96%89%ED%99%98%EA%B2%BD%EC%9D%80-%EC%96%B4%EB%96%BB%EA%B2%8C-%EA%B4%80%EB%A6%AC%EB%90%98%EB%82%98%EC%9A%94%3F)
+### 주요 기능 구현 방법
+[사용자의 쿼리 실행 환경은 어떻게 관리되나요?](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%82%AC%EC%9A%A9%EC%9E%90%EC%9D%98-%EC%BF%BC%EB%A6%AC-%EC%8B%A4%ED%96%89%ED%99%98%EA%B2%BD%EC%9D%80-%EC%96%B4%EB%96%BB%EA%B2%8C-%EA%B4%80%EB%A6%AC%EB%90%98%EB%82%98%EC%9A%94%3F)
 
-- 세션을 통한 DB Connection 관리하는 법
-- 응답되는 쿼리 실행 시간 측정 방법
+> 세션을 통한 DB Connection 관리하는 법  
+> 응답되는 쿼리 실행 시간 측정 방법
   
-> [유저의 무한한 데이터삽입은 어떻게 제한시키나요?](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%9C%A0%EC%A0%80%EC%9D%98-%EB%AC%B4%ED%95%9C%ED%95%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0%EC%82%BD%EC%9E%85%EC%9D%80-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%A0%9C%ED%95%9C%EC%8B%9C%ED%82%A4%EB%82%98%EC%9A%94%3F)
+[유저의 무한한 데이터삽입은 어떻게 제한시키나요?](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%9C%A0%EC%A0%80%EC%9D%98-%EB%AC%B4%ED%95%9C%ED%95%9C-%EB%8D%B0%EC%9D%B4%ED%84%B0%EC%82%BD%EC%9E%85%EC%9D%80-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%A0%9C%ED%95%9C%EC%8B%9C%ED%82%A4%EB%82%98%EC%9A%94%3F)
 
-- 한정된 스토리지 속 유저 데이터 삽입 제한 방법
-- Redis pub/sub 이용하기
+> 한정된 스토리지 속 유저 데이터 삽입 제한 방법  
+> Redis pub/sub 이용하기
 
   
-> [대용량 랜덤 데이터는 어떻게 삽입되나요?](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EB%8C%80%EC%9A%A9%EB%9F%89-%EB%9E%9C%EB%8D%A4-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%8A%94-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%82%BD%EC%9E%85%EB%90%98%EB%82%98%EC%9A%94%3F)
+[대용량 랜덤 데이터는 어떻게 삽입되나요?](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EB%8C%80%EC%9A%A9%EB%9F%89-%EB%9E%9C%EB%8D%A4-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%8A%94-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%82%BD%EC%9E%85%EB%90%98%EB%82%98%EC%9A%94%3F)
 
-- 대용량 데이터를 빠르게 삽입하는 방법
+> 대용량 데이터를 빠르게 삽입하는 방법
 
-> [유저에게 더 좋은 쿼리 실행 환경을 제공할 수 있도록 with 부하테스트](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%9C%A0%EC%A0%80%EC%97%90%EA%B2%8C-%EB%8D%94-%EC%A2%8B%EC%9D%80-%EC%BF%BC%EB%A6%AC-%EC%8B%A4%ED%96%89-%ED%99%98%EA%B2%BD%EC%9D%84-%EC%A0%9C%EA%B3%B5%ED%95%A0-%EC%88%98-%EC%9E%88%EB%8F%84%EB%A1%9D-with-%EB%B6%80%ED%95%98%ED%85%8C%EC%8A%A4%ED%8A%B8)
 
-- 제한된 서버 환경에서도 최대한 독립적인 실행 환경을 제공하기 위한 개선 과정
 
-> [인터셉터로 관심사 분리하기](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%9D%B8%ED%84%B0%EC%85%89%ED%84%B0%EB%A1%9C-%EA%B4%80%EC%8B%AC%EC%82%AC-%EB%B6%84%EB%A6%AC%ED%95%98%EA%B8%B0)
+### 트러블 슈팅
 
-- 인터셉터를 이용하여 유저 DB 커넥션 관리 코드 개선
+[인프라는 어떻게 관리 했나요?](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%9D%B8%ED%94%84%EB%9D%BC%EB%8A%94-%EC%96%B4%EB%96%BB%EA%B2%8C-%EA%B4%80%EB%A6%AC%ED%96%88%EB%82%98%EC%9A%94%3F)
+
+> 원활한 서비스를 위한 인프라 관리방법
+
+[유저에게 더 좋은 쿼리 실행 환경을 제공할 수 있도록 with 부하테스트](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%9C%A0%EC%A0%80%EC%97%90%EA%B2%8C-%EB%8D%94-%EC%A2%8B%EC%9D%80-%EC%BF%BC%EB%A6%AC-%EC%8B%A4%ED%96%89-%ED%99%98%EA%B2%BD%EC%9D%84-%EC%A0%9C%EA%B3%B5%ED%95%A0-%EC%88%98-%EC%9E%88%EB%8F%84%EB%A1%9D-with-%EB%B6%80%ED%95%98%ED%85%8C%EC%8A%A4%ED%8A%B8)
+
+> 제한된 서버 환경에서도 최대한 독립적인 실행 환경을 제공하기 위한 개선 과정
+
+[인터셉터로 관심사 분리하기](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%9D%B8%ED%84%B0%EC%85%89%ED%84%B0%EB%A1%9C-%EA%B4%80%EC%8B%AC%EC%82%AC-%EB%B6%84%EB%A6%AC%ED%95%98%EA%B8%B0)
+
+> 인터셉터를 이용하여 유저 DB 커넥션 관리 코드 개선
+
+[세션을 관리하기 위해서 Redis 활용하기](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%84%B8%EC%85%98%EC%9D%84-%EA%B4%80%EB%A6%AC%ED%95%98%EA%B8%B0-%EC%9C%84%ED%95%B4%EC%84%9C-Redis-%ED%99%9C%EC%9A%A9%ED%95%98%EA%B8%B0)
+
+> Redis를 이용하여 체계적으로 세션 관리하기
+
+[jest로 도전한 NestJS 인터셉터 통합테스트](https://github.com/boostcampwm-2024/web36-QLab/wiki/jest%EB%A1%9C-%EB%8F%84%EC%A0%84%ED%95%9C-NestJS-%EC%9D%B8%ED%84%B0%EC%85%89%ED%84%B0-%ED%86%B5%ED%95%A9%ED%85%8C%EC%8A%A4%ED%8A%B8)
+
+> 의미있게 통합테스트 작성하기
+
 
 ## 기술 스택
 
