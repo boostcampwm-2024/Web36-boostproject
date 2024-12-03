@@ -24,6 +24,7 @@ export default function Shell({ shell }: ShellProps) {
   const LINE_HEIGHT = 1.2
 
   const prevQueryRef = useRef<string>(query ?? '')
+  const [isExecuting, setIsExecuting] = useState(false)
   const [focused, setFocused] = useState(true)
   const [inputValue, setInputValue] = useState(query ?? '')
   const [editorHeight, setEditorHeight] = useState(LINE_HEIGHT)
@@ -69,10 +70,13 @@ export default function Shell({ shell }: ShellProps) {
   const handleClick = async () => {
     if (!id || !shell) throw new Error(`Invalid shell or id, ${id}`)
 
+    setIsExecuting(true)
     try {
       await executeShell({ ...shell, query })
     } catch (error) {
       throw new Error(`Failed to execute shell with id, ${id}`)
+    } finally {
+      setIsExecuting(false)
     }
 
     try {
@@ -107,14 +111,19 @@ export default function Shell({ shell }: ShellProps) {
       <div className="flex h-auto overflow-hidden rounded-sm bg-secondary shadow-md">
         <button
           type="button"
-          className="h-full bg-primary p-3 shadow-lg"
+          className="relative h-full bg-primary p-3 shadow-lg"
           onClick={handleClick}
           disabled={inputValue.length === 0}
         >
+          {isExecuting && (
+            <span className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+              <span className="h-7 w-7 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            </span>
+          )}
           <img
             src={PlayCircle}
             alt="play button"
-            className={`${inputValue.length === 0 ? 'opacity-50' : ''} `}
+            className={`h-7 w-7 ${inputValue.length === 0 ? 'opacity-50' : ''} `}
           />
         </button>
         <div className="editor-container h-full w-full rounded-sm bg-secondary">
