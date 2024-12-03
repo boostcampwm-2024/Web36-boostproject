@@ -66,7 +66,7 @@ export default function TableTool({
       setTables(tableToolData)
       setSelectedTableName(tableToolData[0]?.tableName)
     } catch (error) {
-      throw new Error('TableTool(69): Failed to process table data')
+      throw new Error('Failed to process table data')
     }
   }, [tableData])
 
@@ -90,8 +90,7 @@ export default function TableTool({
   }
 
   const handleAddTable = () => {
-    if (!newTableName.trim())
-      throw new Error('TableTool(93): Table name cannot be empty.')
+    if (!newTableName.trim()) throw new Error('Table name cannot be empty.')
 
     const newTable: TableToolType = {
       tableName: newTableName,
@@ -104,8 +103,7 @@ export default function TableTool({
   }
 
   const handleAddRow = () => {
-    if (!selectedTable)
-      throw new Error('TableTool(107): No table selected for adding a row.')
+    if (!selectedTable) throw new Error('No table selected for adding a row.')
     selectedTable?.columns.push({
       id: uuidv4(),
       name: 'new_column',
@@ -124,8 +122,7 @@ export default function TableTool({
   }
 
   const handleDeleteRow = (id: string) => {
-    if (!selectedTable)
-      throw new Error('TableTool(128): No table selected for deleting a row.')
+    if (!selectedTable) throw new Error('No table selected for deleting a row.')
 
     const updatedColumns = selectedTable.columns.filter(
       (column) => column.id !== id
@@ -144,8 +141,7 @@ export default function TableTool({
   }
 
   const handleSubmit = async () => {
-    if (!selectedTable)
-      throw new Error('TableTool(147): No table selected for submission.')
+    if (!selectedTable) throw new Error('No table selected for submission.')
 
     const previousTable = initialTableData.current.find(
       (table) => table.tableName === selectedTableName
@@ -159,7 +155,7 @@ export default function TableTool({
       const id = await addShell()
       await updateShell({ id, query })
     } catch (error) {
-      throw new Error(`TableTool(162): Failed to submit query: ${error}`)
+      throw new Error(`Failed to submit query: ${error}`)
     }
   }
 
