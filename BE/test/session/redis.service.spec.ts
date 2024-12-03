@@ -1,75 +1,92 @@
-// import Redis from 'ioredis';
-// import { RedisService } from '../../src/config/redis/redis.service';
-// import { GenericContainer, Wait } from 'testcontainers';
-// import { SingleMySQLAdapter } from 'src/config/query-database/single-mysql.adapter';
-// import { mock, MockProxy } from 'jest-mock-extended';
+import { ConfigService } from '@nestjs/config';
+import { mock, MockProxy } from 'jest-mock-extended';
+import { AdminDBManager } from '../../src/config/query-database/admin-db-manager.service';
+import { RedisService } from '../../src/config/redis/redis.service';
+import { RedisContainer, StartedRedisContainer } from '@testcontainers/redis';
 
 describe('RedisService', () => {
-  // let redisContainer: any;
-  // let redisService: RedisService;
-  // let mockQueryDbAdapter: MockProxy<SingleMySQLAdapter>;
+  let redisService: RedisService;
+  let mockAdminDBManager: MockProxy<AdminDBManager>;
+  let mockConfigService: MockProxy<ConfigService>;
+  let redisContainer: StartedRedisContainer;
 
-  // beforeAll(async () => {
-  //     redisContainer = await new GenericContainer('redis')
-  //       .withExposedPorts(6379)
-  //       .withWaitStrategy(Wait.forListeningPorts())
-  //       .start();
-  //     process.env.REDIS_HOST = redisContainer.getHost();
-  //     process.env.REDIS_PORT = redisContainer.getMappedPort(6379).toString();
+  beforeAll(async () => {
+    redisContainer = await new RedisContainer().withExposedPorts(6379).start();
 
-  //     mockQueryDbAdapter = mock<SingleMySQLAdapter>();
-  //     redisService = new RedisService(mockQueryDbAdapter);
-  // });
+    mockAdminDBManager = mock<AdminDBManager>();
+    mockConfigService = mock<ConfigService>();
+    mockConfigService.get.mockImplementation((key: string) => {
+      switch (key) {
+        case 'REDIS_HOST':
+          return redisContainer.getHost();
+        case 'REDIS_PORT':
+          return redisContainer.getMappedPort(6379).toString();
+      }
+    });
 
-  // afterAll(async () => {
-  //     delete process.env.REDIS_HOST;
-  //     delete process.env.REDIS_PORT;
-  //     redisService.getDefaultConnection().disconnect();
-  //     redisService.getEventConnection().disconnect();
-  //     await redisContainer.stop();
-  // });
-
-  it('Redis container 연결 확인', async () => {
-    //     const redis = new Redis({
-    //       host: process.env.REDIS_HOST,
-    //       port: parseInt(process.env.REDIS_PORT),
-    //     });
-    //     await redis.set('test', 'test');
-    //     const value = await redis.get('test');
-    //     expect(value).toBe('test');
-    //     redis.disconnect();
+    redisService = new RedisService(mockAdminDBManager, mockConfigService);
   });
 
-  //   it('RedisService를 생성하면 redis, pubsub 클라이언트가 연결된다.', () => {
-  //     expect(redisService.getDefaultConnection()).toBeInstanceOf(Redis);
-  //     expect(redisService.getEventConnection()).toBeInstanceOf(Redis);
-  //   });
+  afterEach(() => {
+    redisService['defaultConnection'].del('testKey');
+  });
 
-  //   it('세션 저장소에 존재하지 않는 세션 ID의 경우, setNewSession 메서드를 통해 세션 정보를 등록할 수 있다.', async () => {
-  //     const sessionId = 'session_key';
+  afterAll(async () => {
+    redisService['defaultConnection'].disconnect();
+    redisService['eventConnection'].disconnect();
+    await redisContainer.stop();
+  });
 
-  //     await redisService.setNewSession(sessionId);
+  it('세션 저장소에 존재하지 않는 세션 ID의 경우, setNewSession 메서드를 통해 새로운 세션 정보를 등록할 수 있다.', async () => {
+    // given
+    const newSessionId = 'testKey';
 
-  //     expect(mockQueryDbAdapter.createConnection).toHaveBeenCalledWith(sessionId);
-  //   });
+    // when
+    // 새로운 세션을 생성한다
+    await redisService.setNewSession(newSessionId);
 
-  //   it('getSession 메서드를 통해 Redis에 등록한 세션 정보를 조회할 수 있다.', async () => {
-  //     const mockKey = 'session_key';
-  //     const mockValue = 'session_value';
-  //     await redisService.getDefaultConnection().set(mockKey, mockValue);
+    // then
+    // redis에 해당 세션이 등록된다
+    const newSession = await redisService.getSession(newSessionId);
+    expect(newSession).not.toBeNull();
+  });
 
-  //     const session = await redisService.getSession(mockKey);
-  //     expect(session).toBe(mockValue);
-  //   });
+  it('세션 저장소에 이미 존재하는 세션 ID의 경우, setNewSession 메서드를 통해 새로운 세션 정보를 등록하지 않는다.', async () => {
+    // given
+    const existingSession = 'testKey';
+    await redisService.setNewSession(existingSession);
+    const keyCountBefore = redisService['defaultConnection'].get('*');
 
-  //   it('세션 만료 시, DBAdapter의 closeConnection 메서드가 호출된다.', async () => {
-  //     // 1초 후 만료되는 세션 등록
-  //     redisService.getDefaultConnection().set('test_key', 'value');
-  //     redisService.getDefaultConnection().expire('test_key', 1);
+    // when
+    await redisService.setNewSession(existingSession);
 
-  //     // 2초 대기
-  //     await new Promise((resolve) => setTimeout(resolve, 2000));
+    // then
+    const keyCountAfter = redisService['defaultConnection'].get('*');
+    expect(keyCountAfter).toEqual(keyCountBefore);
+  });
 
-  //     expect(mockQueryDbAdapter.closeConnection).toHaveBeenCalledWith('test_key');
-  //   });
+  it('getSession 메서드를 통해 Redis에 등록한 세션 정보를 조회할 수 있다.', async () => {
+    // given
+    const mockKey = 'testKey';
+    await redisService.setNewSession(mockKey);
+
+    // when
+    const session = await redisService.getSession(mockKey);
+
+    // then
+    expect(session).not.toBeNull();
+  });
+
+  it('세션 만료 시, AdminDBManager의 removeDatabaseInfo 메서드가 호출된다.', async () => {
+    // given
+    const mockKey = 'testKey';
+    await redisService.setNewSession(mockKey);
+    await redisService.setExpireTime(mockKey, 1);
+
+    // when
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // then
+    expect(mockAdminDBManager.removeDatabaseInfo).toHaveBeenCalledWith(mockKey);
+  });
 });

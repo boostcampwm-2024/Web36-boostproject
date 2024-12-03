@@ -17,7 +17,7 @@ export interface ResponseInfo {
 }
 
 export interface ErrorInfo {
-  id: string;
+  id?: string;
   message: string;
   stack?: string;
 }

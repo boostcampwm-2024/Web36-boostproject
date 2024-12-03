@@ -117,14 +117,25 @@ pipeline {
                 }
                 stage('Run test & build') {
                     steps {
-                        sh 'docker run --rm be-test-image'
-                        sh 'docker run --rm fe-test-image'
+                        sh 'docker run --rm --name be-test -v /var/run/docker.sock:/var/run/docker.sock be-test-image'
+                        sh 'docker run --rm --name fe-test fe-test-image'
                     }
                 }
                 stage('clean Up') {
                     steps {
-                        sh 'docker rmi be-test-image'
-                        sh 'docker rmi fe-test-image'
+                        script {
+                            if (sh(script: 'docker ps -q --filter "name=be-test"', returnStdout: true).trim()) {
+                                sh 'docker stop be-test'
+                                sh "docker rm be-test"
+                            }
+                            if (sh(script: 'docker ps -q --filter "name=fe-test"', returnStdout: true).trim()) {
+                                sh 'docker stop fe-test'
+                                sh "docker rm fe-test"
+                            }
+                            
+                            sh 'docker rmi be-test-image'
+                            sh 'docker rmi fe-test-image'
+                        }
                     }
                 }
                 stage('write Ci Test success review') {
