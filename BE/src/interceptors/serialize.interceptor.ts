@@ -7,6 +7,8 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { plainToInstance } from 'class-transformer';
+import { catchError } from 'rxjs/operators';
+import { throwError } from 'rxjs';
 
 interface ClassConstructor<T> {
   new (...args: any[]): T;
@@ -23,6 +25,9 @@ class SerializeInterceptor<T> implements NestInterceptor {
     next: CallHandler<any>,
   ): Observable<any> {
     return next.handle().pipe(
+      catchError((error) => {
+        return throwError(() => error);
+      }),
       map((inputData: any) => {
         let data;
         if (inputData instanceof Array) {
@@ -51,6 +56,7 @@ class SerializeInterceptor<T> implements NestInterceptor {
   }
 
   removeNullProperties(obj: any): any {
+    if (!obj) return;
     return Object.fromEntries(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       Object.entries(obj).filter(([_, value]) => value !== null),
