@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   OnModuleInit,
@@ -22,12 +23,19 @@ import {
 } from './constant/random-record.constant';
 import { UserDBManager } from '../config/query-database/user-db-manager.service';
 import { UsageService } from '../usage/usage.service';
+import { TableService } from 'src/table/table.service';
+import { ResTableDto } from 'src/table/dto/res-table.dto';
+import {
+  DomainToTypes,
+  mysqlToJsType,
+} from './constant/random-record.constant';
 
 @Injectable()
 export class RecordService implements OnModuleInit {
   constructor(
     private readonly userDBManager: UserDBManager,
     private readonly usageService: UsageService,
+    private readonly tableService: TableService,
   ) {}
 
   async onModuleInit() {
@@ -42,13 +50,56 @@ export class RecordService implements OnModuleInit {
     }
   }
 
+  async validateDto(
+    createRandomRecordDto: CreateRandomRecordDto,
+    identify: string,
+  ) {
+    const tableInfo = (await this.tableService.find(
+      identify,
+      createRandomRecordDto.tableName,
+    )) as ResTableDto;
+
+    if (!tableInfo?.tableName)
+      throw new BadRequestException(
+        `${createRandomRecordDto.tableName} 테이블이 존재하지 않습니다.`,
+      );
+
+    const cols = tableInfo.columns;
+    const columnInfos = createRandomRecordDto.columns;
+    console.log(cols);
+    //column 이름 확인
+    columnInfos.forEach((columnInfo) => {
+      const targetName = columnInfo.name;
+      const targetDomain = columnInfo.type;
+      const baseColumn = cols.find((column) => column.name === columnInfo.name);
+
+      if (!baseColumn)
+        throw new BadRequestException(
+          `${targetName} 컬럼이 ${createRandomRecordDto.tableName} 에 존재하지 않습니다.`,
+        );
+
+      console.log(mysqlToJsType(baseColumn.type));
+      console.log(DomainToTypes[targetDomain]);
+      if (!this.checkDomainAvailability(baseColumn.type, targetDomain))
+        throw new BadRequestException(
+          `${targetName}(${baseColumn.type}) 컬럼에 ${targetDomain} 랜덤 값을 넣을 수 없습니다.`,
+        );
+    });
+  }
+
+  checkDomainAvailability(baseSchema: string, targetDomain: string) {
+    const baseType = mysqlToJsType(baseSchema);
+    const targetType = DomainToTypes[targetDomain];
+    if (baseType === 'number' && targetType === 'string') return false;
+    return true;
+  }
   async insertRandomRecord(
     req: any,
     createRandomRecordDto: CreateRandomRecordDto,
   ): Promise<ResRecordDto> {
     const columnEntities: RandomColumnEntity[] =
       createRandomRecordDto.columns.map((column) => this.toEntity(column));
-    const columnNames = columnEntities.map((column) => column.name);
+    const cols = columnEntities.map((column) => column.name);
 
     const csvFilePath = await this.generateCsvFile(
       columnEntities,
@@ -59,7 +110,7 @@ export class RecordService implements OnModuleInit {
       req,
       csvFilePath,
       createRandomRecordDto.tableName,
-      columnNames,
+      cols,
     );
 
     await this.deleteFile(csvFilePath);
@@ -145,7 +196,7 @@ export class RecordService implements OnModuleInit {
     req: any,
     csvFilePath: string,
     tableName: string,
-    columnNames: string[],
+    cols: string[],
   ): Promise<ResultSetHeader> {
     const query = `
       LOAD DATA LOCAL INFILE \'${csvFilePath.replace(/\\/g, '\\\\')}\'
@@ -153,7 +204,7 @@ export class RecordService implements OnModuleInit {
       FIELDS TERMINATED BY ',' 
       LINES TERMINATED BY '\\n'
       IGNORE 1 ROWS
-      \(${columnNames.map((col) => `\`${col}\``).join(',')}\);
+      \(${cols.map((col) => `\`${col}\``).join(',')}\);
     `;
     let queryResult: ResultSetHeader;
 
