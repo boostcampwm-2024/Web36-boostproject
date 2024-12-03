@@ -11,10 +11,7 @@ describe('RedisService', () => {
   let redisContainer: StartedRedisContainer;
 
   beforeAll(async () => {
-    redisContainer = await new RedisContainer()
-      .withExposedPorts(6379)
-      .withReuse()
-      .start();
+    redisContainer = await new RedisContainer().withExposedPorts(6379).start();
 
     mockAdminDBManager = mock<AdminDBManager>();
     mockConfigService = mock<ConfigService>();
@@ -30,7 +27,7 @@ describe('RedisService', () => {
     redisService = new RedisService(mockAdminDBManager, mockConfigService);
   });
 
-  beforeEach(() => {
+  afterEach(() => {
     redisService['defaultConnection'].del('testKey');
   });
 
