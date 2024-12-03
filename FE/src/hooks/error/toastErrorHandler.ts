@@ -28,13 +28,11 @@ export default function useToastErrorHandler() {
             'You have exceeded your usage limit. Please delete rows or tables and try again.'
           break
         default:
-          console.error('Unhandled AxiosError:', error)
           title = `Error ${status || 'Unknown'}`
           description =
             responseData?.error?.message || 'An unknown error occurred.'
       }
     } else {
-      console.error('Unhandled Error:', error)
       title = 'An unexpected error occurred'
       description =
         error.message || 'An unknown error occurred. Please try again later.'

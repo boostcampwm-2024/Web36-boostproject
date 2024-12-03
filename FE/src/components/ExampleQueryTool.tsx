@@ -9,7 +9,7 @@ import testQueries from '@/constants/exampleQuery'
 import { ExampleQuery } from '@/types/interfaces'
 import { useToast } from '@/hooks/use-toast'
 
-export default function TestQueryTool() {
+export default function ExampleQueryTool() {
   const { toast } = useToast()
 
   const { addShell, updateShell } = useShellHandlers()
@@ -17,6 +17,7 @@ export default function TestQueryTool() {
   const [queryInput, setQueryInput] = useState<string>('')
 
   const handleSelectQuery = (query: ExampleQuery) => {
+    if (!query || !query.query) throw new Error('Invalid query selected.')
     setSelectedQuery(query)
     setQueryInput(query.query)
   }
@@ -28,11 +29,17 @@ export default function TestQueryTool() {
         title: 'No query selected',
         description: 'Please write a query first.',
       })
-      return
+      throw new Error('TestTool(33): Query input is empty.')
     }
 
     const id = await addShell()
-    await updateShell({ id, query: queryInput })
+    if (!id) throw new Error('Failed to create a new shell.')
+
+    try {
+      await updateShell({ id, query: queryInput })
+    } catch (error) {
+      throw new Error('Failed to update shell.')
+    }
   }
 
   const onInputChange = (value: string) => {

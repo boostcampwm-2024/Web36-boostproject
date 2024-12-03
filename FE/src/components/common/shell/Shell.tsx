@@ -3,13 +3,13 @@ import PlayCircle from '@/assets/play_circle.svg'
 import { ShellType } from '@/types/interfaces'
 import useShellHandlers from '@/hooks/useShellHandler'
 import { X } from 'lucide-react'
-import { useTables } from '@/hooks/useTableQuery'
+import { useTables } from '@/hooks/query/useTableQuery'
 import AceEditor from 'react-ace'
 import 'ace-builds/src-noconflict/mode-sql'
 import 'ace-builds/src-noconflict/theme-monokai'
 import 'ace-builds/src-noconflict/ext-language_tools'
-import useUsages from '@/hooks/useUsageQuery'
-import ResultTable from './ResultTable'
+import useUsages from '@/hooks/query/useUsageQuery'
+import ResultTable from '@/components/common/ResultTable'
 
 type ShellProps = {
   shell: ShellType
@@ -58,19 +58,39 @@ export default function Shell({ shell }: ShellProps) {
     if (e.relatedTarget?.id === 'remove-shell-btn') return
     setFocused(false)
     if (inputValue === prevQueryRef.current || shell.id === null) return
-    updateShell({ id: shell.id, query: inputValue })
+    try {
+      updateShell({ id: shell.id, query: inputValue })
+    } catch (error) {
+      throw new Error(`Failed to update shell with id, ${shell.id}`)
+    }
     prevQueryRef.current = inputValue
   }
 
   const handleClick = async () => {
-    if (!id || !shell) return
-    await executeShell({ ...shell, query })
+    if (!id || !shell) throw new Error(`Invalid shell or id, ${id}`)
 
-    if (!queryType || ['CREATE', 'ALTER', 'DROP'].includes(queryType || ''))
-      await tableRefetch()
+    try {
+      await executeShell({ ...shell, query })
+    } catch (error) {
+      throw new Error(`Failed to execute shell with id, ${id}`)
+    }
 
-    if (!queryType || !['CREATE', 'ALTER', 'SELECT'].includes(queryType || ''))
-      usageRefetch()
+    try {
+      if (!queryType || ['CREATE', 'ALTER', 'DROP'].includes(queryType || ''))
+        await tableRefetch()
+    } catch (error) {
+      throw new Error('Failed to refetch tables after shell execution.')
+    }
+
+    try {
+      if (
+        !queryType ||
+        !['CREATE', 'ALTER', 'SELECT'].includes(queryType || '')
+      )
+        usageRefetch()
+    } catch (error) {
+      throw new Error('Failed to refetch usages tables after shell execution.')
+    }
   }
 
   const handleMouseDown = (e: React.MouseEvent) => {

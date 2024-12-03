@@ -40,10 +40,10 @@ import {
 } from '@/types/interfaces'
 import { RECORD_TYPES } from '@/constants/constants'
 import { generateKey, convertTableDataToRecordToolData } from '@/util'
-import TagInputForm from '@/components/TagInputForm'
-import InputWithLocalState from '@/components/InputWithLocalState'
-import useAddRecord from '@/hooks/useRecordQuery'
-import useUsages from '@/hooks/useUsageQuery'
+import TagInputForm from '@/components/common/TagInputForm'
+import InputWithLocalState from '@/components/common/InputWithLocalState'
+import useAddRecord from '@/hooks/query/useRecordQuery'
+import useUsages from '@/hooks/query/useUsageQuery'
 
 export default function RecordTool({
   tableData = [],
@@ -62,13 +62,24 @@ export default function RecordTool({
   })
 
   useEffect(() => {
-    const recordToolData = convertTableDataToRecordToolData(tableData)
-    setTables(recordToolData)
-    setSelectedTable(recordToolData[0] || { tableName: '', columns: [] })
+    try {
+      const recordToolData = convertTableDataToRecordToolData(tableData)
+      setTables(recordToolData)
+      setSelectedTable(recordToolData[0] || { tableName: '', columns: [] })
+    } catch (error) {
+      throw new Error('Failed to convert table data to RecordTool data.')
+    }
   }, [tableData])
 
-  const addRecord = async (record: RecordToolType): Promise<RecordResultType> =>
-    addRecordMutation.mutateAsync(record)
+  const addRecord = async (
+    record: RecordToolType
+  ): Promise<RecordResultType> => {
+    try {
+      return await addRecordMutation.mutateAsync(record)
+    } catch (error) {
+      throw new Error('Failed to add record.')
+    }
+  }
 
   const handleColumnChange = (
     row: number,
@@ -109,12 +120,16 @@ export default function RecordTool({
   }
 
   const handleSubmitRecord = async () => {
-    const result: RecordResultType = await addRecord(selectedTable)
-    usageRefetch()
-    toast({
-      title: 'Data inserted successfully',
-      description: result.text,
-    })
+    try {
+      const result: RecordResultType = await addRecord(selectedTable)
+      usageRefetch()
+      toast({
+        title: 'Data inserted successfully',
+        description: result.text,
+      })
+    } catch (error) {
+      throw new Error('Failed to submit record.')
+    }
   }
 
   return (
