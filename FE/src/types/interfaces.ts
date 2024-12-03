@@ -55,11 +55,20 @@ export interface RecordToolType {
 
 export interface RecordToolColumnType {
   name: string
-  type: string
+  type:
+    | 'name'
+    | 'country'
+    | 'city'
+    | 'email'
+    | 'phone'
+    | 'sex'
+    | 'boolean'
+    | 'number'
+    | 'enum'
   blank: number
-  min: number
-  max: number
-  enum: string[]
+  min?: number
+  max?: number
+  enum?: string[]
 }
 
 export interface RecordResultType {
