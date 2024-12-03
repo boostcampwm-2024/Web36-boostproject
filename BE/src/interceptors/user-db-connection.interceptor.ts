@@ -29,7 +29,7 @@ export class UserDBConnectionInterceptor implements NestInterceptor {
         user: identify.substring(0, 10),
         password: identify,
         port: this.configService.get<number>('QUERY_DB_PORT', 3306),
-        database: identify,
+        database: identify.substring(0, 10),
         infileStreamFactory: (path) => {
           return createReadStream(path);
         },
