@@ -61,6 +61,25 @@ describe('RecordService', () => {
     ).rejects.toThrow(BadRequestException);
   });
 
+  it('요청한 컬럼이 존재하지 않으면 에러를 반환한다.', async () => {
+    // given
+    const TEST_BODY = {
+      tableName: 'test1',
+      columns: [{ name: 'column1' }],
+    } as CreateRandomRecordDto;
+
+    // when
+    mockTableService.find.mockResolvedValue({
+      tableName: 'test1',
+      columns: [{ name: 'column2' }],
+    } as ResTableDto);
+
+    // then
+    await expect(
+      recordService.validateDto(TEST_BODY, TEST_SESSION_ID),
+    ).rejects.toThrow(BadRequestException);
+  });
+
   it('문자열 도메인을 숫자 타입으로 된 컬럼에 넣을 수 없다.', async () => {
     // given
     const TEST_BODY = {

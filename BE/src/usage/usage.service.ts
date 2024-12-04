@@ -6,7 +6,7 @@ import { RedisService } from '../config/redis/redis.service';
 
 @Injectable()
 export class UsageService {
-  MAX_ROW_COUNT = 10000;
+  MAX_ROW_COUNT = 1000000;
   constructor(
     private readonly userDBManager: UserDBManager,
     private readonly redisService: RedisService,
