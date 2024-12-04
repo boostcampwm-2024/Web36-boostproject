@@ -39,7 +39,7 @@ function CapacityUsage({ usage }: { usage: UsageType }) {
           )}
           <span>{UNIT}</span>
           <span>
-            / {total} {UNIT}
+            / {new Intl.NumberFormat().format(Number(total))} {UNIT}
           </span>
         </div>
       </div>
