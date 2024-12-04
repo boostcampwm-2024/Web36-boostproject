@@ -21,4 +21,4 @@ COPY ./FE /app/FE
 
 COPY ./schemas /app/schemas
 
-CMD npx vite build
+CMD ["npx", "vite", "build"]
