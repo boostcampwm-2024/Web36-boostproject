@@ -196,6 +196,7 @@ export default function RecordTool({
                       type="number"
                       placeholder="0"
                       className="mr-2 h-8 w-12 p-1"
+                      value={field.value === 0 ? '' : field.value}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />
                   )}
@@ -215,6 +216,7 @@ export default function RecordTool({
                           type="number"
                           placeholder="min"
                           className="mr-2 h-8 w-12 p-1"
+                          value={field.value === 0 ? '' : field.value}
                           onChange={(e) =>
                             field.onChange(Number(e.target.value))
                           }
@@ -230,6 +232,7 @@ export default function RecordTool({
                           type="number"
                           placeholder="max"
                           className="h-8 w-12 p-1"
+                          value={field.value === 0 ? '' : field.value}
                           onChange={(e) =>
                             field.onChange(Number(e.target.value))
                           }
@@ -288,6 +291,7 @@ export default function RecordTool({
               id="Rows"
               placeholder="max 100,000"
               className="h-8 w-28 p-2"
+              value={field.value === 0 ? '' : field.value}
               onChange={(e) => field.onChange(Number(e.target.value))}
             />
           )}
