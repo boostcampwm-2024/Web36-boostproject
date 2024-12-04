@@ -1,11 +1,21 @@
-FROM node:22
+FROM node:20-alpine
 
-WORKDIR /app
+WORKDIR /app/
 
-COPY package*.json /app
+RUN npm install -g pm2
+
+COPY ./package*.json /app
 
 RUN npm install
 
-COPY . /app
+WORKDIR /app/BE/
+
+COPY ./BE/package*.json /app/BE/
+
+RUN npm install
+
+COPY ./BE /app/BE
+
+COPY ./schemas /app/schemas
 
 CMD npm run test && npm run build

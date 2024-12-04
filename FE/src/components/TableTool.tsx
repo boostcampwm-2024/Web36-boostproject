@@ -46,7 +46,7 @@ import {
   generateCreateTableQuery,
   generateAlterTableQuery,
 } from '@/util'
-import InputWithLocalState from '@/components/InputWithLocalState'
+import InputWithLocalState from '@/components/common/InputWithLocalState'
 
 export default function TableTool({
   tableData = [],
@@ -60,10 +60,14 @@ export default function TableTool({
   const [newTableName, setNewTableName] = useState('')
 
   useEffect(() => {
-    const tableToolData = convertTableDataToTableToolData(tableData)
-    initialTableData.current = tableToolData
-    setTables(tableToolData)
-    setSelectedTableName(tableToolData[0]?.tableName)
+    try {
+      const tableToolData = convertTableDataToTableToolData(tableData)
+      initialTableData.current = tableToolData
+      setTables(tableToolData)
+      setSelectedTableName(tableToolData[0]?.tableName)
+    } catch (error) {
+      throw new Error('Failed to process table data')
+    }
   }, [tableData])
 
   const selectedTable = tables.find(
@@ -86,6 +90,8 @@ export default function TableTool({
   }
 
   const handleAddTable = () => {
+    if (!newTableName.trim()) throw new Error('Table name cannot be empty.')
+
     const newTable: TableToolType = {
       tableName: newTableName,
       columns: [],
@@ -97,7 +103,7 @@ export default function TableTool({
   }
 
   const handleAddRow = () => {
-    if (!selectedTable) return
+    if (!selectedTable) throw new Error('No table selected for adding a row.')
     selectedTable?.columns.push({
       id: uuidv4(),
       name: 'new_column',
@@ -116,7 +122,7 @@ export default function TableTool({
   }
 
   const handleDeleteRow = (id: string) => {
-    if (!selectedTable) return
+    if (!selectedTable) throw new Error('No table selected for deleting a row.')
 
     const updatedColumns = selectedTable.columns.filter(
       (column) => column.id !== id
@@ -135,7 +141,7 @@ export default function TableTool({
   }
 
   const handleSubmit = async () => {
-    if (!selectedTable) return
+    if (!selectedTable) throw new Error('No table selected for submission.')
 
     const previousTable = initialTableData.current.find(
       (table) => table.tableName === selectedTableName
@@ -145,8 +151,12 @@ export default function TableTool({
       ? generateAlterTableQuery(previousTable, selectedTable)
       : generateCreateTableQuery(selectedTable)
 
-    const { id } = await addShell()
-    await updateShell({ id, query })
+    try {
+      const id = await addShell()
+      await updateShell({ id, query })
+    } catch (error) {
+      throw new Error(`Failed to submit query: ${error}`)
+    }
   }
 
   return (
@@ -171,7 +181,6 @@ export default function TableTool({
             <TableHead>Del</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Type</TableHead>
-            <TableHead>PK</TableHead>
             <TableHead>UQ</TableHead>
             <TableHead>AI</TableHead>
             <TableHead>NN</TableHead>
@@ -191,7 +200,8 @@ export default function TableTool({
               </TableCell>
               {Object.entries(row).map(
                 ([key, value]) =>
-                  key !== 'id' && (
+                  key !== 'id' &&
+                  !(typeof value === 'boolean' && key === 'PK') && (
                     <TableCell key={generateKey(value)}>
                       {key === 'name' && (
                         <InputWithLocalState<string>
@@ -205,7 +215,7 @@ export default function TableTool({
                           }
                         />
                       )}
-
+                      {/* /PK제약조건 제거 */}
                       {typeof value === 'boolean' && (
                         <Checkbox
                           checked={value}
@@ -277,7 +287,11 @@ export default function TableTool({
             </div>
             <DialogFooter>
               <DialogClose asChild>
-                <Button type="submit" onClick={handleAddTable}>
+                <Button
+                  type="submit"
+                  onClick={handleAddTable}
+                  disabled={!newTableName.trim()}
+                >
                   Add
                 </Button>
               </DialogClose>

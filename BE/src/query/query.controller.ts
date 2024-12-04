@@ -1,4 +1,12 @@
-import { Body, Controller, Param, Post, Req, UseGuards, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { QueryService } from './query.service';
 import { QueryDto } from './dto/query.dto';
 import { ResponseDto } from '../common/response/response.dto';

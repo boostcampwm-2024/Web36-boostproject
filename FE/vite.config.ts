@@ -15,6 +15,13 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@schemas': path.resolve(__dirname, '../schemas'),
     },
+  },
+  optimizeDeps: {
+    include: [
+      'ace-builds/src-noconflict/mode-sql',
+      'ace-builds/src-noconflict/theme-monokai',
+    ],
   },
 })

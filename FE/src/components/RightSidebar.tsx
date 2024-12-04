@@ -1,5 +1,5 @@
 import { MENU_TITLE } from '@/constants/constants'
-import { TableType } from '@/types/interfaces'
+import { useTables } from '@/hooks/query/useTableQuery'
 import {
   Sidebar,
   SidebarContent,
@@ -7,20 +7,16 @@ import {
   SidebarGroup,
   SidebarGroupContent,
 } from '@/components/ui/sidebar'
+import LoadingPage from '@/pages/LoadingPage'
 import ViewTable from './ViewTable'
 
-export default function RightSidebar({
-  tables = [],
-  ...props
-}: {
-  tables: TableType[]
-}) {
+export default function RightSidebar() {
+  const tables = useTables()
+
   return (
     <Sidebar
       collapsible="none"
-      className="sticky top-0 hidden h-svh border-l lg:flex"
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...props}
+      className="sticky top-0 hidden h-svh max-w-[35vw] border-l lg:flex"
       side="right"
     >
       <SidebarHeader className="gap-3.5 border-b p-4">
@@ -30,13 +26,17 @@ export default function RightSidebar({
           </div>
         </div>
       </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup className="p-0">
-          <SidebarGroupContent>
-            <ViewTable tableData={tables} />
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
+      {tables.isLoading ? (
+        <LoadingPage />
+      ) : (
+        <SidebarContent>
+          <SidebarGroup className="p-0">
+            <SidebarGroupContent>
+              <ViewTable tableData={tables.data || []} />
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      )}
     </Sidebar>
   )
 }

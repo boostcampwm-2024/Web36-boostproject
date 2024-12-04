@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import { useState, useEffect } from 'react'
 
 import {
@@ -30,19 +31,21 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Label from '@/components/ui/label'
+import TagInputForm from '@/components/common/TagInputForm'
 
-import {
-  TableType,
-  RecordToolType,
-  RecordToolColumnType,
-  RecordResultType,
-} from '@/types/interfaces'
+import { TableType, RecordToolType, RecordResultType } from '@/types/interfaces'
 import { RECORD_TYPES } from '@/constants/constants'
-import { generateKey, convertTableDataToRecordToolData } from '@/util'
-import TagInputForm from '@/components/TagInputForm'
-import InputWithLocalState from '@/components/InputWithLocalState'
-import useAddRecord from '@/hooks/useRecordQuery'
-import useUsages from '@/hooks/useUsageQuery'
+import { convertTableDataToRecordToolData, extractMessages } from '@/util'
+import useAddRecord from '@/hooks/query/useRecordQuery'
+import useUsages from '@/hooks/query/useUsageQuery'
+
+import { z } from 'zod'
+import { useForm, Controller, useFieldArray } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { CreateRandomRecordDtoSchema } from '@schemas/record'
+
+type CreateRandomRecordDto = z.infer<typeof CreateRandomRecordDtoSchema>
+type RecordType = (typeof RECORD_TYPES)[number]
 
 export default function RecordTool({
   tableData = [],
@@ -53,81 +56,83 @@ export default function RecordTool({
   const addRecordMutation = useAddRecord()
   const { refetch: usageRefetch } = useUsages()
 
-  const [tables, setTables] = useState<RecordToolType[]>([])
-  const [selectedTable, setSelectedTable] = useState<RecordToolType>({
-    tableName: '',
-    columns: [],
-    count: 0,
+  const [recordToolData, setRecordToolData] = useState<RecordToolType[]>([])
+  const [selectedTableName, setSelectedTableName] = useState<string>(
+    tableData[0]?.tableName || ''
+  )
+
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<CreateRandomRecordDto>({
+    resolver: zodResolver(CreateRandomRecordDtoSchema),
+    defaultValues: {
+      tableName: '',
+      columns: [],
+      count: 0,
+    },
+  })
+
+  const { fields, replace } = useFieldArray({
+    control,
+    name: 'columns',
   })
 
   useEffect(() => {
-    const recordToolData = convertTableDataToRecordToolData(tableData)
-    setTables(recordToolData)
-    setSelectedTable(recordToolData[0] || { tableName: '', columns: [] })
-  }, [tableData])
+    const convertedData = convertTableDataToRecordToolData(tableData)
+    setRecordToolData(convertedData)
 
-  const addRecord = async (record: RecordToolType): Promise<RecordResultType> =>
-    addRecordMutation.mutateAsync(record)
-
-  const handleColumnChange = (
-    row: number,
-    id: keyof RecordToolColumnType,
-    value: unknown
-  ) => {
-    const updatedColumns = selectedTable.columns.map((col, colIdx) =>
-      colIdx !== row ? col : { ...col, [id]: value }
-    )
-
-    const updatedSelectedTable = {
-      ...selectedTable,
-      columns: updatedColumns,
+    if (convertedData.length > 0) {
+      const firstTable = convertedData[0]
+      setSelectedTableName(firstTable.tableName)
+      setValue('tableName', firstTable.tableName)
+      replace(firstTable.columns)
     }
-    setSelectedTable(updatedSelectedTable)
+  }, [tableData, setValue, replace])
 
-    setTables((prevTables) =>
-      prevTables.map((table) =>
-        table.tableName === updatedSelectedTable.tableName
-          ? updatedSelectedTable
-          : table
-      )
+  const handleTableChange = (tableName: string) => {
+    const selectedTable = recordToolData.find(
+      (table) => table.tableName === tableName
     )
+
+    if (!selectedTable) throw new Error('Cannot find table')
+
+    setSelectedTableName(selectedTable.tableName)
+    setValue('tableName', selectedTable.tableName)
+    replace(selectedTable.columns)
   }
 
-  const handleCountChange = (count: number) => {
-    const updatedSelectedTable = { ...selectedTable, count }
-
-    setSelectedTable(updatedSelectedTable)
-
-    setTables((prevTables) =>
-      prevTables.map((table) =>
-        table.tableName === updatedSelectedTable.tableName
-          ? updatedSelectedTable
-          : table
-      )
-    )
-  }
-
-  const handleSubmitRecord = async () => {
-    const result: RecordResultType = await addRecord(selectedTable)
-    usageRefetch()
-    toast({
-      title: 'Data inserted successfully',
-      description: result.text,
-    })
+  const handleSubmitRecord = async (data: CreateRandomRecordDto) => {
+    try {
+      const result: RecordResultType = await addRecordMutation.mutateAsync(data)
+      usageRefetch()
+      toast({
+        title: 'Data inserted successfully',
+        description: result.text,
+      })
+      reset({
+        tableName: selectedTableName,
+        columns: fields,
+        count: 0,
+      })
+    } catch (error) {
+      throw new Error('Failed to submit record.')
+    }
   }
 
   return (
     <>
       <div className="sticky top-0 min-h-10 items-center gap-3 border-b p-2">
-        {tables.map((table) => (
+        {recordToolData.map((table) => (
           <Badge
             variant={
-              selectedTable.tableName === table.tableName
-                ? 'default'
-                : 'secondary'
+              selectedTableName === table.tableName ? 'default' : 'secondary'
             }
             className="mr-2 cursor-pointer"
-            onClick={() => setSelectedTable(table)}
+            onClick={() => handleTableChange(table.tableName)}
             key={table.tableName}
           >
             {table.tableName}
@@ -144,67 +149,96 @@ export default function RecordTool({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {selectedTable?.columns.map((row: RecordToolColumnType, rowIdx) => (
-            <TableRow key={generateKey(row.name)}>
-              <TableCell>{row.name}</TableCell>
+          {fields?.map((fieldData, rowIdx) => (
+            <TableRow key={fieldData.id}>
+              <TableCell>{fieldData.name}</TableCell>
+
               <TableCell>
-                <Select
-                  value={row.type}
-                  onValueChange={(newValue) =>
-                    handleColumnChange(rowIdx, 'type', newValue)
-                  }
-                >
-                  <SelectTrigger className="h-8 w-20 p-2">
-                    <SelectValue placeholder={row.type} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {RECORD_TYPES.map((types) => (
-                      <SelectItem value={types} key={types}>
-                        {types}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Controller
+                  name={`columns.${rowIdx}.type`}
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      value={field.value}
+                      onValueChange={(newValue: RecordType) => {
+                        if (!RECORD_TYPES.includes(newValue)) return
+                        field.onChange(newValue)
+                        replace(
+                          fields.map(({ id, ...col }, idx) => ({
+                            ...col,
+                            type: idx === rowIdx ? newValue : col.type,
+                          }))
+                        )
+                      }}
+                    >
+                      <SelectTrigger className="h-8 w-20 p-2">
+                        <SelectValue placeholder="Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {RECORD_TYPES.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </TableCell>
+
               <TableCell className="flex items-center">
-                <InputWithLocalState<number>
-                  type="number"
-                  id={`row-blank-${rowIdx}`}
-                  className="mr-2 h-8 w-12 p-1"
-                  placeholder="0"
-                  value={row.blank}
-                  onChange={(updatedValue) =>
-                    handleColumnChange(rowIdx, 'blank', Number(updatedValue))
-                  }
+                <Controller
+                  name={`columns.${rowIdx}.blank`}
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      type="number"
+                      placeholder="0"
+                      className="mr-2 h-8 w-12 p-1"
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  )}
                 />
                 <span>%</span>
               </TableCell>
+
               <TableCell>
-                {row.type === 'number' && (
+                {fieldData.type === 'number' && (
                   <div className="flex">
-                    <InputWithLocalState<number>
-                      type="number"
-                      id={`row-min-${rowIdx}`}
-                      className="mr-2 h-8 w-16 p-2"
-                      placeholder="min"
-                      value={row.min}
-                      onChange={(updatedValue) =>
-                        handleColumnChange(rowIdx, 'min', Number(updatedValue))
-                      }
+                    <Controller
+                      name={`columns.${rowIdx}.min`}
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          {...field}
+                          type="number"
+                          placeholder="min"
+                          className="mr-2 h-8 w-12 p-1"
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
+                        />
+                      )}
                     />
-                    <InputWithLocalState<number>
-                      type="number"
-                      id={`row-max-${rowIdx}`}
-                      className="h-8 w-16 p-2"
-                      placeholder="max"
-                      value={row.max}
-                      onChange={(updatedValue) =>
-                        handleColumnChange(rowIdx, 'max', Number(updatedValue))
-                      }
+                    <Controller
+                      name={`columns.${rowIdx}.max`}
+                      control={control}
+                      render={({ field }) => (
+                        <Input
+                          {...field}
+                          type="number"
+                          placeholder="max"
+                          className="h-8 w-12 p-1"
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
+                        />
+                      )}
                     />
                   </div>
                 )}
-                {row.type === 'enum' && (
+                {fieldData.type === 'enum' && (
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button variant="secondary" className="h-8">
@@ -218,10 +252,13 @@ export default function RecordTool({
                       </DialogHeader>
                       <TagInputForm
                         type="enum"
-                        preTag={row.enum}
-                        onAdd={(newEnum) =>
-                          handleColumnChange(rowIdx, 'enum', newEnum)
-                        }
+                        preTag={fieldData.enum || []}
+                        onAdd={(newEnum) => {
+                          const updatedColumns = fields.map((col, idx) =>
+                            idx === rowIdx ? { ...col, enum: newEnum } : col
+                          )
+                          replace(updatedColumns)
+                        }}
                       >
                         <DialogFooter className="pt-3">
                           <DialogClose asChild>
@@ -241,22 +278,32 @@ export default function RecordTool({
         <Label htmlFor="Rows" className="pr-3">
           Rows
         </Label>
-        <Input
-          type="number"
-          id="Rows"
-          value={selectedTable.count === 0 ? '' : selectedTable.count}
-          placeholder="max 100,000"
-          className="h-8 w-28 p-2"
-          onChange={(e) => handleCountChange(Number(e.target.value))}
+        <Controller
+          name="count"
+          control={control}
+          render={({ field }) => (
+            <Input
+              {...field}
+              type="number"
+              id="Rows"
+              placeholder="max 100,000"
+              className="h-8 w-28 p-2"
+              onChange={(e) => field.onChange(Number(e.target.value))}
+            />
+          )}
         />
       </div>
-      <div className="mt-5 flex justify-center">
+      <div className="mt-8 flex justify-center text-xs text-red-500">
+        {extractMessages(errors)[0]}
+      </div>
+      <div className="mt-2 flex justify-center">
         <Button
           variant="default"
           className="ml-3 h-8"
-          onClick={handleSubmitRecord}
+          onClick={handleSubmit(handleSubmitRecord)}
+          disabled={isSubmitting}
         >
-          Add Random Data
+          {isSubmitting ? 'submitting' : 'Add Random Data'}
         </Button>
       </div>
     </>

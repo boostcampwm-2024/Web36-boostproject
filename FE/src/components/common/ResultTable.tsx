@@ -7,9 +7,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from './ui/table'
+} from '@/components/ui/table'
 
-function ResultTable({ data }: { data: any[] }) {
+function ResultTable<T extends Record<string, unknown>>({
+  data,
+}: {
+  data: T[]
+}) {
   const ITEMS_PER_PAGE = 10
 
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE)
@@ -24,14 +28,15 @@ function ResultTable({ data }: { data: any[] }) {
       <Table className="">
         <TableHeader>
           <TableRow>
-            {Object.keys(data[0]).map((header) => (
-              <TableHead
-                className="border-b border-t border-gray-300 text-muted-foreground"
-                key={header}
-              >
-                {header}
-              </TableHead>
-            ))}
+            {data?.length > 0 &&
+              Object.keys(data[0]).map((header) => (
+                <TableHead
+                  className="border-b border-t border-gray-300 text-muted-foreground"
+                  key={header}
+                >
+                  {header}
+                </TableHead>
+              ))}
           </TableRow>
         </TableHeader>
         <TableBody>

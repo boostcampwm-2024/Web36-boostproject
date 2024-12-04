@@ -8,6 +8,13 @@ export function generateKey(data: Record<string, unknown> | unknown) {
   return `${JSON.stringify(data)}-${uuidv4()}`
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function extractMessages(errors: any): string[] {
+  if (!errors) return []
+  if ('message' in errors) return [errors.message]
+  return Object.values(errors).flatMap(extractMessages)
+}
+
 export function convertTableDataToTableToolData(
   tableData: TableType[]
 ): TableToolType[] {

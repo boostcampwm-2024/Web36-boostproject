@@ -1,7 +1,7 @@
-import { Domains } from './dto/create-random-record.dto';
 import { RandomValueGenerator } from './domain';
+import { Domains } from '../../../schemas/record';
 
-export interface RandomColumnEntity {
+export interface RandomColumnModel {
   name: string;
   type: Domains;
   generator: RandomValueGenerator<any>;

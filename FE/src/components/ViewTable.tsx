@@ -11,21 +11,24 @@ import { Badge } from '@/components/ui/badge'
 import { TableType, TableColumnType } from '@/types/interfaces'
 import { generateKey } from '@/util'
 import { Check } from 'lucide-react'
-import { useTableByName } from '@/hooks/useTableQuery'
+import { useTableByName } from '@/hooks/query/useTableQuery'
 
 export default function ViewTable({ tableData }: { tableData: TableType[] }) {
   const [selectedTableName, setSelectedTableName] = useState(
     tableData.length > 0 ? tableData[0].tableName : null
   )
 
-  const {
-    data: selectedTable,
-    isLoading,
-    isError,
-  } = useTableByName(selectedTableName)
+  const selectedTable = useTableByName(selectedTableName)
 
   if (!tableData || tableData.length === 0) {
-    return <p>No table data available.</p>
+    return (
+      <div className="flex min-h-screen items-center justify-center border px-10">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-primary">No table</h1>
+          <p className="my-4 text-sm">No table data available</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -46,19 +49,17 @@ export default function ViewTable({ tableData }: { tableData: TableType[] }) {
           </Badge>
         ))}
       </div>
-      {isLoading && <p>Loading...</p>}
-      {isError && <p>Error loading table data.</p>}
-      {selectedTable?.columns && selectedTable.columns.length > 0 && (
+      {selectedTable.data?.columns && (
         <Table>
           <TableHeader className="bg-secondary">
             <TableRow>
-              {Object.keys(selectedTable.columns[0])?.map((header) => (
+              {Object.keys(selectedTable.data.columns[0])?.map((header) => (
                 <TableHead key={generateKey(header)}>{header}</TableHead>
               ))}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {selectedTable.columns.map((row: TableColumnType) => (
+            {selectedTable.data.columns.map((row: TableColumnType) => (
               <TableRow key={generateKey(row)}>
                 {Object.values(row).map((cell) => (
                   <TableCell key={generateKey(cell)}>

@@ -9,6 +9,8 @@
   "license": "ISC",
   "dependencies": {
     "ace-builds": "^1.36.5",
-    "react-ace": "^13.0.0"
+    "nestjs-zod": "^4.2.0",
+    "react-ace": "^13.0.0",
+    "zod": "^3.23.8"
   }
 }

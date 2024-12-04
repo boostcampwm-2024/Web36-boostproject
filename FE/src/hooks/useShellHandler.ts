@@ -3,7 +3,7 @@ import {
   useDeleteShell,
   useExecuteShell,
   useUpdateShell,
-} from '@/hooks/useShellQuery'
+} from '@/hooks/query/useShellQuery'
 import { ShellType } from '@/types/interfaces'
 
 export default function useShellHandlers() {
@@ -21,8 +21,8 @@ export default function useShellHandlers() {
       text: null,
       resultTable: null,
     }
-    const addedShellID = await addShellMutation.mutateAsync(newShell)
-    return addedShellID
+    const addedShell = await addShellMutation.mutateAsync(newShell)
+    return addedShell
   }
 
   const deleteShell = (id: number) => {

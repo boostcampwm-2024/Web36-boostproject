@@ -18,7 +18,7 @@ export class TableService {
     );
   }
 
-  async find(sessionId: string, tableName: string) {
+  async find(sessionId: string, tableName: string): Promise<ResTableDto | []> {
     const tables = await this.getTables(sessionId, tableName);
     const columns = await this.getColumns(sessionId, tableName);
     const foreignKeys = await this.getForeignKeys(sessionId, tableName);
@@ -34,7 +34,8 @@ export class TableService {
     );
   }
 
-  async getTables(schema: string, tableName?: string) {
+  async getTables(identify: string, tableName?: string) {
+    const schema = identify.substring(0, 10);
     const query = `
     SELECT TABLE_NAME
     FROM INFORMATION_SCHEMA.TABLES
@@ -45,7 +46,8 @@ export class TableService {
     return tables as any[];
   }
 
-  private async getColumns(schema: string, tableName?: string) {
+  async getColumns(identify: string, tableName?: string) {
+    const schema = identify.substring(0, 10);
     const query = `
     SELECT TABLE_NAME, COLUMN_NAME, COLUMN_TYPE, COLUMN_KEY, EXTRA, IS_NULLABLE
     FROM INFORMATION_SCHEMA.COLUMNS
@@ -57,7 +59,8 @@ export class TableService {
     return columns as any[];
   }
 
-  private async getForeignKeys(schema: string, tableName?: string) {
+  private async getForeignKeys(identify: string, tableName?: string) {
+    const schema = identify.substring(0, 10);
     const query = `
     SELECT 
       TABLE_NAME, 
@@ -74,7 +77,8 @@ export class TableService {
     return foreignKey as any[];
   }
 
-  private async getIndexes(schema: string, tableName?: string) {
+  private async getIndexes(identify: string, tableName?: string) {
+    const schema = identify.substring(0, 10);
     const query = `
     SELECT TABLE_NAME, COLUMN_NAME, INDEX_NAME, NON_UNIQUE
     FROM INFORMATION_SCHEMA.STATISTICS

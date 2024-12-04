@@ -1,5 +1,5 @@
 import { useMutation, UseMutationOptions, useQueryClient } from 'react-query'
-import useToastErrorHandler from '@/error/toastErrorHandler'
+import useToastErrorHandler from '@/hooks/error/toastErrorHandler'
 
 type MutationContext<TData> = {
   previousData: TData[] | undefined

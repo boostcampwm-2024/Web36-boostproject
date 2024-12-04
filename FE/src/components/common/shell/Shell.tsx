@@ -1,15 +1,18 @@
 import { useState, useRef, useEffect } from 'react'
+import { useQueryClient } from 'react-query'
+
 import PlayCircle from '@/assets/play_circle.svg'
 import { ShellType } from '@/types/interfaces'
 import useShellHandlers from '@/hooks/useShellHandler'
 import { X } from 'lucide-react'
-import { useTables } from '@/hooks/useTableQuery'
+import { useTables } from '@/hooks/query/useTableQuery'
 import AceEditor from 'react-ace'
 import 'ace-builds/src-noconflict/mode-sql'
 import 'ace-builds/src-noconflict/theme-monokai'
 import 'ace-builds/src-noconflict/ext-language_tools'
-import useUsages from '@/hooks/useUsageQuery'
-import ResultTable from './ResultTable'
+import useUsages from '@/hooks/query/useUsageQuery'
+import ResultTable from '@/components/common/ResultTable'
+import { QUERY_KEYS } from '@/constants/constants'
 
 type ShellProps = {
   shell: ShellType
@@ -17,6 +20,8 @@ type ShellProps = {
 
 export default function Shell({ shell }: ShellProps) {
   const { id, queryStatus, query, text, queryType, resultTable } = shell
+
+  const queryClient = useQueryClient()
   const { refetch: tableRefetch } = useTables()
   const { refetch: usageRefetch } = useUsages()
   const { executeShell, updateShell, deleteShell } = useShellHandlers()
@@ -24,7 +29,8 @@ export default function Shell({ shell }: ShellProps) {
   const LINE_HEIGHT = 1.2
 
   const prevQueryRef = useRef<string>(query ?? '')
-  const [focused, setFocused] = useState(false)
+  const [isExecuting, setIsExecuting] = useState(false)
+  const [focused, setFocused] = useState(true)
   const [inputValue, setInputValue] = useState(query ?? '')
   const [editorHeight, setEditorHeight] = useState(LINE_HEIGHT)
   const editorRef = useRef<AceEditor>(null)
@@ -40,25 +46,62 @@ export default function Shell({ shell }: ShellProps) {
       if (!focused) {
         renderer.$cursorLayer.element.style.display = 'none'
       } else {
+        editorRef.current?.editor.focus()
         renderer.$cursorLayer.element.style.display = ''
       }
     }
   }, [focused])
 
+  const handleFocus = () => {
+    setFocused(true)
+    editorRef.current?.editor.container.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    })
+  }
+
   const handleBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     if (e.relatedTarget?.id === 'remove-shell-btn') return
     setFocused(false)
     if (inputValue === prevQueryRef.current || shell.id === null) return
-    updateShell({ id: shell.id, query: inputValue })
+    try {
+      updateShell({ id: shell.id, query: inputValue })
+    } catch (error) {
+      throw new Error(`Failed to update shell with id, ${shell.id}`)
+    }
     prevQueryRef.current = inputValue
   }
 
   const handleClick = async () => {
-    if (!id || !shell) return
-    await executeShell({ ...shell, query })
-    usageRefetch()
-    if (!queryType || ['CREATE', 'ALTER', 'DROP'].includes(queryType || ''))
-      await tableRefetch()
+    if (!id || !shell) throw new Error(`Invalid shell or id, ${id}`)
+
+    setIsExecuting(true)
+    try {
+      await executeShell({ ...shell, query })
+    } catch (error) {
+      throw new Error(`Failed to execute shell with id, ${id}`)
+    } finally {
+      setIsExecuting(false)
+    }
+
+    try {
+      if (!queryType || ['CREATE', 'ALTER', 'DROP'].includes(queryType || '')) {
+        await tableRefetch()
+        queryClient.invalidateQueries(QUERY_KEYS.TABLES)
+      }
+    } catch (error) {
+      throw new Error('Failed to refetch tables after shell execution.')
+    }
+
+    try {
+      if (
+        !queryType ||
+        !['CREATE', 'ALTER', 'SELECT'].includes(queryType || '')
+      )
+        usageRefetch()
+    } catch (error) {
+      throw new Error('Failed to refetch usages tables after shell execution.')
+    }
   }
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -75,15 +118,21 @@ export default function Shell({ shell }: ShellProps) {
       <div className="flex h-auto overflow-hidden rounded-sm bg-secondary shadow-md">
         <button
           type="button"
-          className="h-full bg-primary p-3 shadow-lg"
+          className="relative h-full w-14 bg-primary p-3 shadow-lg"
           onClick={handleClick}
-          disabled={inputValue.length === 0}
+          disabled={inputValue.length === 0 || isExecuting}
         >
-          <img
-            src={PlayCircle}
-            alt="play button"
-            className={`${inputValue.length === 0 ? 'opacity-50' : ''} `}
-          />
+          <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+            {isExecuting ? (
+              <span className="h-6 w-6 animate-spin rounded-full border-2 border-white border-t-transparent" />
+            ) : (
+              <img
+                src={PlayCircle}
+                alt="play button"
+                className={`h-6 w-6 ${inputValue.length === 0 ? 'opacity-50' : ''} `}
+              />
+            )}
+          </div>
         </button>
         <div className="editor-container h-full w-full rounded-sm bg-secondary">
           <style>{`.ace_placeholder {margin: 0;}`}</style>
@@ -93,7 +142,7 @@ export default function Shell({ shell }: ShellProps) {
             mode="sql"
             value={inputValue}
             onChange={handleEditorChange}
-            onFocus={() => setFocused(true)}
+            onFocus={handleFocus}
             onBlur={handleBlur}
             fontSize={14}
             width="100%"
@@ -107,7 +156,6 @@ export default function Shell({ shell }: ShellProps) {
               tabSize: 2,
               wrap: true,
               behavioursEnabled: false,
-              showCursor: focused,
               highlightActiveLine: false,
               cursorStyle: 'slim',
             }}
