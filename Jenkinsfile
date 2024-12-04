@@ -112,7 +112,7 @@ pipeline {
                 stage('docker image Build') {
                     steps {
                         sh 'docker build -f ./BE/Dockerfile.test -t be-test-image .' 
-                        sh 'docker build --no-cache -f ./FE/Dockerfile.test -t fe-test-image .' 
+                        sh 'docker build -f ./FE/Dockerfile.test -t fe-test-image .' 
                     }
                 }
                 stage('Run test & build') {
