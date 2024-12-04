@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
+import { useQueryClient } from 'react-query'
+
 import PlayCircle from '@/assets/play_circle.svg'
 import { ShellType } from '@/types/interfaces'
 import useShellHandlers from '@/hooks/useShellHandler'
@@ -10,6 +12,7 @@ import 'ace-builds/src-noconflict/theme-monokai'
 import 'ace-builds/src-noconflict/ext-language_tools'
 import useUsages from '@/hooks/query/useUsageQuery'
 import ResultTable from '@/components/common/ResultTable'
+import { QUERY_KEYS } from '@/constants/constants'
 
 type ShellProps = {
   shell: ShellType
@@ -17,6 +20,8 @@ type ShellProps = {
 
 export default function Shell({ shell }: ShellProps) {
   const { id, queryStatus, query, text, queryType, resultTable } = shell
+
+  const queryClient = useQueryClient()
   const { refetch: tableRefetch } = useTables()
   const { refetch: usageRefetch } = useUsages()
   const { executeShell, updateShell, deleteShell } = useShellHandlers()
@@ -80,8 +85,10 @@ export default function Shell({ shell }: ShellProps) {
     }
 
     try {
-      if (!queryType || ['CREATE', 'ALTER', 'DROP'].includes(queryType || ''))
+      if (!queryType || ['CREATE', 'ALTER', 'DROP'].includes(queryType || '')) {
         await tableRefetch()
+        queryClient.invalidateQueries(QUERY_KEYS.TABLES)
+      }
     } catch (error) {
       throw new Error('Failed to refetch tables after shell execution.')
     }
