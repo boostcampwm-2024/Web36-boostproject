@@ -1,5 +1,4 @@
 import {
-  ConflictException,
   Injectable,
   InternalServerErrorException,
   OnModuleInit,
@@ -36,7 +35,7 @@ export class AdminDBManager implements OnModuleInit {
         name: identify.substring(0, 10),
         password: identify,
         host: '%',
-        database: identify,
+        database: identify.substring(0, 10),
       };
 
       await this.run(`create database ${connectInfo.database};`);
@@ -58,7 +57,7 @@ export class AdminDBManager implements OnModuleInit {
 
   public async removeDatabaseInfo(identify: string) {
     try {
-      const dropDatabase = `drop database ${identify};`;
+      const dropDatabase = `drop database ${identify.substring(0, 10)};`;
       await this.run(dropDatabase);
       const dropUser = `drop user '${identify.substring(0, 10)}';`;
       await this.run(dropUser);
