@@ -1,16 +1,24 @@
 # 리액트 빌드
-FROM node:22 AS build
+FROM node:22-alpine
 
-WORKDIR /app
+WORKDIR /app/
 
-COPY package.json /app
+ENV VITE_BASE_URL=https://www.q-lab.site/api
+
+COPY ./package*.json /app
 
 RUN npm config set registry https://registry.npmjs.org/
 
-RUN npm install vite
+RUN npm install
+
+WORKDIR /app/FE/
+
+COPY ./FE/package*.json /app/FE/
 
 RUN npm install
 
-COPY . /app
+COPY ./FE /app/FE
+
+COPY ./schemas /app/schemas
 
 CMD npx vite build
