@@ -7,13 +7,15 @@ import {
 } from "./record";
 import { UpdateShellDto, UpdateShellDtoSchema } from "./shells";
 
+export {
+  QueryDtoSchema,
+  CreateRandomRecordDtoSchema,
+  RandomColumnInfoSchema,
+  UpdateShellDtoSchema,
+};
 export type {
   QueryDto,
-  QueryDtoSchema,
   CreateRandomRecordDto,
-  CreateRandomRecordDtoSchema,
   RandomColumnInfo,
-  RandomColumnInfoSchema,
   UpdateShellDto,
-  UpdateShellDtoSchema,
 };

@@ -2,7 +2,8 @@ version: "3"
 services:
   frontend:
     build:
-      context: ./FE
+      context: .
+      dockerfile: FE/Dockerfile
     container_name: QLab-Front-Server
     environment:
       VITE_BASE_URL: https://www.q-lab.site/api
