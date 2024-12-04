@@ -1,6 +1,6 @@
-import { IsString } from 'class-validator';
+import { createZodDto } from 'nestjs-zod';
+import { UpdateShellDtoSchema } from '../../../../schemas';
 
-export class UpdateShellDto {
-  @IsString()
-  readonly query: string;
-}
+class UpdateShellDto extends createZodDto(UpdateShellDtoSchema) {}
+
+export { UpdateShellDto };

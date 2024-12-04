@@ -15,6 +15,7 @@ import { LoggingInterceptor } from './interceptors/logging.interceptor';
 import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { UsageModule } from './usage/usage.module';
 import { ConfigModule } from '@nestjs/config';
+import { ZodValidationPipe } from 'nestjs-zod';
 
 @Module({
   imports: [
@@ -39,7 +40,7 @@ import { ConfigModule } from '@nestjs/config';
     },
     {
       provide: APP_PIPE,
-      useClass: ValidationPipe,
+      useClass: ZodValidationPipe,
     },
   ],
 })

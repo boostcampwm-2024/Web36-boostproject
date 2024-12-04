@@ -2,7 +2,8 @@ version: '3'
 services:
   backend:
     build:
-      context: .
+      context: ..
+      dockerfile: BE/Dockerfile
     container_name: QLab-Service-Server
     ports:
       - "3000:3000"
@@ -46,7 +47,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ../db/server:/var/lib/mysql 
+      - ../db/server:/var/lib/mysql
     networks:
       - backend
 

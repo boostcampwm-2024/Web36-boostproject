@@ -1,10 +1,6 @@
-import { IsString } from 'class-validator';
+import { createZodDto } from 'nestjs-zod';
+import { QueryDtoSchema } from '../../../../schemas';
 
-export class QueryDto {
-  /**
-   * 사용자 쿼리 요청
-   * @example "select * from users"
-   */
-  @IsString()
-  query: string;
-}
+class QueryDto extends createZodDto(QueryDtoSchema) {}
+
+export { QueryDto };

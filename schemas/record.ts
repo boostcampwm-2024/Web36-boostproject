@@ -2,7 +2,6 @@ import { z } from "zod";
 
 // Domains Enum 정의
 const Domains = z.enum(["name", "country", "city", "email", "phone", "sex", "boolean", "number", "enum"]);
-type Domains = z.infer<typeof Domains>;
 
 // RandomColumnInfo 스키마
 export const RandomColumnInfoSchema = z
@@ -63,3 +62,4 @@ export const CreateRandomRecordDtoSchema = z.object({
 
 export type RandomColumnInfo = z.infer<typeof RandomColumnInfoSchema>;
 export type CreateRandomRecordDto = z.infer<typeof CreateRandomRecordDtoSchema>;
+export type Domains = z.infer<typeof Domains>;

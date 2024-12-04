@@ -12,7 +12,8 @@ services:
 
   backend:
     build:
-      context: ./BE
+      context: .
+      dockerfile: BE/Dockerfile
     container_name: QLab-Service-Server
     expose:
       - 3000
