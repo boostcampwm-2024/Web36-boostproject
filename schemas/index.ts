@@ -1,8 +1,13 @@
 import { QueryDto, QueryDtoSchema } from "./query";
-import { RandomColumnInfoSchema, RandomColumnInfo, CreateRandomRecordDto, CreateRandomRecordDtoSchema } from "./record";
+import {
+  RandomColumnInfoSchema,
+  RandomColumnInfo,
+  CreateRandomRecordDto,
+  CreateRandomRecordDtoSchema,
+} from "./record";
 import { UpdateShellDto, UpdateShellDtoSchema } from "./shells";
 
-export {
+export type {
   QueryDto,
   QueryDtoSchema,
   CreateRandomRecordDto,
