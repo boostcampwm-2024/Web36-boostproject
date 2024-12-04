@@ -1,9 +1,5 @@
 import { UserDBConnectionInterceptor } from '../../src/interceptors/user-db-connection.interceptor';
-import {
-  BadGatewayException,
-  CallHandler,
-  ExecutionContext,
-} from '@nestjs/common';
+import { CallHandler, ExecutionContext } from '@nestjs/common';
 import { MySqlContainer } from '@testcontainers/mysql';
 import { ConfigService } from '@nestjs/config';
 import { lastValueFrom, of, throwError } from 'rxjs';
@@ -36,13 +32,7 @@ beforeAll(async () => {
     .withExposedPorts(3306)
     .withCommand(['--max_connections=1'])
     .start();
-});
 
-afterAll(async () => {
-  await dbContainer.stop();
-});
-
-beforeEach(async () => {
   // Mock ConfigService
   mockConfigService.get.mockImplementation((key: string) => {
     const config = {
@@ -54,6 +44,19 @@ beforeEach(async () => {
 
   //Mock Context
   setupMockContext();
+});
+
+const setupMockContext = () => {
+  const mockHttpArgumentsHost = mock<HttpArgumentsHost>();
+  mockHttpArgumentsHost.getRequest.mockReturnValue(TEST_REQUEST);
+  mockContext.switchToHttp.mockReturnValue(mockHttpArgumentsHost);
+};
+
+afterAll(async () => {
+  await dbContainer.stop();
+});
+
+beforeEach(async () => {
   const module: TestingModule = await Test.createTestingModule({
     providers: [
       UserDBConnectionInterceptor,
@@ -72,12 +75,6 @@ afterEach(async () => {
     TEST_REQUEST.dbConnection = null;
   }
 });
-
-const setupMockContext = () => {
-  const mockHttpArgumentsHost = mock<HttpArgumentsHost>();
-  mockHttpArgumentsHost.getRequest.mockReturnValue(TEST_REQUEST);
-  mockContext.switchToHttp.mockReturnValue(mockHttpArgumentsHost);
-};
 
 describe('UserDBConnectionInterceptor - 요청 처리', () => {
   beforeEach(() => {
@@ -100,7 +97,7 @@ describe('UserDBConnectionInterceptor - 요청 처리', () => {
     //then
     await expect(
       interceptor.intercept(mockContext, mockCallHandler),
-    ).rejects.toThrowError(ConnectionLimitExceedException);
+    ).rejects.toThrow(ConnectionLimitExceedException);
   });
 });
 

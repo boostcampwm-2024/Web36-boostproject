@@ -289,8 +289,8 @@ export default function RecordTool({
               {...field}
               type="number"
               id="Rows"
-              placeholder="max 100,000"
-              className="h-8 w-28 p-2"
+              placeholder="max 1,000,000"
+              className="h-8 w-32 p-2"
               value={field.value === 0 ? '' : field.value}
               onChange={(e) => field.onChange(Number(e.target.value))}
             />
