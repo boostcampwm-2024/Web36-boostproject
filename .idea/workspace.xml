@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="753787aa-0731-4932-96bc-d2beecf341ef" name="Changes" comment="fix: merge 충돌 해결" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="k6" />
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="feature-be-#160" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;mintaek22&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/boostcampwm-2024/web36-QLab.git&quot;,
+    &quot;accountId&quot;: &quot;25b9d88c-fb19-4eef-ad7e-d75d5c8425b8&quot;
+  }
+}</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/BE/node_modules/@types/express-session/index.d.ts" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="PackageJsonUpdateNotifier">
+    <dismissed value="$PROJECT_DIR$/FE/package.json" />
+    <dismissed value="$PROJECT_DIR$/package.json" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2opH7JaEahS2OqAvtL5c8XUului" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature-be-#223&quot;,
+    &quot;k6.scipt.js.executor&quot;: &quot;Run&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/choco/Desktop/code/web36-QLab&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.lint.executor&quot;: &quot;Run&quot;,
+    &quot;npm.start:container.executor&quot;: &quot;Run&quot;,
+    &quot;prettier.import.notification.dismissed&quot;: &quot;true&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/choco/Desktop/code/web36-QLab/BE/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager" selected="npm.start:container">
+    <configuration name="scipt.js" type="K6ConfigurationType" factoryName="k6" temporary="true" nameIsGenerated="true" show_console_on_std_err="false" show_console_on_std_out="false">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="data">
+        <K6RunData>
+          <option name="additionalParams" />
+          <option name="envs">
+            <map />
+          </option>
+          <option name="nodeJsRef" value="project" />
+          <option name="nodeOptions" value="--experimental-default-type=module --experimental-specifier-resolution=node --experimental-network-imports --disable-warning=ExperimentalWarning" />
+          <option name="passParentEnvs" value="true" />
+          <option name="pty" value="true" />
+          <option name="script" value="load-test/scipt.js" />
+          <option name="thresholdsAsTests" value="false" />
+          <option name="type" value="local" />
+          <option name="workingDir" value="$PROJECT_DIR$" />
+        </K6RunData>
+      </option>
+      <option name="defaultTargetName" />
+      <option name="envs">
+        <map />
+      </option>
+      <option name="passParentEnvs" value="true" />
+      <option name="programParameters" />
+      <option name="projectPathOnTarget" />
+      <option name="selectedOptions">
+        <list />
+      </option>
+      <option name="workingDirectory" value="$PROJECT_DIR$" />
+      <option name="additionalParams" />
+      <option name="envs">
+        <map />
+      </option>
+      <option name="nodeJsRef" value="project" />
+      <option name="nodeOptions" value="--experimental-default-type=module --experimental-specifier-resolution=node --experimental-network-imports --disable-warning=ExperimentalWarning" />
+      <option name="passParentEnvs" value="true" />
+      <option name="pty" value="true" />
+      <option name="script" value="load-test/scipt.js" />
+      <option name="thresholdsAsTests" value="false" />
+      <option name="type" value="local" />
+      <option name="workingDir" value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="start" type="js.build_tools.npm" temporary="true">
+      <package-json value="$PROJECT_DIR$/FE/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="start:container" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start:container" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="k6.scipt.js" />
+      <item itemvalue="npm.start" />
+      <item itemvalue="npm.start:container" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.start:container" />
+        <item itemvalue="npm.start" />
+        <item itemvalue="k6.scipt.js" />
+        <item itemvalue="npm.start:container" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.23726.103" />
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.23726.103" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="753787aa-0731-4932-96bc-d2beecf341ef" name="Changes" comment="" />
+      <created>1731559427507</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1731559427507</updated>
+      <workItem from="1731559428667" duration="1239000" />
+      <workItem from="1731561152775" duration="28000" />
+      <workItem from="1731595265677" duration="1435000" />
+      <workItem from="1731729591012" duration="1000" />
+      <workItem from="1731729658231" duration="84000" />
+      <workItem from="1731994483166" duration="4306000" />
+      <workItem from="1732004997327" duration="590000" />
+      <workItem from="1732014149279" duration="640000" />
+      <workItem from="1732065174034" duration="1375000" />
+      <workItem from="1732109932090" duration="10818000" />
+      <workItem from="1732150746029" duration="2173000" />
+      <workItem from="1732152926924" duration="3810000" />
+      <workItem from="1732164349085" duration="571000" />
+      <workItem from="1732170229089" duration="738000" />
+      <workItem from="1732179488904" duration="226000" />
+      <workItem from="1732250594432" duration="2112000" />
+      <workItem from="1732337500310" duration="2056000" />
+      <workItem from="1732339719698" duration="6430000" />
+      <workItem from="1732350270677" duration="59000" />
+      <workItem from="1732416098087" duration="1736000" />
+      <workItem from="1732516121074" duration="614000" />
+      <workItem from="1732603435590" duration="902000" />
+      <workItem from="1732675858136" duration="2802000" />
+      <workItem from="1732686077614" duration="37000" />
+      <workItem from="1732692420275" duration="6796000" />
+      <workItem from="1732701894339" duration="5054000" />
+      <workItem from="1732709861391" duration="869000" />
+      <workItem from="1733058395201" duration="2586000" />
+      <workItem from="1733101742750" duration="3558000" />
+      <workItem from="1733196212864" duration="141000" />
+      <workItem from="1733200607356" duration="1262000" />
+      <workItem from="1733218085825" duration="1183000" />
+      <workItem from="1733276704848" duration="523000" />
+      <workItem from="1733277358362" duration="85000" />
+    </task>
+    <task id="LOCAL-00001" summary="feat: 테이블 생성,수정 sql 변환 로직 작성">
+      <option name="closed" value="true" />
+      <created>1732002786413</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1732002786413</updated>
+    </task>
+    <task id="LOCAL-00002" summary="feat: 부하테스트 코드 작성">
+      <option name="closed" value="true" />
+      <created>1732337573301</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1732337573301</updated>
+    </task>
+    <task id="LOCAL-00003" summary="chore: 사용되지 않는 파일 삭제">
+      <option name="closed" value="true" />
+      <created>1732337596280</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1732337596280</updated>
+    </task>
+    <task id="LOCAL-00004" summary="fix: createConnection Promise 추가">
+      <option name="closed" value="true" />
+      <created>1732337627739</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1732337627739</updated>
+    </task>
+    <task id="LOCAL-00005" summary="chore: eslint에 맞게 포맷 변경">
+      <option name="closed" value="true" />
+      <created>1732337654661</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1732337654661</updated>
+    </task>
+    <task id="LOCAL-00006" summary="fix: 쿼리 describe 줄인말인 desc도 지원">
+      <option name="closed" value="true" />
+      <created>1732339630688</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1732339630688</updated>
+    </task>
+    <task id="LOCAL-00007" summary="feat: 실제 쿼리 실행시간 차트만들어주는 스크립트 작성">
+      <option name="closed" value="true" />
+      <created>1732349990663</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1732349990663</updated>
+    </task>
+    <task id="LOCAL-00008" summary="fix: nginx https q-lab.site도 반영">
+      <option name="closed" value="true" />
+      <created>1732603598455</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1732603598455</updated>
+    </task>
+    <task id="LOCAL-00009" summary="fix: merge 충돌 해결">
+      <option name="closed" value="true" />
+      <created>1732681856609</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1732681856609</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="GitHub.CommitStatus" />
+      </list>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="feat: 테이블 생성,수정 sql 변환 로직 작성" />
+    <MESSAGE value="feat: 부하테스트 코드 작성" />
+    <MESSAGE value="chore: 사용되지 않는 파일 삭제" />
+    <MESSAGE value="fix: createConnection Promise 추가" />
+    <MESSAGE value="chore: eslint에 맞게 포맷 변경" />
+    <MESSAGE value="fix: 쿼리 describe 줄인말인 desc도 지원" />
+    <MESSAGE value="feat: 실제 쿼리 실행시간 차트만들어주는 스크립트 작성" />
+    <MESSAGE value="fix: nginx https q-lab.site도 반영" />
+    <MESSAGE value="fix: merge 충돌 해결" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix: merge 충돌 해결" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
