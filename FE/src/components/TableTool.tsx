@@ -181,7 +181,6 @@ export default function TableTool({
             <TableHead>Del</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Type</TableHead>
-            <TableHead>PK</TableHead>
             <TableHead>UQ</TableHead>
             <TableHead>AI</TableHead>
             <TableHead>NN</TableHead>
@@ -201,7 +200,8 @@ export default function TableTool({
               </TableCell>
               {Object.entries(row).map(
                 ([key, value]) =>
-                  key !== 'id' && (
+                  key !== 'id' &&
+                  !(typeof value === 'boolean' && key === 'PK') && (
                     <TableCell key={generateKey(value)}>
                       {key === 'name' && (
                         <InputWithLocalState<string>
@@ -215,7 +215,7 @@ export default function TableTool({
                           }
                         />
                       )}
-
+                      {/* /PK제약조건 제거 */}
                       {typeof value === 'boolean' && (
                         <Checkbox
                           checked={value}
