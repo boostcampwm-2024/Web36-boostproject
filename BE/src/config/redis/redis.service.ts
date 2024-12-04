@@ -23,7 +23,7 @@ export class RedisService {
     });
 
     this.defaultConnection.on('ready', () => {
-      this.defaultConnection.config('SET', 'notify-keyspace-events', 'Ex');
+      this.defaultConnection.config('SET', 'notify-keyspace-events', 'Exg');
     });
   }
 
@@ -33,7 +33,7 @@ export class RedisService {
       port: this.configService.get<number>('REDIS_PORT'),
     });
 
-    this.defaultConnection.on('ready', () => {
+    this.eventConnection.on('ready', () => {
       this.subscribeToExpiredEvents();
     });
   }
@@ -55,6 +55,7 @@ export class RedisService {
       await this.defaultConnection.hset(key, 'rowCount', 0);
       await this.adminDBManager.initUserDatabase(key);
     }
+    await this.setExpireTime(key, 60 * 60);
   }
 
   public async deleteSession(key: string) {
@@ -66,6 +67,7 @@ export class RedisService {
   }
 
   private subscribeToExpiredEvents() {
+    this.eventConnection.subscribe('__keyevent@0__:del');
     this.eventConnection.subscribe('__keyevent@0__:expired');
 
     this.eventConnection.on('message', (event, session) => {

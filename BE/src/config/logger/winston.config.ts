@@ -1,6 +1,9 @@
 import { utilities } from 'nest-winston';
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 const infoFileOptions = {
   level: 'info',

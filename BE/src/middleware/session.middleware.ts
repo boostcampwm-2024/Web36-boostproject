@@ -20,13 +20,10 @@ export class SessionMiddleware implements NestMiddleware {
       secret: this.configService.get<string>('SESSION_SECRET'),
       resave: false,
       saveUninitialized: true,
-      rolling: true,
       store: new CustomRedisStore(this.redisService),
+      rolling: true,
       genid: () => {
         return 'db' + uuidv4().replace(/[^a-zA-Z0-9]/g, '');
-      },
-      cookie: {
-        maxAge: 1000 * 60 * 60, // 1시간 (ms)
       },
       name: 'sid',
     })(req, res, async () => {
