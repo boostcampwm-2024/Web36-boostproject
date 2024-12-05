@@ -78,31 +78,77 @@ Query를 연습하고 싶은데, DB 환경세팅이 너무 어렵고 많은 시�
 <br>
 
 ## 핵심경험 (FE)
-[FE 프로젝트 핵심 경험(김다영)](https://github.com/boostcampwm-2024/web36-QLab/wiki/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%95%B5%EC%8B%AC-%EA%B2%BD%ED%97%98-%E2%80%90-%EA%B9%80%EB%8B%A4%EC%98%81(FE))
+> 안녕하세요, Q-Lab 프로젝트의 유일한 프론트엔드 개발자 김다영입니다! 핵심 경험은 아래 랑크에서 상세하게 확인 가능합니다.  
+> [FE 프로젝트 핵심 경험(김다영)](https://github.com/boostcampwm-2024/web36-QLab/wiki/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%ED%95%B5%EC%8B%AC-%EA%B2%BD%ED%97%98-%E2%80%90-%EA%B9%80%EB%8B%A4%EC%98%81(FE))
 
-### **핵심 경험 요약**
-- `1주차`: 서비스 설계, 작업 관리(플래닝 포커), GitHub 협업 전략.
-- `2주차`: React Query 도입, API 설계와 모킹(`axios-mock-adapter` 활용).
-- `3~5주차`: Sub-key 활용, 상태 관리 최적화, 비즈니스 로직 커스텀 훅 분리.
-- `6주차`: 코드 리팩토링 및 최적화.
+<br>
+<br>
 
-### 주요 트러블슈팅
-[성급한 추상화 (feat. useCustomMutation)](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%84%B1%EA%B8%89%ED%95%9C-%EC%B6%94%EC%83%81%ED%99%94-(feat.-useCustomMutation))
-
-> 커스텀 훅(useCustomMutation) 작성 후 범용성과 유연성 부족으로 불편함 발생  
-> 추상화는 반복된 코드 속 공통점을 충분히 파악한 뒤 이점이 있는 경우 진행해야한다는 교훈을 얻음
-
-
-[상태는 대체 어디에…](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%83%81%ED%83%9C%EB%8A%94-%EB%8C%80%EC%B2%B4-%EC%96%B4%EB%94%94%EC%97%90%E2%80%A6)
-
+### 점멸하는 쉘 
 > 부모에서 포커스 상태를 관리하자 자식 컴포넌트 전체가 리렌더링되어 깜빡이는 현상 발생  
-> 상태는 최대한 사용하는 컴포넌트에 두어 불필요한 리렌더링을 방지해야한다는 교훈을 얻음
+> [상태는 대체 어디에…](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%83%81%ED%83%9C%EB%8A%94-%EB%8C%80%EC%B2%B4-%EC%96%B4%EB%94%94%EC%97%90%E2%80%A6)
 
-  
-[React의 고유한 key](https://github.com/boostcampwm-2024/web36-QLab/wiki/React%EC%9D%98-%EA%B3%A0%EC%9C%A0%ED%95%9C-key)
+리액트를 처음 사용하면서 가장 어려웠던 점은 상태를 어디에 배치해야하는지 고민하는 것이었습니다.  
+처음에는 상태에 접근하기 쉽게 부모에 상태를 주는 경우가 많았는데요.  
+그중에 대표적인 사례는 각 쉘 즉 인풋 컴포넌트의 포커스 여부를부모 컴포넌트에 줬던 경험이었습니다.  
+이 경우 부모 상태가 변경되면 모든 자식 쉘이 리랜더링되면서 깜빡이는 현상이 발생했습니다.   
+이에 해당 상태를 각 쉘에게 부여하는 방식으로 수정했습니다.  
 
-> new Date().getTime()으로 생성한 키를 사용해 React의 key 경고 발생.  
-> 서버에서 생성된 ID 사용. 서버 ID가 없을 경우, UUID와 객체 문자열 변환을 조합해 고유 키 생성.
+<img width="883" alt="스크린샷 2024-12-05 오후 1 41 20" src="https://github.com/user-attachments/assets/ea46dcd4-4962-4534-8eee-2b08b0b8c240">
+
+<br>
+<br>
+
+### 수많은 입력 관리
+> 저희 서비스 기능에는 입력이 많습니다. 이 많은 입력을 어떻게 받아올 것인가 고민이 많았습니다.
+
+![스크린샷 2024-12-04 오후 11 12 28](https://github.com/user-attachments/assets/8ff9db64-b7a4-4e16-af12-74ccd914fd57)
+
+<br>
+<br>
+
+서버에서 받아온 정보를 기반으로 입력창이 바뀌어야 했기에,  
+먼저 서버로부터 받은 테이블 데이터를 가공해서 response 형식에 맞는 데이터로 변경해 줬습니다.  
+
+<img width="857" alt="스크린샷 2024-12-05 오후 1 45 37" src="https://github.com/user-attachments/assets/a2a71f7c-c2eb-4b8b-a65a-345346fe7779">
+
+<br>
+<br>
+
+그리고 변경한 response 형식의 객체를 기반으로 입력폼을 만들었습니다. 
+
+```tsx
+{fields?.map((fieldData, rowIdx) => (
+  <TableRow key={fieldData.id}>
+    <TableCell>{fieldData.name}</TableCell>
+    <TableCell className="flex items-center">
+      <Controller
+        name={`columns.${rowIdx}.blank`}
+        control={control}
+        render={({ field }) => (
+          <Input
+            {...field}
+            type="number"
+            placeholder="0"
+            className="mr-2 h-8 w-12 p-1"
+            value={field.value || ''}
+            onChange={(e) => field.onChange(Number(e.target.value))}
+          />
+        )}
+      />
+      <span>%</span>
+    </TableCell>
+  </TableRow>
+))}
+
+```
+
+이후에 hook form과 zod를 같이 사용하여 백엔드와 스키마를 공유하고 유저 입력을 검증했는데요.
+검증을 생각하지 않고 다 구현하고 스키마랑 연동했더니 무수히 많은 타입에러가 발생했습니다.
+입력이 있으면 무조건 검증 로직을 고려해야한다는 것을 깨달았습니다.
+
+
+
 <br>
 <br>
 
