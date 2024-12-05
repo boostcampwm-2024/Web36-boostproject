@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable react/jsx-props-no-spreading */
 import { useState, useEffect } from 'react'
 
@@ -102,6 +103,7 @@ export default function RecordTool({
 
     setSelectedTableName(selectedTable.tableName)
     setValue('tableName', selectedTable.tableName)
+
     replace(selectedTable.columns)
   }
 
@@ -197,7 +199,11 @@ export default function RecordTool({
                       placeholder="0"
                       className="mr-2 h-8 w-12 p-1"
                       value={field.value === 0 ? '' : field.value}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      onChange={(e) => {
+                        const value =
+                          e.target.value === '' ? 0 : Number(e.target.value)
+                        field.onChange(value)
+                      }}
                     />
                   )}
                 />
@@ -217,9 +223,11 @@ export default function RecordTool({
                           placeholder="min"
                           className="mr-2 h-8 w-12 p-1"
                           value={field.value === 0 ? '' : field.value}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          onChange={(e) => {
+                            const value =
+                              e.target.value === '' ? 0 : Number(e.target.value)
+                            field.onChange(value)
+                          }}
                         />
                       )}
                     />
@@ -233,9 +241,11 @@ export default function RecordTool({
                           placeholder="max"
                           className="h-8 w-12 p-1"
                           value={field.value === 0 ? '' : field.value}
-                          onChange={(e) =>
-                            field.onChange(Number(e.target.value))
-                          }
+                          onChange={(e) => {
+                            const value =
+                              e.target.value === '' ? 0 : Number(e.target.value)
+                            field.onChange(value)
+                          }}
                         />
                       )}
                     />
@@ -292,7 +302,10 @@ export default function RecordTool({
               placeholder="max 1,000,000"
               className="h-8 w-32 p-2"
               value={field.value === 0 ? '' : field.value}
-              onChange={(e) => field.onChange(Number(e.target.value))}
+              onChange={(e) => {
+                const value = e.target.value === '' ? 0 : Number(e.target.value)
+                field.onChange(value)
+              }}
             />
           )}
         />

@@ -35,7 +35,7 @@ function CapacityUsage({ usage }: { usage: UsageType }) {
           {loading ? (
             <div className="mb-0.5 h-3 w-3 animate-spin rounded-full border-2 border-gray-300 border-t-blue-500" />
           ) : (
-            <span>{used}</span>
+            <span>{new Intl.NumberFormat().format(Number(used))}</span>
           )}
           <span>{UNIT}</span>
           <span>
