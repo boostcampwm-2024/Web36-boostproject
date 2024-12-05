@@ -57,7 +57,7 @@ export const RandomColumnInfoSchema = z
 export const CreateRandomRecordDtoSchema = z.object({
   tableName: z.string().trim().min(1, "Table name is required"),
   columns: z.array(RandomColumnInfoSchema),
-  count: z.number().int().min(1, "Count must be at least 1").max(100000, "Count cannot exceed 100000"),
+  count: z.number().int().min(1, "Count must be at least 1").max(1000000, "Count cannot exceed 1000000"),
 });
 
 export type RandomColumnInfo = z.infer<typeof RandomColumnInfoSchema>;
