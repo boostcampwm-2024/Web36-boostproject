@@ -26,6 +26,7 @@ export class UsageService {
       await this.tableService.getTables(req.sessionID)
     ).map((table) => table.TABLE_NAME);
     if (tableList.length === 0) {
+      await this.redisService.setRowCount(req.sessionID, 0);
       return {
         currentUsage: 0,
         availUsage: this.MAX_ROW_COUNT,

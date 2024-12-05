@@ -29,6 +29,9 @@ export class LoggingInterceptor implements NestInterceptor {
       url: context.switchToHttp().getRequest().url,
       body: context.switchToHttp().getRequest().body,
       sessionId: context.switchToHttp().getRequest().sessionID,
+      timestamp: new Date().toLocaleString('ko-KR', {
+        timeZone: 'Asia/Seoul',
+      }),
     };
     this.loggerService.logRequest(requestInfo);
     return next.handle().pipe(
@@ -37,6 +40,9 @@ export class LoggingInterceptor implements NestInterceptor {
           id: logId,
           status: context.switchToHttp().getResponse().statusCode,
           body: context.switchToHttp().getResponse().body,
+          timestamp: new Date().toLocaleString('ko-KR', {
+            timeZone: 'Asia/Seoul',
+          }),
         };
         this.loggerService.logResponse(responseInfo);
       }),
@@ -46,6 +52,9 @@ export class LoggingInterceptor implements NestInterceptor {
             id: logId,
             status: err.getStatus(),
             body: err.getResponse(),
+            timestamp: new Date().toLocaleString('ko-KR', {
+              timeZone: 'Asia/Seoul',
+            }),
           };
           this.loggerService.logResponse(responseInfo);
         } else {
@@ -53,6 +62,9 @@ export class LoggingInterceptor implements NestInterceptor {
             id: logId,
             message: err['message'],
             stack: err['stack'],
+            timestamp: new Date().toLocaleString('ko-KR', {
+              timeZone: 'Asia/Seoul',
+            }),
           };
           this.loggerService.error(errorInfo);
         }
