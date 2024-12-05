@@ -62,7 +62,9 @@ export class AdminDBManager implements OnModuleInit {
       const dropUser = `drop user '${identify.substring(0, 10)}';`;
       await this.run(dropUser);
     } catch (e) {
-      console.error(e);
+      if (e.code !== 'ER_DB_DROP_EXISTS') {
+        console.error(e);
+      }
     }
   }
 }

@@ -67,7 +67,6 @@ export class RedisService {
   }
 
   private subscribeToExpiredEvents() {
-    this.eventConnection.subscribe('__keyevent@0__:del');
     this.eventConnection.subscribe('__keyevent@0__:expired');
 
     this.eventConnection.on('message', (event, session) => {
