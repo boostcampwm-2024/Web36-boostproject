@@ -40,7 +40,7 @@ services:
 
       LOGGER_DIR: /logs
     volumes:
-      - /logs:/app/logs
+      - /logs:/app/BE/logs
 
   nginx:
     build:
