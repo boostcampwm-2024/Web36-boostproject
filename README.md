@@ -44,7 +44,7 @@ Query를 연습하고 싶은데, DB 환경세팅이 너무 어렵고 많은 시�
 
 ![쿼리 실행 : 테이블 보기](https://github.com/user-attachments/assets/1c87bdfb-ecf9-43c6-84b5-28cd6365393b)
 
-[유저의 쿼리 실행 환경은 어떻게 제공되나요?](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%82%AC%EC%9A%A9%EC%9E%90%EC%9D%98-%EC%BF%BC%EB%A6%AC-%EC%8B%A4%ED%96%89%ED%99%98%EA%B2%BD%EC%9D%80-%EC%96%B4%EB%96%BB%EA%B2%8C-%EA%B4%80%EB%A6%AC%EB%90%98%EB%82%98%EC%9A%94%3F)
+[유저의 쿼리 실행 환경은 어떻게 제공되나요?](https://github.com/boostcampwm-2024/web36-QLab/wiki/%EC%82%AC%EC%9A%A9%EC%9E%90%EC%9D%98-%EC%BF%BC%EB%A6%AC-%EC%8B%A4%ED%96%89%ED%99%98%EA%B2%BD%EC%9D%80-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%A0%9C%EA%B3%B5%EB%90%98%EB%82%98%EC%9A%94%3F)
 
 > 세션을 이용하여 DB Connection 관리하는 법  
 > 실제 쿼리 실행 시간 측정 방법
