@@ -33,18 +33,23 @@ export class FileService implements OnModuleInit {
   async generateCsvFile(
     columnEntities: RandomColumnModel[],
     rows: number,
-  ): Promise<string> {
+  ): Promise<string[]> {
     const randomString = crypto.randomBytes(10).toString('hex');
-    const filePath = path.join(RANDOM_DATA_TEMP_DIR, `${randomString}.csv`);
-    const header = this.generateCsvHeader(columnEntities);
-    await fs.writeFile(filePath, header);
-
+    const filePaths: string[] = [];
     let remainRows = rows;
+    let batchIndex = 0;
+
     while (remainRows > 0) {
-      const batchSize = Math.min(remainRows, RECORD_PROCESS_BATCH_SIZE);
-      const data = this.generateCsvData(columnEntities, batchSize);
+      const currentBatchSize = Math.min(remainRows, RECORD_PROCESS_BATCH_SIZE);
+      const data = this.generateCsvData(columnEntities, currentBatchSize);
+      const filePath = path.join(
+        RANDOM_DATA_TEMP_DIR,
+        `${randomString}_${batchIndex}.csv`,
+      );
+      const header = this.generateCsvHeader(columnEntities);
+
       try {
-        await fs.writeFile(filePath, data, { flag: 'a' });
+        await fs.writeFile(filePath, header + '\n' + data);
       } catch (err) {
         console.error('CSV 파일 쓰기 실패:', err);
         throw new InternalServerErrorException({
@@ -52,40 +57,46 @@ export class FileService implements OnModuleInit {
           error: err.message,
         });
       }
-      remainRows -= batchSize;
+
+      filePaths.push(filePath);
+      remainRows -= currentBatchSize;
+      batchIndex++;
     }
-    return filePath;
+    return filePaths;
   }
 
-  async insertCsvIntoDB(
+  async loadCSVFilesToDB(
     req: any,
-    csvFilePath: string,
+    csvFilePaths: string[],
     tableName: string,
     columnNames: string[],
-  ): Promise<ResultSetHeader> {
-    const query = `
+  ): Promise<number> {
+    let affectedRows = 0;
+    for (const csvFilePath of csvFilePaths) {
+      const query = `
       LOAD DATA LOCAL INFILE \'${csvFilePath.replace(/\\/g, '\\\\')}\'
       INTO TABLE ${tableName}
       FIELDS TERMINATED BY ','
       LINES TERMINATED BY '\\n'
       IGNORE 1 ROWS
-      \(${columnNames.map((col) => `\`${col}\``).join(',')}\);
+      (${columnNames.map((col) => `\`${col}\``).join(',')});
     `;
-    let queryResult: ResultSetHeader;
 
-    try {
-      queryResult = (await this.userDBManager.run(
-        req,
-        query,
-      )) as ResultSetHeader;
-    } catch (err) {
-      throw new InternalServerErrorException({
-        message: '랜덤 데이터 DB 삽입중 에러:' + err.message,
-        error: err.message,
-      });
+      try {
+        const queryResult = (await this.userDBManager.run(
+          req,
+          query,
+        )) as ResultSetHeader;
+        affectedRows += queryResult.affectedRows;
+      } catch (err) {
+        console.error(`CSV 파일 ${csvFilePath} 삽입 중 에러:`, err);
+        throw new InternalServerErrorException({
+          message: `랜덤 데이터 DB 삽입 중 에러: ${err.message}`,
+          error: err.message,
+        });
+      }
     }
-
-    return queryResult;
+    return affectedRows;
   }
 
   async deleteFile(filePath: string) {
@@ -100,7 +111,7 @@ export class FileService implements OnModuleInit {
   }
 
   private generateCsvHeader(columnEntities: RandomColumnModel[]): string {
-    return columnEntities.map((column) => column.name).join(', ') + '\n';
+    return columnEntities.map((column) => column.name).join(', ');
   }
 
   private generateCsvData(
