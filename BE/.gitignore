@@ -63,3 +63,5 @@ csvTemp
 
 # intelliJ
 *.iml
+
+.idea
