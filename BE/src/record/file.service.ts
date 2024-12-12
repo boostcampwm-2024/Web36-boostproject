@@ -13,6 +13,8 @@ import { RandomColumnModel } from './random-column.entity';
 import * as path from 'node:path';
 import { ResultSetHeader } from 'mysql2/promise';
 import * as crypto from 'node:crypto';
+import pLimit from 'p-limit';
+import { ConnectionLimitExceedException } from '../common/exception/custom-exception';
 
 @Injectable()
 export class FileService implements OnModuleInit {
@@ -38,7 +40,6 @@ export class FileService implements OnModuleInit {
     const filePaths: string[] = [];
     let remainRows = rows;
     let batchIndex = 0;
-    const header = this.generateCsvHeader(columnEntities);
 
     while (remainRows > 0) {
       const currentBatchSize = Math.min(remainRows, RECORD_PROCESS_BATCH_SIZE);
@@ -48,11 +49,11 @@ export class FileService implements OnModuleInit {
         `${randomString}_${batchIndex}.csv`,
       );
       try {
-        await fs.writeFile(filePath, header + '\n' + data);
+        await fs.writeFile(filePath, data);
       } catch (err) {
         console.error('CSV 파일 쓰기 실패:', err);
         throw new InternalServerErrorException({
-          message: 'CSV 파일 쓰기 실패:: ' + err.message,
+          message: 'CSV 파일 쓰기 실패: ' + err.message,
           error: err.message,
         });
       }
@@ -69,30 +70,35 @@ export class FileService implements OnModuleInit {
     tableName: string,
     columnNames: string[],
   ): Promise<number> {
-    const loadTasks = csvFilePaths.map(async (csvFilePath) => {
-      const query = `
-      LOAD DATA LOCAL INFILE \'${csvFilePath.replace(/\\/g, '\\\\')}\'
-      INTO TABLE ${tableName}
-      FIELDS TERMINATED BY ','
-      LINES TERMINATED BY '\\n'
-      IGNORE 1 ROWS
-      (${columnNames.map((col) => `\`${col}\``).join(',')});
-    `;
+    const limit = pLimit(2);
 
-      try {
-        const queryResult = (await this.userDBManager.run(
-          req,
-          query,
-        )) as ResultSetHeader;
-        return queryResult.affectedRows;
-      } catch (err) {
-        console.error(`CSV 파일 ${csvFilePath} 삽입 중 에러:`, err);
-        throw new InternalServerErrorException({
-          message: `랜덤 데이터 DB 삽입 중 에러: ${err.message}`,
-          error: err.message,
-        });
-      }
-    });
+    const loadTasks = csvFilePaths.map((csvFilePath) =>
+      limit(async () => {
+        const query = `
+        LOAD DATA LOCAL INFILE \'${csvFilePath.replace(/\\/g, '\\\\')}\'
+        INTO TABLE ${tableName}
+        FIELDS TERMINATED BY ','
+        LINES TERMINATED BY '\\n'
+        (${columnNames.map((col) => `\`${col}\``).join(',')});`;
+        try {
+          const queryResult = (await this.userDBManager.runWithNewConnection(
+            req,
+            query,
+          )) as ResultSetHeader;
+          return queryResult.affectedRows;
+        } catch (err) {
+          if (err.errno == 1040) {
+            throw new ConnectionLimitExceedException();
+          } else {
+            console.error(`CSV 파일 ${csvFilePath} 삽입 중 에러:`, err);
+            throw new InternalServerErrorException({
+              message: `랜덤 데이터 DB 삽입 중 에러: ${err.message}`,
+              error: err.message,
+            });
+          }
+        }
+      }),
+    );
 
     const results = await Promise.all(loadTasks);
 
@@ -109,11 +115,6 @@ export class FileService implements OnModuleInit {
       });
     }
   }
-
-  private generateCsvHeader(columnEntities: RandomColumnModel[]): string {
-    return columnEntities.map((column) => column.name).join(', ');
-  }
-
   private generateCsvData(
     columnEntities: RandomColumnModel[],
     rows: number,
