@@ -70,15 +70,15 @@ export class RecordService {
     req: any,
     createRandomRecordDto: CreateRandomRecordDto,
   ): Promise<ResRecordDto> {
-    const columnEntities: RandomColumnModel[] =
-      createRandomRecordDto.columns.map((column) => this.toEntity(column));
+    const columnEntities: RandomColumnModel[] = createRandomRecordDto.columns
+      .filter((column) => column.type !== 'default')
+      .map((column) => this.toEntity(column));
     const columnNames = columnEntities.map((column) => column.name);
 
     const csvFilePaths = await this.fileService.generateCsvFile(
       columnEntities,
       createRandomRecordDto.count,
     );
-
     const affectedRows = await this.fileService.loadCSVFilesToDB(
       req,
       csvFilePaths,
@@ -87,7 +87,7 @@ export class RecordService {
     );
 
     for (const csvFilepath of csvFilePaths) {
-      this.fileService.deleteFile(csvFilepath);
+      await this.fileService.deleteFile(csvFilepath);
     }
 
     await this.usageService.updateRowCount(req);

@@ -12,6 +12,7 @@ export const RANDOM_DATA_TEMP_DIR = 'csvTemp';
 export const RECORD_PROCESS_BATCH_SIZE = 100000;
 
 export const generalDomain = [
+  'default',
   'name',
   'country',
   'city',
