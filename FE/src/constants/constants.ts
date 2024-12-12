@@ -70,6 +70,7 @@ export const COLUMN_TYPES = [
 ] as const
 
 export const RECORD_TYPES = [
+  'default',
   'name',
   'country',
   'city',

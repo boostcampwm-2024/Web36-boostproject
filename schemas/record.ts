@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // Domains Enum 정의
-const Domains = z.enum(["name", "country", "city", "email", "phone", "sex", "boolean", "number", "enum"]);
+const Domains = z.enum(["default","name", "country", "city", "email", "phone", "sex", "boolean", "number", "enum"]);
 
 // RandomColumnInfo 스키마
 export const RandomColumnInfoSchema = z
