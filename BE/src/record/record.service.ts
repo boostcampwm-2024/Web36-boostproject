@@ -74,25 +74,27 @@ export class RecordService {
       createRandomRecordDto.columns.map((column) => this.toEntity(column));
     const columnNames = columnEntities.map((column) => column.name);
 
-    const csvFilePath = await this.fileService.generateCsvFile(
+    const csvFilePaths = await this.fileService.generateCsvFile(
       columnEntities,
       createRandomRecordDto.count,
     );
 
-    const result = await this.fileService.insertCsvIntoDB(
+    const affectedRows = await this.fileService.loadCSVFilesToDB(
       req,
-      csvFilePath,
+      csvFilePaths,
       createRandomRecordDto.tableName,
       columnNames,
     );
 
-    await this.fileService.deleteFile(csvFilePath);
+    for (const csvFilepath of csvFilePaths) {
+      this.fileService.deleteFile(csvFilepath);
+    }
 
     await this.usageService.updateRowCount(req);
 
     return new ResRecordDto({
-      status: result.affectedRows === createRandomRecordDto.count,
-      text: `${createRandomRecordDto.tableName} 에 랜덤 레코드 ${result.affectedRows}개 삽입되었습니다.`,
+      status: affectedRows === createRandomRecordDto.count,
+      text: `${createRandomRecordDto.tableName} 에 랜덤 레코드 ${affectedRows}개 삽입되었습니다.`,
     });
   }
 
