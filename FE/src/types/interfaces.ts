@@ -56,6 +56,7 @@ export interface RecordToolType {
 export interface RecordToolColumnType {
   name: string
   type:
+    | 'default'
     | 'name'
     | 'country'
     | 'city'
