@@ -38,6 +38,7 @@ export class FileService implements OnModuleInit {
     const filePaths: string[] = [];
     let remainRows = rows;
     let batchIndex = 0;
+    const header = this.generateCsvHeader(columnEntities);
 
     while (remainRows > 0) {
       const currentBatchSize = Math.min(remainRows, RECORD_PROCESS_BATCH_SIZE);
@@ -46,8 +47,6 @@ export class FileService implements OnModuleInit {
         RANDOM_DATA_TEMP_DIR,
         `${randomString}_${batchIndex}.csv`,
       );
-      const header = this.generateCsvHeader(columnEntities);
-
       try {
         await fs.writeFile(filePath, header + '\n' + data);
       } catch (err) {
@@ -57,7 +56,6 @@ export class FileService implements OnModuleInit {
           error: err.message,
         });
       }
-
       filePaths.push(filePath);
       remainRows -= currentBatchSize;
       batchIndex++;
