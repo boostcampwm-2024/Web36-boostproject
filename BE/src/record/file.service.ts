@@ -69,8 +69,7 @@ export class FileService implements OnModuleInit {
     tableName: string,
     columnNames: string[],
   ): Promise<number> {
-    let affectedRows = 0;
-    for (const csvFilePath of csvFilePaths) {
+    const loadTasks = csvFilePaths.map(async (csvFilePath) => {
       const query = `
       LOAD DATA LOCAL INFILE \'${csvFilePath.replace(/\\/g, '\\\\')}\'
       INTO TABLE ${tableName}
@@ -85,7 +84,7 @@ export class FileService implements OnModuleInit {
           req,
           query,
         )) as ResultSetHeader;
-        affectedRows += queryResult.affectedRows;
+        return queryResult.affectedRows;
       } catch (err) {
         console.error(`CSV 파일 ${csvFilePath} 삽입 중 에러:`, err);
         throw new InternalServerErrorException({
@@ -93,8 +92,11 @@ export class FileService implements OnModuleInit {
           error: err.message,
         });
       }
-    }
-    return affectedRows;
+    });
+
+    const results = await Promise.all(loadTasks);
+
+    return results.reduce((sum, rows) => sum + rows, 0);
   }
 
   async deleteFile(filePath: string) {
