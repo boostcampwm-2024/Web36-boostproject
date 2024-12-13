@@ -75,20 +75,18 @@ export class RecordService {
       .map((column) => this.toEntity(column));
     const columnNames = columnEntities.map((column) => column.name);
 
-    const csvFilePaths = await this.fileService.generateCsvFile(
+    const csvFilePath = await this.fileService.generateCsvFile(
       columnEntities,
       createRandomRecordDto.count,
     );
-    const affectedRows = await this.fileService.loadCSVFilesToDB(
+    const affectedRows = await this.fileService.loadCsvToDB(
       req,
-      csvFilePaths,
+      csvFilePath,
       createRandomRecordDto.tableName,
       columnNames,
     );
 
-    for (const csvFilepath of csvFilePaths) {
-      await this.fileService.deleteFile(csvFilepath);
-    }
+    await this.fileService.deleteFile(csvFilePath);
 
     await this.usageService.updateRowCount(req);
 

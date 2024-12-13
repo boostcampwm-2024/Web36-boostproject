@@ -45,7 +45,7 @@ export function convertTableDataToRecordToolData(
     tableName: table.tableName,
     columns: table.columns.map((column) => ({
       name: column.name,
-      type: 'name',
+      type: 'default',
       blank: 0,
       min: 0,
       max: 0,
