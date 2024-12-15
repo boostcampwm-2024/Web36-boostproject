@@ -2,8 +2,10 @@
   "name": "web36-qlab",
   "version": "1.0.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start:container": "docker-compose -f ./BE/docker-compose.backend.local.yml up --build"
+    "start:container": "npm run start:backend && npm run setup:frontend && npm run start:frontend",
+    "start:backend": "docker-compose -f ./BE/docker-compose.backend.local.yml up --build -d",
+    "setup:frontend": "cd FE && npm install",
+    "start:frontend": "cd FE && VITE_BASE_URL=http://localhost:3000/api VITE_NODE_ENV=development npm run preview"
   },
   "author": "",
   "license": "ISC",
